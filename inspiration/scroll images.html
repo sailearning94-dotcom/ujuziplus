@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-black">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#0a0a0a" />
+  <title>Gallery — Art Gallery Slider</title>
+  <meta name="description" content="An immersive art gallery slider with drag, wheel, and keyboard navigation, plus dynamic color-driven ambient backgrounds." />
+
+  <!-- Fonts: Playfair Display (serif headings) + Geist-like sans/mono fallbacks -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --c0: #1a1a2e;
+      --c1: #16213e;
+      --c2: #0f3460;
+      --font-sans: "Inter", system-ui, -apple-system, sans-serif;
+      --font-serif: "Playfair Display", Georgia, serif;
+      --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+      /* card metrics (kept in sync with JS) */
+      --card-size: 400px;
+      --card-step: 432px; /* card width + gap (400 + 32) */
+      --pad: calc(50vw - 200px);
+    }
+
+    @media (min-width: 768px) {
+      :root {
+        --card-size: 500px;
+        --card-step: 564px; /* 500 + 64 */
+        --pad: calc(50vw - 250px);
+      }
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      background: #000;
+      color: #fff;
+      font-family: var(--font-sans);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    ::-webkit-scrollbar { display: none; }
+
+    main {
+      position: relative;
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      background: #000;
+    }
+
+    .gallery {
+      position: relative;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    /* ---- Animated ambient background ---- */
+    .ambient {
+      position: absolute;
+      inset: 0;
+      transition: background 0.6s cubic-bezier(0.32, 0.72, 0, 1),
+                  transform 0.6s cubic-bezier(0.32, 0.72, 0, 1),
+                  opacity 0.6s cubic-bezier(0.32, 0.72, 0, 1);
+      background:
+        radial-gradient(ellipse at 30% 20%, var(--c0-a) 0%, transparent 50%),
+        radial-gradient(ellipse at 70% 80%, var(--c1-a) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, var(--c2-a) 0%, transparent 70%),
+        linear-gradient(180deg, #0a0a0a 0%, #111111 100%);
+    }
+
+    .blur-overlay {
+      position: absolute;
+      inset: 0;
+      backdrop-filter: blur(64px);
+      -webkit-backdrop-filter: blur(64px);
+      pointer-events: none;
+    }
+
+    /* ---- Header ---- */
+    header {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 2rem;
+    }
+
+    .brand {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: rgba(255, 255, 255, 0.9);
+      opacity: 0;
+      transform: translateY(-20px);
+      animation: fadeDown 0.6s ease 0.2s forwards;
+    }
+
+    .counter {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-radius: 9999px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 0.5rem 1rem;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      font-size: 0.875rem;
+      opacity: 0;
+      transform: translateY(-20px);
+      animation: fadeDown 0.6s ease 0.3s forwards;
+    }
+    .counter .current { color: rgba(255, 255, 255, 0.6); }
+    .counter .sep { color: rgba(255, 255, 255, 0.3); }
+    .counter .total { color: rgba(255, 255, 255, 0.4); }
+
+    /* ---- Slider ---- */
+    .slider {
+      position: relative;
+      display: flex;
+      height: 100%;
+      width: 100%;
+      align-items: center;
+      cursor: grab;
+    }
+    .slider.dragging { cursor: grabbing; }
+
+    .track {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      padding-left: var(--pad);
+      padding-right: var(--pad);
+      will-change: transform;
+    }
+    @media (min-width: 768px) {
+      .track { gap: 4rem; }
+    }
+    .track.animate {
+      transition: transform 0.6s cubic-bezier(0.32, 0.72, 0, 1);
+    }
+
+    /* ---- Card ---- */
+    .card {
+      position: relative;
+      flex-shrink: 0;
+      transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1),
+                  opacity 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+      transform-style: preserve-3d;
+    }
+
+    .card-inner {
+      position: relative;
+      overflow: hidden;
+      border-radius: 1rem;
+      transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
+    }
+
+    .frame {
+      position: absolute;
+      inset: 0;
+      border-radius: 1rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .image-container {
+      position: relative;
+      height: var(--card-size);
+      width: var(--card-size);
+      overflow: hidden;
+      border-radius: 1rem;
+      padding: 0.75rem;
+    }
+
+    .image-container img {
+      height: 100%;
+      width: 100%;
+      border-radius: 0.75rem;
+      object-fit: cover;
+      transition: transform 0.4s ease-out;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .gradient-overlay {
+      position: absolute;
+      left: 0.75rem;
+      right: 0.75rem;
+      bottom: 0.75rem;
+      height: 30%;
+      border-radius: 0 0 0.75rem 0.75rem;
+      background: linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.4), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease, height 0.3s ease;
+      pointer-events: none;
+    }
+
+    .info {
+      position: absolute;
+      left: 0.75rem;
+      right: 0.75rem;
+      bottom: 0.75rem;
+      padding: 1.5rem;
+      user-select: none;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+      pointer-events: none;
+    }
+    .info .year {
+      margin-bottom: 0.25rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: rgba(255, 255, 255, 0.5);
+      transition: transform 0.3s ease;
+    }
+    .info .title {
+      font-family: var(--font-serif);
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #fff;
+      transition: transform 0.3s ease 0.05s;
+    }
+    @media (min-width: 768px) {
+      .info .title { font-size: 1.875rem; }
+    }
+    .info .artist {
+      margin-top: 0.5rem;
+      font-size: 0.875rem;
+      color: rgba(255, 255, 255, 0.7);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.3s ease 0.1s, transform 0.3s ease 0.1s;
+    }
+
+    /* Active state */
+    .card.active .gradient-overlay { opacity: 1; }
+    .card.active .info { opacity: 1; transform: translateY(0); }
+
+    /* Hover state (only meaningful on active card) */
+    .card.active.hovered .card-inner {
+      transform: translateY(-10px);
+      box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.8);
+    }
+    .card.active.hovered .image-container img { transform: scale(1.05); }
+    .card.active.hovered .gradient-overlay { height: 50%; }
+    .card.active.hovered .info .year { transform: translateY(-5px); }
+    .card.active.hovered .info .title { transform: translateY(-5px); }
+    .card.active.hovered .info .artist { opacity: 1; transform: translateY(0); }
+
+    /* Reflection */
+    .reflection {
+      position: absolute;
+      bottom: -5rem;
+      left: 0.75rem;
+      right: 0.75rem;
+      height: 5rem;
+      overflow: hidden;
+      border-radius: 1rem;
+      opacity: 0.05;
+      filter: blur(4px);
+      background: linear-gradient(to bottom, rgba(255,255,255,0.1), transparent);
+      transform: scaleY(-1);
+      transition: opacity 0.5s ease;
+      pointer-events: none;
+    }
+    .card.active .reflection { opacity: 0.15; }
+
+    /* ---- Navigation dots ---- */
+    .dots {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-radius: 9999px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 0.75rem 1rem;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      opacity: 0;
+      animation: fadeUpDots 0.6s ease 0.5s forwards;
+    }
+    .dot-btn {
+      position: relative;
+      padding: 0.25rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    .dot {
+      height: 0.5rem;
+      width: 0.5rem;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.3);
+      transition: width 0.3s ease-out, background-color 0.3s ease-out;
+    }
+    .dot-btn:hover .dot { background: rgba(255, 255, 255, 0.55); }
+
+    /* ---- Keyboard hint ---- */
+    .hint {
+      position: absolute;
+      bottom: 2rem;
+      left: 2rem;
+      display: none;
+      align-items: center;
+      gap: 0.75rem;
+      color: rgba(255, 255, 255, 0.3);
+      opacity: 0;
+      animation: fadeIn 0.6s ease 1s forwards;
+    }
+    @media (min-width: 768px) {
+      .hint { display: flex; }
+    }
+    kbd {
+      border-radius: 0.25rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 0.25rem 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+    }
+    .hint span { font-size: 0.75rem; }
+
+    @keyframes fadeDown {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeUpDots {
+      to { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="gallery">
+      <div class="ambient" id="ambient" style="--c0-a:#1a1a2e66; --c1-a:#16213e66; --c2-a:#0f346044;"></div>
+      <div class="blur-overlay"></div>
+
+      <header>
+        <div class="brand">Gallery</div>
+        <div class="counter">
+          <span class="current" id="counter-current">01</span>
+          <span class="sep">/</span>
+          <span class="total" id="counter-total">00</span>
+        </div>
+      </header>
+
+      <div class="slider" id="slider">
+        <div class="track animate" id="track"></div>
+      </div>
+
+      <div class="dots" id="dots"></div>
+
+      <div class="hint">
+        <kbd>&larr;</kbd>
+        <kbd>&rarr;</kbd>
+        <span>navigate</span>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // ----- Data -----
+    const artworks = [
+      { id: 1, title: "Ethereal Dreams",   artist: "Marina Solace",   year: 2023, image: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=800&q=80" },
+      { id: 2, title: "Urban Fragments",   artist: "Chen Wei",        year: 2024, image: "https://images.unsplash.com/photo-1577083288073-40892c0860a4?w=800&q=80" },
+      { id: 3, title: "Coastal Serenity",  artist: "Elise Beaumont",  year: 2022, image: "https://images.unsplash.com/photo-1518998053901-5348d3961a04?w=800&q=80" },
+      { id: 4, title: "Abstract Reverie",  artist: "Yuki Tanaka",     year: 2024, image: "https://images.unsplash.com/photo-1536924940846-227afb31e2a5?w=800&q=80" },
+      { id: 6, title: "Digital Landscapes",artist: "Alex Reiner",     year: 2024, image: "https://images.unsplash.com/photo-1550859492-d5da9d8e45f3?w=800&q=80" },
+      { id: 7, title: "Whispers of Color", artist: "Lila Fontaine",   year: 2023, image: "https://images.unsplash.com/photo-1482160549825-59d1b23cb208?w=800&q=80" },
+      { id: 8, title: "Metropolis",        artist: "David Kross",     year: 2022, image: "https://images.unsplash.com/photo-1501472312651-726afe119ff1?w=800&q=80" },
+    ];
+
+    const SLIDER = {
+      DRAG_RESISTANCE: 0.4,
+      SWIPE_THRESHOLD_PERCENT: 0.08,
+      VELOCITY_THRESHOLD: 0.3,
+      WHEEL_RESISTANCE: 0.3,
+      WHEEL_SCROLL_THRESHOLD: 120,
+      WHEEL_RESET_DELAY: 150,
+      MOMENTUM_EASING: 0.1,
+      ANIMATION_TIMEOUT: 800,
+    };
+
+    const DEFAULT_COLORS = ["#1a1a2e", "#16213e", "#0f3460"];
+
+    // ----- Color extraction (canvas, mirrors lib/color-extractor.ts) -----
+    function rgbToHex(r, g, b) {
+      return "#" + [r, g, b].map((x) => {
+        const h = x.toString(16);
+        return h.length === 1 ? "0" + h : h;
+      }).join("");
+    }
+    function hexToRgb(hex) {
+      const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return m ? { r: parseInt(m[1], 16), g: parseInt(m[2], 16), b: parseInt(m[3], 16) } : null;
+    }
+
+    function extractColors(imageUrl) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          const ctx = canvas.getContext("2d");
+          if (!ctx) return resolve([...DEFAULT_COLORS]);
+          const sampleSize = 50;
+          canvas.width = sampleSize;
+          canvas.height = sampleSize;
+          ctx.drawImage(img, 0, 0, sampleSize, sampleSize);
+          try {
+            const pixels = ctx.getImageData(0, 0, sampleSize, sampleSize).data;
+            const colorMap = new Map();
+            for (let i = 0; i < pixels.length; i += 4) {
+              const r = Math.min(255, Math.round(pixels[i] / 32) * 32);
+              const g = Math.min(255, Math.round(pixels[i + 1] / 32) * 32);
+              const b = Math.min(255, Math.round(pixels[i + 2] / 32) * 32);
+              const brightness = (r + g + b) / 3;
+              if (brightness < 20 || brightness > 240) continue;
+              const key = r + "," + g + "," + b;
+              const existing = colorMap.get(key);
+              if (existing) existing.count++;
+              else colorMap.set(key, { count: 1, r, g, b });
+            }
+            const sorted = Array.from(colorMap.values()).sort((a, b) => b.count - a.count).slice(0, 10);
+            const distinct = [];
+            for (const color of sorted) {
+              const hex = rgbToHex(color.r, color.g, color.b);
+              const isDistinct = distinct.every((ex) => {
+                const exRgb = hexToRgb(ex);
+                if (!exRgb) return true;
+                const d = Math.sqrt((color.r - exRgb.r) ** 2 + (color.g - exRgb.g) ** 2 + (color.b - exRgb.b) ** 2);
+                return d > 40;
+              });
+              if (isDistinct && distinct.length < 3) distinct.push(hex);
+            }
+            if (distinct.length === 0 && sorted.length > 0) {
+              const t = sorted[0];
+              distinct.push(rgbToHex(Math.max(0, t.r - 60), Math.max(0, t.g - 60), Math.max(0, t.b - 60)));
+            }
+            while (distinct.length < 3) {
+              const base = hexToRgb(distinct[0] || "#1a1a2e");
+              if (base) {
+                const shift = distinct.length === 1 ? -40 : 40;
+                distinct.push(rgbToHex(
+                  Math.min(255, Math.max(0, base.r + shift)),
+                  Math.min(255, Math.max(0, base.g + shift)),
+                  Math.min(255, Math.max(0, base.b + shift))
+                ));
+              } else distinct.push("#1a1a2e");
+            }
+            resolve(distinct);
+          } catch (e) {
+            resolve([...DEFAULT_COLORS]);
+          }
+        };
+        img.onerror = () => resolve([...DEFAULT_COLORS]);
+        img.src = imageUrl;
+      });
+    }
+
+    // ----- State -----
+    let currentIndex = 0;
+    const colorsById = {};
+    const totalSlides = artworks.length;
+
+    const trackEl = document.getElementById("track");
+    const sliderEl = document.getElementById("slider");
+    const ambientEl = document.getElementById("ambient");
+    const dotsEl = document.getElementById("dots");
+    const counterCurrent = document.getElementById("counter-current");
+    const counterTotal = document.getElementById("counter-total");
+
+    counterTotal.textContent = String(totalSlides).padStart(2, "0");
+
+    function getStep() {
+      return window.innerWidth > 768 ? 564 : 432;
+    }
+    function pad2(n) { return String(n).padStart(2, "0"); }
+
+    // ----- Build cards -----
+    const cardEls = [];
+    artworks.forEach((art, index) => {
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <div class="card-inner">
+          <div class="frame"></div>
+          <div class="image-container">
+            <img src="${art.image}" alt="${art.title}" crossorigin="anonymous" draggable="false" />
+            <div class="gradient-overlay"></div>
+            <div class="info">
+              <p class="year">${art.year}</p>
+              <h2 class="title">${art.title}</h2>
+              <p class="artist">by ${art.artist}</p>
+            </div>
+          </div>
+        </div>
+        <div class="reflection"></div>
+      `;
+      card.addEventListener("mouseenter", () => card.classList.add("hovered"));
+      card.addEventListener("mouseleave", () => card.classList.remove("hovered"));
+      trackEl.appendChild(card);
+      cardEls.push(card);
+    });
+
+    // ----- Build dots -----
+    const dotInnerEls = [];
+    artworks.forEach((_, index) => {
+      const btn = document.createElement("button");
+      btn.className = "dot-btn";
+      btn.setAttribute("aria-label", `Go to slide ${index + 1}`);
+      const dot = document.createElement("div");
+      dot.className = "dot";
+      btn.appendChild(dot);
+      btn.addEventListener("click", () => goToSlide(index));
+      dotsEl.appendChild(btn);
+      dotInnerEls.push(dot);
+    });
+
+    // ----- Render -----
+    let dragX = 0;
+    let isDragging = false;
+
+    function updateTrack() {
+      const step = getStep();
+      trackEl.style.transform = `translateX(${-currentIndex * step + dragX}px)`;
+    }
+
+    function render() {
+      updateTrack();
+
+      cardEls.forEach((card, index) => {
+        const distance = index - currentIndex;
+        const isActive = index === currentIndex;
+        const scale = isActive ? 1 : 0.85;
+        const opacity = isActive ? 1 : 0.5;
+        const rotateY = distance * 5;
+        const parallax = dragX * (0.1 * (distance + 1));
+        card.style.transform = `perspective(1200px) translateX(${parallax}px) scale(${scale}) rotateY(${rotateY}deg)`;
+        card.style.opacity = opacity;
+        card.classList.toggle("active", isActive);
+        if (!isActive) card.classList.remove("hovered");
+      });
+
+      // counter
+      counterCurrent.textContent = pad2(currentIndex + 1);
+
+      // dots
+      const colors = colorsById[artworks[currentIndex].id] || DEFAULT_COLORS;
+      dotInnerEls.forEach((dot, index) => {
+        if (index === currentIndex) {
+          dot.style.width = "24px";
+          dot.style.backgroundColor = colors[0] || "#ffffff";
+        } else {
+          dot.style.width = "8px";
+          dot.style.backgroundColor = "rgba(255,255,255,0.3)";
+        }
+      });
+
+      // ambient background
+      ambientEl.style.setProperty("--c0-a", (colors[0] || "#1a1a2e") + "66");
+      ambientEl.style.setProperty("--c1-a", (colors[1] || "#16213e") + "66");
+      ambientEl.style.setProperty("--c2-a", (colors[2] || "#0f3460") + "44");
+    }
+
+    // ----- Navigation -----
+    function goToNext() { currentIndex = Math.min(currentIndex + 1, totalSlides - 1); render(); }
+    function goToPrev() { currentIndex = Math.max(currentIndex - 1, 0); render(); }
+    function goToSlide(i) { currentIndex = Math.max(0, Math.min(i, totalSlides - 1)); render(); }
+    function goToFirst() { currentIndex = 0; render(); }
+    function goToLast() { currentIndex = totalSlides - 1; render(); }
+
+    // ----- Keyboard -----
+    window.addEventListener("keydown", (e) => {
+      switch (e.key) {
+        case "ArrowRight": case "d": case "D": goToNext(); break;
+        case "ArrowLeft":  case "a": case "A": goToPrev(); break;
+        case "Home": goToFirst(); break;
+        case "End": goToLast(); break;
+      }
+    });
+
+    // ----- Drag (mouse + touch) -----
+    let startX = 0, currentXRef = 0, velocity = 0, lastTime = 0, animFrame = null;
+
+    function getClientX(e) {
+      return e.touches ? e.touches[0].clientX : e.clientX;
+    }
+
+    function animateToPosition(target) {
+      function step() {
+        const diff = target - dragX;
+        if (Math.abs(diff) < 0.5) {
+          dragX = target;
+          updateTrack();
+          return;
+        }
+        dragX = dragX + diff * SLIDER.MOMENTUM_EASING;
+        updateTrack();
+        animFrame = requestAnimationFrame(step);
+      }
+      step();
+      setTimeout(() => {
+        if (animFrame) cancelAnimationFrame(animFrame);
+        dragX = target;
+        updateTrack();
+      }, SLIDER.ANIMATION_TIMEOUT);
+    }
+
+    function handleDragStart(e) {
+      isDragging = true;
+      sliderEl.classList.add("dragging");
+      trackEl.classList.remove("animate");
+      const clientX = getClientX(e);
+      startX = clientX - dragX / SLIDER.DRAG_RESISTANCE;
+      lastTime = Date.now();
+      velocity = 0;
+      if (animFrame) cancelAnimationFrame(animFrame);
+    }
+
+    function handleDragMove(e) {
+      if (!isDragging) return;
+      const clientX = getClientX(e);
+      const raw = clientX - startX;
+      const resisted = raw * SLIDER.DRAG_RESISTANCE;
+      const now = Date.now();
+      const dt = now - lastTime;
+      if (dt > 0) velocity = (resisted - currentXRef) / dt;
+      currentXRef = resisted;
+      lastTime = now;
+      dragX = resisted;
+      render();
+    }
+
+    function handleDragEnd() {
+      if (!isDragging) return;
+      isDragging = false;
+      sliderEl.classList.remove("dragging");
+      trackEl.classList.add("animate");
+      const threshold = window.innerWidth * SLIDER.SWIPE_THRESHOLD_PERCENT;
+      if (dragX < -threshold || velocity < -SLIDER.VELOCITY_THRESHOLD) goToNext();
+      else if (dragX > threshold || velocity > SLIDER.VELOCITY_THRESHOLD) goToPrev();
+      animateToPosition(0);
+      render();
+    }
+
+    sliderEl.addEventListener("mousedown", handleDragStart);
+    sliderEl.addEventListener("mousemove", handleDragMove);
+    sliderEl.addEventListener("mouseup", handleDragEnd);
+    sliderEl.addEventListener("mouseleave", handleDragEnd);
+    sliderEl.addEventListener("touchstart", handleDragStart, { passive: true });
+    sliderEl.addEventListener("touchmove", handleDragMove, { passive: true });
+    sliderEl.addEventListener("touchend", handleDragEnd);
+
+    // ----- Wheel -----
+    let wheelAccumulator = 0;
+    let wheelTimeout = null;
+    sliderEl.addEventListener("wheel", (e) => {
+      e.preventDefault();
+      const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+      wheelAccumulator += delta * SLIDER.WHEEL_RESISTANCE;
+      if (wheelTimeout) clearTimeout(wheelTimeout);
+      if (Math.abs(wheelAccumulator) >= SLIDER.WHEEL_SCROLL_THRESHOLD) {
+        if (wheelAccumulator > 0) goToNext();
+        else goToPrev();
+        wheelAccumulator = 0;
+      }
+      wheelTimeout = setTimeout(() => { wheelAccumulator = 0; }, SLIDER.WHEEL_RESET_DELAY);
+    }, { passive: false });
+
+    // ----- Resize -----
+    window.addEventListener("resize", updateTrack);
+
+    // ----- Init -----
+    render();
+
+    // Extract colors for each artwork asynchronously, then re-render the active one
+    artworks.forEach((art) => {
+      extractColors(art.image).then((colors) => {
+        colorsById[art.id] = colors;
+        if (artworks[currentIndex].id === art.id) render();
+      });
+    });
+  </script>
+</body>
+</html>
