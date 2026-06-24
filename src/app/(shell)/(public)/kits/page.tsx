@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { getPublishedKits, getPublishedKitCategories } from "@/lib/actions/kits";
 import { KitsCatalogClient } from "@/components/kits/KitsCatalogClient";
 

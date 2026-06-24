@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { FaqItem } from "@/components/shared/PricingCard";
 import { PricingPlansGrid } from "@/components/pricing/PricingPlansGrid";
 import { PageSection } from "@/components/motion/PageSection";
