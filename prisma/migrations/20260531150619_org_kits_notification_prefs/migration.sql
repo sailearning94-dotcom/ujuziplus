@@ -7,7 +7,7 @@ CREATE TABLE notification_preferences (
     inAppEnabled BOOLEAN NOT NULL DEFAULT true,
     pushEnabled BOOLEAN NOT NULL DEFAULT false,
 
-    UNIQUE INDEX notification_preferences_userId_category_key(userId, category),
+    CONSTRAINT notification_preferences_userId_category_key UNIQUE (userId, category),
     PRIMARY KEY (id)
 ) ;
 
@@ -23,7 +23,7 @@ CREATE TABLE organizations (
     createdAt TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     updatedAt TIMESTAMP(3) NOT NULL,
 
-    UNIQUE INDEX organizations_slug_key(slug),
+    CONSTRAINT organizations_slug_key UNIQUE (slug),
     PRIMARY KEY (id)
 ) ;
 
@@ -34,7 +34,7 @@ CREATE TABLE organization_members (
     userId VARCHAR(191) NOT NULL,
     role VARCHAR(191) NOT NULL DEFAULT 'MEMBER',
 
-    UNIQUE INDEX organization_members_orgId_userId_key(orgId, userId),
+    CONSTRAINT organization_members_orgId_userId_key UNIQUE (orgId, userId),
     PRIMARY KEY (id)
 ) ;
 
@@ -47,7 +47,7 @@ CREATE TABLE org_kit_inventory (
     quantityAllocated INTEGER NOT NULL DEFAULT 0,
     reorderLevel INTEGER NOT NULL DEFAULT 5,
 
-    UNIQUE INDEX org_kit_inventory_orgId_kitId_key(orgId, kitId),
+    CONSTRAINT org_kit_inventory_orgId_kitId_key UNIQUE (orgId, kitId),
     PRIMARY KEY (id)
 ) ;
 

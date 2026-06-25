@@ -1,12 +1,12 @@
 -- DropForeignKey
-ALTER TABLE order_items DROP FOREIGN KEY order_items_courseId_fkey;
+ALTER TABLE order_items DROP CONSTRAINT order_items_courseId_fkey;
 
 -- AlterTable
-ALTER TABLE notifications MODIFY type VARCHAR(191) NOT NULL;
+ALTER TABLE notifications ALTER COLUMN type TYPE VARCHAR(191);
 
 -- AlterTable
-ALTER TABLE order_items ADD COLUMN kitId VARCHAR(191) NULL,
-    MODIFY courseId VARCHAR(191) NULL;
+ALTER TABLE order_items ADD COLUMN kitId VARCHAR(191) NULL;
+ALTER TABLE order_items ALTER COLUMN courseId TYPE VARCHAR(191);
 
 -- CreateTable
 CREATE TABLE kit_purchases (
@@ -16,7 +16,7 @@ CREATE TABLE kit_purchases (
     orderId VARCHAR(191) NULL,
     purchasedAt TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
-    UNIQUE INDEX kit_purchases_userId_kitId_key(userId, kitId),
+    CONSTRAINT kit_purchases_userId_kitId_key UNIQUE (userId, kitId),
     PRIMARY KEY (id)
 ) ;
 

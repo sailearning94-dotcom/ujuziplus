@@ -11,8 +11,6 @@ CREATE TABLE discussions (
     createdAt TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     updatedAt TIMESTAMP(3) NOT NULL,
 
-    INDEX discussions_channel_idx(channel),
-    INDEX discussions_courseId_idx(courseId),
     PRIMARY KEY (id)
 ) ;
 
@@ -37,8 +35,8 @@ CREATE TABLE discussion_likes (
     replyId VARCHAR(191) NULL,
     createdAt TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
-    UNIQUE INDEX discussion_likes_userId_discussionId_key(userId, discussionId),
-    UNIQUE INDEX discussion_likes_userId_replyId_key(userId, replyId),
+    CONSTRAINT discussion_likes_userId_discussionId_key UNIQUE (userId, discussionId),
+    CONSTRAINT discussion_likes_userId_replyId_key UNIQUE (userId, replyId),
     PRIMARY KEY (id)
 ) ;
 
@@ -53,7 +51,6 @@ CREATE TABLE notifications (
     isRead BOOLEAN NOT NULL DEFAULT false,
     createdAt TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
-    INDEX notifications_userId_isRead_idx(userId, isRead),
     PRIMARY KEY (id)
 ) ;
 
@@ -80,3 +77,7 @@ ALTER TABLE discussion_likes ADD CONSTRAINT discussion_likes_replyId_fkey FOREIG
 
 -- AddForeignKey
 ALTER TABLE notifications ADD CONSTRAINT notifications_userId_fkey FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE ;
+
+CREATE INDEX discussions_channel_idx ON discussions(channel);
+CREATE INDEX discussions_courseId_idx ON discussions(courseId);
+CREATE INDEX notifications_userId_isRead_idx ON notifications(userId, isRead);

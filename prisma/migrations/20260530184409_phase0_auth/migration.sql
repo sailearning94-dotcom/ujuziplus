@@ -17,8 +17,8 @@ CREATE TABLE users (
     createdAt TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     updatedAt TIMESTAMP(3) NOT NULL,
 
-    UNIQUE INDEX users_email_key(email),
-    UNIQUE INDEX users_username_key(username),
+    CONSTRAINT users_email_key UNIQUE (email),
+    CONSTRAINT users_username_key UNIQUE (username),
     PRIMARY KEY (id)
 ) ;
 
@@ -31,7 +31,7 @@ CREATE TABLE password_reset_tokens (
     usedAt TIMESTAMP(3) NULL,
     createdAt TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
-    UNIQUE INDEX password_reset_tokens_token_key(token),
+    CONSTRAINT password_reset_tokens_token_key UNIQUE (token),
     PRIMARY KEY (id)
 ) ;
 

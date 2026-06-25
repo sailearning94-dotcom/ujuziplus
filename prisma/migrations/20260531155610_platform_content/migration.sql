@@ -16,8 +16,7 @@ CREATE TABLE projects (
     createdAt TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     updatedAt TIMESTAMP(3) NOT NULL,
 
-    UNIQUE INDEX projects_slug_key(slug),
-    INDEX projects_creatorId_idx(creatorId),
+    CONSTRAINT projects_slug_key UNIQUE (slug),
     PRIMARY KEY (id)
 ) ;
 
@@ -28,7 +27,7 @@ CREATE TABLE project_likes (
     projectId VARCHAR(191) NOT NULL,
     createdAt TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
-    UNIQUE INDEX project_likes_userId_projectId_key(userId, projectId),
+    CONSTRAINT project_likes_userId_projectId_key UNIQUE (userId, projectId),
     PRIMARY KEY (id)
 ) ;
 
@@ -49,7 +48,7 @@ CREATE TABLE solutions (
     createdAt TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     updatedAt TIMESTAMP(3) NOT NULL,
 
-    UNIQUE INDEX solutions_slug_key(slug),
+    CONSTRAINT solutions_slug_key UNIQUE (slug),
     PRIMARY KEY (id)
 ) ;
 
@@ -61,7 +60,7 @@ CREATE TABLE solution_joins (
     labProgress JSON NULL,
     joinedAt TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
-    UNIQUE INDEX solution_joins_userId_solutionId_key(userId, solutionId),
+    CONSTRAINT solution_joins_userId_solutionId_key UNIQUE (userId, solutionId),
     PRIMARY KEY (id)
 ) ;
 
@@ -79,7 +78,7 @@ CREATE TABLE lab_resources (
     createdAt TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     updatedAt TIMESTAMP(3) NOT NULL,
 
-    UNIQUE INDEX lab_resources_slug_key(slug),
+    CONSTRAINT lab_resources_slug_key UNIQUE (slug),
     PRIMARY KEY (id)
 ) ;
 
@@ -90,7 +89,7 @@ CREATE TABLE user_lab_resources (
     labResourceId VARCHAR(191) NOT NULL,
     savedAt TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
-    UNIQUE INDEX user_lab_resources_userId_labResourceId_key(userId, labResourceId),
+    CONSTRAINT user_lab_resources_userId_labResourceId_key UNIQUE (userId, labResourceId),
     PRIMARY KEY (id)
 ) ;
 
@@ -108,7 +107,7 @@ CREATE TABLE blog_posts (
     createdAt TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     updatedAt TIMESTAMP(3) NOT NULL,
 
-    UNIQUE INDEX blog_posts_slug_key(slug),
+    CONSTRAINT blog_posts_slug_key UNIQUE (slug),
     PRIMARY KEY (id)
 ) ;
 
@@ -128,7 +127,7 @@ CREATE TABLE pricing_plans (
     createdAt TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     updatedAt TIMESTAMP(3) NOT NULL,
 
-    UNIQUE INDEX pricing_plans_slug_key(slug),
+    CONSTRAINT pricing_plans_slug_key UNIQUE (slug),
     PRIMARY KEY (id)
 ) ;
 
@@ -155,3 +154,5 @@ ALTER TABLE user_lab_resources ADD CONSTRAINT user_lab_resources_labResourceId_f
 
 -- AddForeignKey
 ALTER TABLE blog_posts ADD CONSTRAINT blog_posts_authorId_fkey FOREIGN KEY (authorId) REFERENCES users(id) ON DELETE SET NULL ;
+
+CREATE INDEX projects_creatorId_idx ON projects(creatorId);

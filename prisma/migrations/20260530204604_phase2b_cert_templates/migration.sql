@@ -6,7 +6,7 @@ CREATE TABLE certificate_templates (
     uploadedAt TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     updatedAt TIMESTAMP(3) NOT NULL,
 
-    UNIQUE INDEX certificate_templates_courseId_key(courseId),
+    CONSTRAINT certificate_templates_courseId_key UNIQUE (courseId),
     PRIMARY KEY (id)
 ) ;
 

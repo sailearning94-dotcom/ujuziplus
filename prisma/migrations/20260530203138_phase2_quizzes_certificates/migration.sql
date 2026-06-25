@@ -7,7 +7,7 @@ CREATE TABLE quizzes (
     createdAt TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     updatedAt TIMESTAMP(3) NOT NULL,
 
-    UNIQUE INDEX quizzes_lessonId_key(lessonId),
+    CONSTRAINT quizzes_lessonId_key UNIQUE (lessonId),
     PRIMARY KEY (id)
 ) ;
 
@@ -66,8 +66,8 @@ CREATE TABLE certificates (
     issuedAt TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     verifyCode VARCHAR(191) NOT NULL,
 
-    UNIQUE INDEX certificates_verifyCode_key(verifyCode),
-    UNIQUE INDEX certificates_userId_courseId_key(userId, courseId),
+    CONSTRAINT certificates_verifyCode_key UNIQUE (verifyCode),
+    CONSTRAINT certificates_userId_courseId_key UNIQUE (userId, courseId),
     PRIMARY KEY (id)
 ) ;
 

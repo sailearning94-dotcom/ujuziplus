@@ -11,8 +11,7 @@ CREATE TABLE org_invites (
     acceptedAt TIMESTAMP(3) NULL,
     createdAt TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
-    UNIQUE INDEX org_invites_token_key(token),
-    INDEX org_invites_orgId_status_idx(orgId, status),
+    CONSTRAINT org_invites_token_key UNIQUE (token),
     PRIMARY KEY (id)
 ) ;
 
@@ -26,7 +25,7 @@ CREATE TABLE push_subscriptions (
     userAgent VARCHAR(500) NULL,
     createdAt TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
-    UNIQUE INDEX push_subscriptions_userId_endpoint_key(userId, endpoint),
+    CONSTRAINT push_subscriptions_userId_endpoint_key UNIQUE (userId, endpoint),
     PRIMARY KEY (id)
 ) ;
 
@@ -38,3 +37,5 @@ ALTER TABLE org_invites ADD CONSTRAINT org_invites_invitedById_fkey FOREIGN KEY 
 
 -- AddForeignKey
 ALTER TABLE push_subscriptions ADD CONSTRAINT push_subscriptions_userId_fkey FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE ;
+
+CREATE INDEX org_invites_orgId_status_idx ON org_invites(orgId, status);

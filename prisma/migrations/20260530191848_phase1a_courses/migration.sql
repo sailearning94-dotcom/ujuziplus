@@ -26,7 +26,7 @@ CREATE TABLE courses (
     createdAt TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     updatedAt TIMESTAMP(3) NOT NULL,
 
-    UNIQUE INDEX courses_slug_key(slug),
+    CONSTRAINT courses_slug_key UNIQUE (slug),
     PRIMARY KEY (id)
 ) ;
 

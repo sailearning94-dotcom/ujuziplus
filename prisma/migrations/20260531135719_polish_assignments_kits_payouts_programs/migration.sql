@@ -9,7 +9,7 @@ CREATE TABLE assignments (
     createdAt TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     updatedAt TIMESTAMP(3) NOT NULL,
 
-    UNIQUE INDEX assignments_lessonId_key(lessonId),
+    CONSTRAINT assignments_lessonId_key UNIQUE (lessonId),
     PRIMARY KEY (id)
 ) ;
 
@@ -30,7 +30,7 @@ CREATE TABLE assignment_submissions (
     createdAt TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     updatedAt TIMESTAMP(3) NOT NULL,
 
-    UNIQUE INDEX assignment_submissions_assignmentId_enrollmentId_key(assignmentId, enrollmentId),
+    CONSTRAINT assignment_submissions_assignmentId_enrollmentId_key UNIQUE (assignmentId, enrollmentId),
     PRIMARY KEY (id)
 ) ;
 
@@ -58,7 +58,7 @@ CREATE TABLE instructor_payout_profiles (
     bankSwift VARCHAR(20) NULL,
     updatedAt TIMESTAMP(3) NOT NULL,
 
-    UNIQUE INDEX instructor_payout_profiles_userId_key(userId),
+    CONSTRAINT instructor_payout_profiles_userId_key UNIQUE (userId),
     PRIMARY KEY (id)
 ) ;
 
@@ -74,7 +74,6 @@ CREATE TABLE instructor_payouts (
     createdAt TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     updatedAt TIMESTAMP(3) NOT NULL,
 
-    INDEX instructor_payouts_instructorId_idx(instructorId),
     PRIMARY KEY (id)
 ) ;
 
@@ -99,7 +98,7 @@ CREATE TABLE kits (
     createdAt TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     updatedAt TIMESTAMP(3) NOT NULL,
 
-    UNIQUE INDEX kits_slug_key(slug),
+    CONSTRAINT kits_slug_key UNIQUE (slug),
     PRIMARY KEY (id)
 ) ;
 
@@ -149,7 +148,7 @@ CREATE TABLE wishlist_items (
     courseId VARCHAR(191) NOT NULL,
     createdAt TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
-    UNIQUE INDEX wishlist_items_userId_courseId_key(userId, courseId),
+    CONSTRAINT wishlist_items_userId_courseId_key UNIQUE (userId, courseId),
     PRIMARY KEY (id)
 ) ;
 
@@ -170,7 +169,7 @@ CREATE TABLE programs (
     createdAt TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     updatedAt TIMESTAMP(3) NOT NULL,
 
-    UNIQUE INDEX programs_slug_key(slug),
+    CONSTRAINT programs_slug_key UNIQUE (slug),
     PRIMARY KEY (id)
 ) ;
 
@@ -181,7 +180,7 @@ CREATE TABLE program_registrations (
     programId VARCHAR(191) NOT NULL,
     registeredAt TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
-    UNIQUE INDEX program_registrations_userId_programId_key(userId, programId),
+    CONSTRAINT program_registrations_userId_programId_key UNIQUE (userId, programId),
     PRIMARY KEY (id)
 ) ;
 
@@ -199,7 +198,7 @@ CREATE TABLE competitions (
     createdAt TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     updatedAt TIMESTAMP(3) NOT NULL,
 
-    UNIQUE INDEX competitions_slug_key(slug),
+    CONSTRAINT competitions_slug_key UNIQUE (slug),
     PRIMARY KEY (id)
 ) ;
 
@@ -211,7 +210,7 @@ CREATE TABLE competition_registrations (
     teamName VARCHAR(100) NULL,
     registeredAt TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
-    UNIQUE INDEX competition_registrations_userId_competitionId_key(userId, competitionId),
+    CONSTRAINT competition_registrations_userId_competitionId_key UNIQUE (userId, competitionId),
     PRIMARY KEY (id)
 ) ;
 
@@ -265,3 +264,5 @@ ALTER TABLE competition_registrations ADD CONSTRAINT competition_registrations_u
 
 -- AddForeignKey
 ALTER TABLE competition_registrations ADD CONSTRAINT competition_registrations_competitionId_fkey FOREIGN KEY (competitionId) REFERENCES competitions(id) ON DELETE CASCADE ;
+
+CREATE INDEX instructor_payouts_instructorId_idx ON instructor_payouts(instructorId);

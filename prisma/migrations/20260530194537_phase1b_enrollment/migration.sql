@@ -15,7 +15,7 @@ CREATE TABLE enrollments (
     enrolledAt TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
     completedAt TIMESTAMP(3) NULL,
 
-    UNIQUE INDEX enrollments_userId_courseId_key(userId, courseId),
+    CONSTRAINT enrollments_userId_courseId_key UNIQUE (userId, courseId),
     PRIMARY KEY (id)
 ) ;
 
@@ -26,7 +26,7 @@ CREATE TABLE lesson_progress (
     lessonId VARCHAR(191) NOT NULL,
     completedAt TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
-    UNIQUE INDEX lesson_progress_enrollmentId_lessonId_key(enrollmentId, lessonId),
+    CONSTRAINT lesson_progress_enrollmentId_lessonId_key UNIQUE (enrollmentId, lessonId),
     PRIMARY KEY (id)
 ) ;
 
