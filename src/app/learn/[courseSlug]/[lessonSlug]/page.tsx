@@ -81,7 +81,19 @@ export default async function LearnPage({
       }
     : null;
 
-  let initialAssignmentBundle = null;
+  let initialAssignmentBundle: {
+    instructions: string;
+    rubric: RubricItem[] | null;
+    maxScore: number;
+    dueAt: Date | null;
+    status: string;
+    text: string;
+    github: string;
+    files: { id: string; fileName: string; filePath: string }[];
+    score: number | null;
+    feedback: string | null;
+  } | null = null;
+
   if (currentLesson?.type === "ASSIGNMENT" && enrollment && currentLesson) {
     const data = await getAssignmentForStudent(
       currentLesson.id,
