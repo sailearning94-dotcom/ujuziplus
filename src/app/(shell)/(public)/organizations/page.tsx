@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { UJUZI } from "@/lib/ujuzi-brand";
 
+export const dynamic = 'force-dynamic';
+
 export default async function OrganizationsPage() {
   const organizations = await getAllOrganizations();
 

@@ -8,6 +8,8 @@ import { getActivePricingPlans } from "@/lib/actions/pricing";
 import { serializePricingPlan } from "@/lib/serialize";
 import { CreditCard } from "lucide-react";
 
+export const dynamic = 'force-dynamic';
+
 export default async function PricingPage() {
   const plans = (await getActivePricingPlans()).map(serializePricingPlan);
 

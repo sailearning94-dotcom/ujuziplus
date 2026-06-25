@@ -2,6 +2,8 @@ import { getAuthSession } from "@/lib/auth-server";
 import { getPublishedCourses } from "@/lib/actions/enrollments";
 import { CourseCatalog } from "@/components/courses/CourseCatalog";
 
+export const dynamic = 'force-dynamic';
+
 export async function CourseCatalogSection() {
   const [session, dbCourses] = await Promise.all([
     getAuthSession(),

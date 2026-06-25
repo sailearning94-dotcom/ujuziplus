@@ -12,6 +12,8 @@ import { getFeaturedMentors } from "@/lib/actions/mentors";
 import { formatDateTz } from "@/lib/utils";
 import { HomePageClient } from "./HomePageClient";
 
+export const dynamic = 'force-dynamic';
+
 export default async function HomePage() {
   const session = await getAuthSession();
   const userId = session?.user?.id;

@@ -1,4 +1,4 @@
-# Railway Deployment Guide for ujuzipluse.co.tz
+# Railway Deployment Guide for ujuziplus.co.tz
 
 ## **ACTION REQUIRED STEPS**
 
@@ -7,7 +7,7 @@ After creating MySQL on Railway, copy the URL and update `.env`:
 ```
 DATABASE_URL="mysql://YOUR_USER:YOUR_PASSWORD@YOUR_HOST:3306/YOUR_DB"
 NEXTAUTH_SECRET="replace-with-your-own-random-string"
-NEXTAUTH_URL="https://ujuzipluse.co.tz"
+NEXTAUTH_URL="https://ujuziplus.co.tz"
 ```
 
 ### 2. Generate NextAuth Secret

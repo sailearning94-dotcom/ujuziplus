@@ -2,6 +2,8 @@ import { CHANNELS } from "@/lib/discussions/channels";
 import { db } from "@/lib/db";
 import { CommunityHubLayout } from "@/components/community/CommunityHubLayout";
 
+export const dynamic = 'force-dynamic';
+
 export default async function CommunityPreviewPage() {
   const [recent, channelCounts, total] = await Promise.all([
     db.discussion.findMany({
