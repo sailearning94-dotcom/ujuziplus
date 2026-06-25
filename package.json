@@ -15,7 +15,8 @@
     "content:hosting-guide": "node scripts/generate-hosting-deployment-guide.mjs",
     "brand:assets": "node scripts/process-brand-assets.mjs",
     "favicons:sync": "node scripts/sync-favicons.mjs",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "postinstall": "prisma generate"
   },
   "prisma": {
   },
