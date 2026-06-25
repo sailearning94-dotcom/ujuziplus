@@ -122,7 +122,7 @@ export async function DashboardContent({ userId }: { userId: string }) {
               {featured && <FeaturedContinueCourse course={featured} />}
               {restCourses.length > 0 && (
                 <div className="learner-dashboard__course-grid">
-                  {restCourses.map((course, i) => (
+                  {restCourses.map((course: typeof featured, i: number) => (
                     <ContinueLearningCard key={course.id} course={course} index={i} />
                   ))}
                 </div>
