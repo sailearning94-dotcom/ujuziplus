@@ -37,17 +37,55 @@ function optionalText(value: FormDataEntryValue | null): string | null {
 // ─── Register ─────────────────────────────────────────────────────────────────
 
 export async function registerUser(formData: FormData) {
-  const raw = {
-    fullName: formData.get("fullName") as string,
-    email: formData.get("email") as string,
-    password: formData.get("password") as string,
-    role: (formData.get("role") as string) || "STUDENT",
-  };
+  try {
+    const raw = {
+      fullName: formData.get("fullName") as string,
+      email: formData.get("email") as string,
+      password: formData.get("password") as string,
+      role: (formData.get("role") as string) || "STUDENT",
+    };
 
-  const result = RegisterSchema.safeParse(raw);
-  if (!result.success) {
-    return { error: result.error.issues[0].message };
+    const result = RegisterSchema.safeParse(raw);
+    if (!result.success) {
+      return { error: result.error.issues[0].message };
+    }
+
+    const { fullName, email, password, role } = result.data;
+    const normalizedEmail = email.toLowerCase().trim();
+
+    const existing = await db.user.findUnique({ where: { email: normalizedEmail } });
+    if (existing) {
+      return { error: "An account with this email already exists." };
+    }
+
+    const base = normalizedEmail.split("@")[0].replace(/[^a-z0-9]+/g, "_").toLowerCase() || "user";
+    let username = base;
+    let attempt = 0;
+    while (await db.user.findUnique({ where: { username } })) {
+      attempt++;
+      username = `${base}${attempt}`;
+    }
+
+    const passwordHash = await hash(password, 12);
+
+    await db.user.create({
+      data: { fullName, email: normalizedEmail, username, passwordHash, role },
+    });
+
+    sendEmail({
+      to: normalizedEmail,
+      subject: "Welcome to UjuziLab!",
+      html: welcomeEmail(fullName),
+    }).then((res) => {
+      if (!res.ok) console.error("Welcome email failed:", res.error);
+    });
+
+    return { success: true };
+  } catch (err) {
+    console.error("REGISTER ERROR:", err);
+    return { error: "Registration failed. Please try again or contact support." };
   }
+}
 
   const { fullName, email, password, role } = result.data;
   const normalizedEmail = email.toLowerCase().trim();
