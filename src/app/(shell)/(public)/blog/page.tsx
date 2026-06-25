@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { BlogPostCard } from "@/components/shared/BlogPostCard";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { LearnerPageHero } from "@/components/shared/LearnerPageHero";
