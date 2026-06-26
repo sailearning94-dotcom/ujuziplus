@@ -388,10 +388,10 @@ export async function seedCourses(
   ];
 
   for (const courseData of courses) {
-    const { slug, title } = courseData;
+    const { slug, title, certTemplate, ...courseFields } = courseData;
     const created = await db.course.upsert({
       where: { slug: slug! },
-      update: courseData,
+      update: courseFields,
       create: courseData,
     });
     courseIds[slug!] = created.id;
