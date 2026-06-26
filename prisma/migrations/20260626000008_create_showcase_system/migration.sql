@@ -1,7 +1,3 @@
--- This migration recovers from the failed 20260626000008 migration
--- The failed migration attempted to use PostgreSQL CREATE TYPE syntax
--- This migration completes the showcase system creation with correct MySQL syntax
-
 -- CreateTable showcase_projects
 CREATE TABLE IF NOT EXISTS `showcase_projects` (
     `id` VARCHAR(191) NOT NULL,
@@ -13,7 +9,7 @@ CREATE TABLE IF NOT EXISTS `showcase_projects` (
     `demoUrl` VARCHAR(191) NULL,
     `repoUrl` VARCHAR(191) NULL,
     `videoUrl` VARCHAR(191) NULL,
-    `techStack` JSON NOT NULL DEFAULT '[]',
+    `techStack` JSON NOT NULL,
     `track` VARCHAR(100) NULL,
     `status` ENUM('DRAFT', 'PENDING_REVIEW', 'PUBLISHED', 'REJECTED') NOT NULL DEFAULT 'DRAFT',
     `isFeatured` BOOLEAN NOT NULL DEFAULT false,

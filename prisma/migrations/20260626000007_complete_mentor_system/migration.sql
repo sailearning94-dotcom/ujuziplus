@@ -1,7 +1,3 @@
--- This migration recovers from the failed 20260626000007 migration
--- The failed migration attempted to use PostgreSQL CREATE TYPE syntax
--- This migration completes the mentor system creation with correct MySQL syntax
-
 -- CreateTable mentor_profiles
 CREATE TABLE IF NOT EXISTS `mentor_profiles` (
     `id` VARCHAR(191) NOT NULL,
@@ -19,15 +15,15 @@ CREATE TABLE IF NOT EXISTS `mentor_profiles` (
     `videoIntroUrl` VARCHAR(191) NULL,
     `city` VARCHAR(100) NULL,
     `country` VARCHAR(100) NULL,
-    `expertiseTags` JSON NOT NULL DEFAULT '[]',
-    `tracks` JSON NOT NULL DEFAULT '[]',
-    `languages` JSON NOT NULL DEFAULT '[]',
+    `expertiseTags` JSON NOT NULL,
+    `tracks` JSON NOT NULL,
+    `languages` JSON NOT NULL,
     `yearsExperience` INT NOT NULL DEFAULT 0,
     `linkedin` VARCHAR(191) NULL,
     `github` VARCHAR(191) NULL,
-    `learningPath` JSON NOT NULL DEFAULT '[]',
-    `recommendedCourseIds` JSON NOT NULL DEFAULT '[]',
-    `recommendedKitSlugs` JSON NOT NULL DEFAULT '[]',
+    `learningPath` JSON NOT NULL,
+    `recommendedCourseIds` JSON NOT NULL,
+    `recommendedKitSlugs` JSON NOT NULL,
     `officeHoursNote` LONGTEXT NULL,
     `bookingUrl` VARCHAR(191) NULL,
     `isFeatured` BOOLEAN NOT NULL DEFAULT false,
@@ -108,6 +104,24 @@ CREATE TABLE IF NOT EXISTS `mentor_office_hours` (
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+-- CreateTable mentor_cohorts (before group_sessions — group_sessions FK references it)
+CREATE TABLE IF NOT EXISTS `mentor_cohorts` (
+    `id` VARCHAR(191) NOT NULL,
+    `mentorId` VARCHAR(191) NOT NULL,
+    `title` VARCHAR(255) NOT NULL,
+    `description` LONGTEXT NULL,
+    `track` VARCHAR(100) NOT NULL,
+    `startsAt` DATETIME(3) NOT NULL,
+    `endsAt` DATETIME(3) NULL,
+    `maxMembers` INT NOT NULL DEFAULT 20,
+    `isActive` BOOLEAN NOT NULL DEFAULT true,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
+    INDEX `mentor_cohorts_mentorId_idx`(`mentorId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 -- CreateTable mentor_group_sessions
 CREATE TABLE IF NOT EXISTS `mentor_group_sessions` (
     `id` VARCHAR(191) NOT NULL,
@@ -144,24 +158,6 @@ CREATE TABLE IF NOT EXISTS `mentor_group_session_attendees` (
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
--- CreateTable mentor_cohorts
-CREATE TABLE IF NOT EXISTS `mentor_cohorts` (
-    `id` VARCHAR(191) NOT NULL,
-    `mentorId` VARCHAR(191) NOT NULL,
-    `title` VARCHAR(255) NOT NULL,
-    `description` LONGTEXT NULL,
-    `track` VARCHAR(100) NOT NULL,
-    `startsAt` DATETIME(3) NOT NULL,
-    `endsAt` DATETIME(3) NULL,
-    `maxMembers` INT NOT NULL DEFAULT 20,
-    `isActive` BOOLEAN NOT NULL DEFAULT true,
-    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
-    `updatedAt` DATETIME(3) NOT NULL,
-
-    INDEX `mentor_cohorts_mentorId_idx`(`mentorId`),
-    PRIMARY KEY (`id`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
 -- CreateTable mentor_cohort_members
 CREATE TABLE IF NOT EXISTS `mentor_cohort_members` (
     `id` VARCHAR(191) NOT NULL,
@@ -174,7 +170,7 @@ CREATE TABLE IF NOT EXISTS `mentor_cohort_members` (
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
--- Add Foreign Keys (with IF NOT EXISTS checks)
+-- AddForeignKey
 ALTER TABLE `mentor_profiles` ADD CONSTRAINT `mentor_profiles_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 ALTER TABLE `mentor_requests` ADD CONSTRAINT `mentor_requests_learnerId_fkey` FOREIGN KEY (`learnerId`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `mentor_requests` ADD CONSTRAINT `mentor_requests_mentorId_fkey` FOREIGN KEY (`mentorId`) REFERENCES `mentor_profiles`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
@@ -182,10 +178,10 @@ ALTER TABLE `mentor_sessions` ADD CONSTRAINT `mentor_sessions_mentorId_fkey` FOR
 ALTER TABLE `mentor_sessions` ADD CONSTRAINT `mentor_sessions_learnerId_fkey` FOREIGN KEY (`learnerId`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `mentor_sessions` ADD CONSTRAINT `mentor_sessions_requestId_fkey` FOREIGN KEY (`requestId`) REFERENCES `mentor_requests`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 ALTER TABLE `mentor_office_hours` ADD CONSTRAINT `mentor_office_hours_mentorId_fkey` FOREIGN KEY (`mentorId`) REFERENCES `mentor_profiles`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `mentor_cohorts` ADD CONSTRAINT `mentor_cohorts_mentorId_fkey` FOREIGN KEY (`mentorId`) REFERENCES `mentor_profiles`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `mentor_group_sessions` ADD CONSTRAINT `mentor_group_sessions_mentorId_fkey` FOREIGN KEY (`mentorId`) REFERENCES `mentor_profiles`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `mentor_group_sessions` ADD CONSTRAINT `mentor_group_sessions_cohortId_fkey` FOREIGN KEY (`cohortId`) REFERENCES `mentor_cohorts`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 ALTER TABLE `mentor_group_session_attendees` ADD CONSTRAINT `mentor_group_session_attendees_sessionId_fkey` FOREIGN KEY (`sessionId`) REFERENCES `mentor_group_sessions`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `mentor_group_session_attendees` ADD CONSTRAINT `mentor_group_session_attendees_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-ALTER TABLE `mentor_cohorts` ADD CONSTRAINT `mentor_cohorts_mentorId_fkey` FOREIGN KEY (`mentorId`) REFERENCES `mentor_profiles`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `mentor_cohort_members` ADD CONSTRAINT `mentor_cohort_members_cohortId_fkey` FOREIGN KEY (`cohortId`) REFERENCES `mentor_cohorts`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `mentor_cohort_members` ADD CONSTRAINT `mentor_cohort_members_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
