@@ -1,10 +1,5 @@
 #!/usr/bin/env node
 
-/**
- * Resolve failed Prisma migrations in the database
- * This script marks failed migrations as rolled back so they can be reapplied
- */
-
 const { PrismaClient } = require("@prisma/client");
 
 async function resolveMigrations() {
@@ -13,58 +8,49 @@ async function resolveMigrations() {
   try {
     console.log("🔧 Checking for failed migrations...");
 
-    // Get all failed migrations
-    const failedMigrations = await prisma.$executeRaw`
-      SELECT migration_name, started_at FROM _prisma_migrations
+    const failedMigrations = await prisma.$queryRaw`
+      SELECT migration_name FROM _prisma_migrations
       WHERE finished_at IS NULL AND rolled_back_at IS NULL
     `;
 
-    if (failedMigrations.length === 0) {
+    if (!Array.isArray(failedMigrations) || failedMigrations.length === 0) {
       console.log("✅ No failed migrations found");
       return;
     }
 
     console.log(`⚠️  Found ${failedMigrations.length} failed migration(s):`);
-    failedMigrations.forEach((m) => {
-      console.log(`   - ${m.migration_name} (started at ${m.started_at})`);
-    });
+    failedMigrations.forEach((m) => console.log(`   - ${m.migration_name}`));
 
-    // Mark failed migrations as rolled back
-    console.log("\n🔄 Marking migrations as rolled back...");
     await prisma.$executeRaw`
       UPDATE _prisma_migrations
       SET rolled_back_at = NOW()
       WHERE finished_at IS NULL AND rolled_back_at IS NULL
     `;
+    console.log("✓ Marked as rolled back");
 
-    // Drop the partially created tables
-    console.log("🗑️  Cleaning up partial tables...");
     const tablesToDrop = [
-      "mentor_profiles",
-      "mentor_requests",
-      "mentor_sessions",
-      "mentor_office_hours",
-      "mentor_group_sessions",
-      "mentor_group_session_attendees",
-      "mentor_cohorts",
       "mentor_cohort_members",
-      "showcase_projects",
+      "mentor_cohorts",
+      "mentor_group_session_attendees",
+      "mentor_group_sessions",
+      "mentor_office_hours",
+      "mentor_sessions",
+      "mentor_requests",
+      "mentor_profiles",
       "showcase_likes",
+      "showcase_projects",
     ];
 
     for (const table of tablesToDrop) {
       try {
         await prisma.$executeRawUnsafe(`DROP TABLE IF EXISTS \`${table}\``);
         console.log(`   ✓ Dropped ${table}`);
-      } catch (e) {
-        console.log(`   - ${table} not found (OK)`);
-      }
+      } catch (_) {}
     }
 
-    console.log("\n✅ Migration resolution complete!");
-    console.log("ℹ️  Run 'prisma migrate deploy' to reapply migrations");
+    console.log("✅ Migration resolution complete!");
   } catch (error) {
-    console.error("❌ Error resolving migrations:", error);
+    console.error("❌ Error resolving migrations:", error.message);
     process.exit(1);
   } finally {
     await prisma.$disconnect();
