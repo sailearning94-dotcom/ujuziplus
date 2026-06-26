@@ -1,0 +1,3 @@
+# Failed migration - resolved in 20260626000009_recover_mentor_system_fix
+# Original error: MySQL doesn't support CREATE TYPE syntax
+# Recovery: Recreated all mentor tables with correct MySQL ENUM syntax

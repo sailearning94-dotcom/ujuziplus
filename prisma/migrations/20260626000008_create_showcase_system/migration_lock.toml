@@ -1,0 +1,3 @@
+# Failed migration - resolved in 20260626000010_recover_showcase_system_fix
+# Original error: MySQL doesn't support CREATE TYPE syntax
+# Recovery: Recreated all showcase tables with correct MySQL ENUM syntax
