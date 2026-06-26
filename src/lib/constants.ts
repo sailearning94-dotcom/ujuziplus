@@ -2,7 +2,7 @@ export const PLATFORM = {
   name: "ujuziPlus",
   tagline: "Africa's modern learning and innovation ecosystem",
   externalBrand: "UjuziLab",
-  url: "https://ujuzipluse.co.tz",
+  url: "https://ujuziplus.co.tz",
 } as const;
 
 /** Main lab navigation (sidebar) */
