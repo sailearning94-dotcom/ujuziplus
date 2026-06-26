@@ -1,10 +1,4 @@
--- CreateEnum
-CREATE TYPE `MentorStatus` AS ENUM('DRAFT', 'PUBLISHED', 'ARCHIVED');
-CREATE TYPE `MentorType` AS ENUM('ACADEMIC', 'INDUSTRY', 'INNOVATION', 'GENERAL');
-CREATE TYPE `MentorRequestStatus` AS ENUM('PENDING', 'ACCEPTED', 'DECLINED', 'CLOSED');
-CREATE TYPE `MentorSessionStatus` AS ENUM('REQUESTED', 'SCHEDULED', 'CONFIRMED', 'COMPLETED', 'CANCELLED', 'NO_SHOW');
-CREATE TYPE `MentorSessionType` AS ENUM('INTRO_CALL', 'GUIDANCE', 'OFFICE_HOURS', 'GROUP_SESSION');
-CREATE TYPE `GroupSessionMode` AS ENUM('VIRTUAL', 'PHYSICAL', 'HYBRID');
+-- Note: ENUMs are defined inline in table definitions for MySQL compatibility
 
 -- CreateTable mentor_profiles
 CREATE TABLE `mentor_profiles` (

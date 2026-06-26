@@ -1,6 +1,3 @@
--- CreateEnum
-CREATE TYPE `ShowcaseStatus` AS ENUM('DRAFT', 'PENDING_REVIEW', 'PUBLISHED', 'REJECTED');
-
 -- CreateTable showcase_projects
 CREATE TABLE `showcase_projects` (
     `id` VARCHAR(191) NOT NULL,
