@@ -22,73 +22,73 @@ enum Role {
 
 // ─── Users ───────────────────────────────────────────────────────────────────
 model User {
-  id            String   @id @default(cuid())
-  fullName      String
-  email         String   @unique @db.VarChar(191)
-  username      String   @unique @db.VarChar(100)
-  passwordHash  String
-  role          Role     @default(STUDENT)
+  id           String @id @default(cuid())
+  fullName     String
+  email        String @unique @db.VarChar(191)
+  username     String @unique @db.VarChar(100)
+  passwordHash String
+  role         Role   @default(STUDENT)
 
   // Profile fields
-  avatarUrl     String?
-  bio           String?  @db.Text
-  location      String?
-  website       String?
-  linkedin      String?
-  github        String?
+  avatarUrl String?
+  bio       String? @db.Text
+  location  String?
+  website   String?
+  linkedin  String?
+  github    String?
 
   // Privacy (public profile visibility)
-  publicProfile              Boolean @default(true)
-  showCoursesOnProfile       Boolean @default(true)
-  showCertificatesOnProfile  Boolean @default(true)
+  publicProfile             Boolean @default(true)
+  showCoursesOnProfile      Boolean @default(true)
+  showCertificatesOnProfile Boolean @default(true)
 
   // Account state
-  isActive      Boolean  @default(true)
-  emailVerified Boolean  @default(false)
+  isActive      Boolean @default(true)
+  emailVerified Boolean @default(false)
 
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
-  resetTokens    PasswordResetToken[]
-  courses        Course[]             @relation("InstructorCourses")
-  enrollments    Enrollment[]
-  orders         Order[]              @relation("UserOrders")
-  quizAttempts   QuizAttempt[]        @relation("UserQuizAttempts")
-  certificates   Certificate[]        @relation("UserCertificates")
-  discussions    Discussion[]         @relation("UserDiscussions")
-  replies        DiscussionReply[]    @relation("UserReplies")
-  likes          DiscussionLike[]     @relation("UserLikes")
-  notifications  Notification[]       @relation("UserNotifications")
-  wishlist       WishlistItem[]       @relation("UserWishlist")
-  assignmentSubmissions AssignmentSubmission[] @relation("StudentSubmissions")
-  gradedSubmissions     AssignmentSubmission[] @relation("GradedSubmissions")
-  payoutProfile  InstructorPayoutProfile? @relation("InstructorPayoutProfile")
-  payouts        InstructorPayout[]   @relation("InstructorPayouts")
-  programRegs    ProgramRegistration[] @relation("UserProgramRegs")
-  competitionRegs CompetitionRegistration[] @relation("UserCompetitionRegs")
-  kitPurchases   KitPurchase[]        @relation("UserKitPurchases")
-  orgMemberships OrganizationMember[] @relation("UserOrgMemberships")
-  orgKitRequests OrgKitRequest[]      @relation("UserOrgKitRequests")
-  notificationPreferences NotificationPreference[] @relation("UserNotificationPrefs")
-  pushSubscriptions     PushSubscription[]       @relation("UserPushSubscriptions")
-  fcmTokens             FcmDeviceToken[]         @relation("UserFcmTokens")
-  orgInvitesSent        OrgInvite[]              @relation("OrgInvitesSent")
-  projects              Project[]                @relation("UserProjects")
-  projectLikes          ProjectLike[]            @relation("UserProjectLikes")
-  solutionJoins         SolutionJoin[]           @relation("UserSolutionJoins")
-  authoredSolutions     Solution[]               @relation("AuthoredSolutions")
-  labResourceBookmarks  UserLabResource[]        @relation("UserLabResources")
-  blogPosts             BlogPost[]               @relation("UserBlogPosts")
-  followers             UserFollow[]             @relation("UserFollowers")
-  following             UserFollow[]             @relation("UserFollowing")
-  mentorProfile         MentorProfile?              @relation("UserMentorProfile")
-  mentorRequests        MentorRequest[]             @relation("LearnerMentorRequests")
-  mentorSessions        MentorSession[]             @relation("LearnerMentorSessions")
-  groupSessionAttendees MentorGroupSessionAttendee[] @relation("UserGroupSessionAttendees")
-  cohortMemberships     MentorCohortMember[]        @relation("UserCohortMemberships")
-  showcaseProjects      ShowcaseProject[]           @relation("UserShowcaseProjects")
-  showcaseLikes         ShowcaseLike[]              @relation("UserShowcaseLikes")
+  resetTokens             PasswordResetToken[]
+  courses                 Course[]                     @relation("InstructorCourses")
+  enrollments             Enrollment[]
+  orders                  Order[]                      @relation("UserOrders")
+  quizAttempts            QuizAttempt[]                @relation("UserQuizAttempts")
+  certificates            Certificate[]                @relation("UserCertificates")
+  discussions             Discussion[]                 @relation("UserDiscussions")
+  replies                 DiscussionReply[]            @relation("UserReplies")
+  likes                   DiscussionLike[]             @relation("UserLikes")
+  notifications           Notification[]               @relation("UserNotifications")
+  wishlist                WishlistItem[]               @relation("UserWishlist")
+  assignmentSubmissions   AssignmentSubmission[]       @relation("StudentSubmissions")
+  gradedSubmissions       AssignmentSubmission[]       @relation("GradedSubmissions")
+  payoutProfile           InstructorPayoutProfile?     @relation("InstructorPayoutProfile")
+  payouts                 InstructorPayout[]           @relation("InstructorPayouts")
+  programRegs             ProgramRegistration[]        @relation("UserProgramRegs")
+  competitionRegs         CompetitionRegistration[]    @relation("UserCompetitionRegs")
+  kitPurchases            KitPurchase[]                @relation("UserKitPurchases")
+  orgMemberships          OrganizationMember[]         @relation("UserOrgMemberships")
+  orgKitRequests          OrgKitRequest[]              @relation("UserOrgKitRequests")
+  notificationPreferences NotificationPreference[]     @relation("UserNotificationPrefs")
+  pushSubscriptions       PushSubscription[]           @relation("UserPushSubscriptions")
+  fcmTokens               FcmDeviceToken[]             @relation("UserFcmTokens")
+  orgInvitesSent          OrgInvite[]                  @relation("OrgInvitesSent")
+  projects                Project[]                    @relation("UserProjects")
+  projectLikes            ProjectLike[]                @relation("UserProjectLikes")
+  solutionJoins           SolutionJoin[]               @relation("UserSolutionJoins")
+  authoredSolutions       Solution[]                   @relation("AuthoredSolutions")
+  labResourceBookmarks    UserLabResource[]            @relation("UserLabResources")
+  blogPosts               BlogPost[]                   @relation("UserBlogPosts")
+  followers               UserFollow[]                 @relation("UserFollowers")
+  following               UserFollow[]                 @relation("UserFollowing")
+  mentorProfile           MentorProfile?               @relation("UserMentorProfile")
+  mentorRequests          MentorRequest[]              @relation("LearnerMentorRequests")
+  mentorSessions          MentorSession[]              @relation("LearnerMentorSessions")
+  groupSessionAttendees   MentorGroupSessionAttendee[] @relation("UserGroupSessionAttendees")
+  cohortMemberships       MentorCohortMember[]         @relation("UserCohortMemberships")
+  showcaseProjects        ShowcaseProject[]            @relation("UserShowcaseProjects")
+  showcaseLikes           ShowcaseLike[]               @relation("UserShowcaseLikes")
 
   @@map("users")
 }
@@ -163,41 +163,41 @@ model Course {
   status        CourseStatus @default(DRAFT)
 
   // Requirements
-  whatYouLearn   Json?       // String[]
-  prerequisites  String?     @db.Text
+  whatYouLearn   Json? // String[]
+  prerequisites  String? @db.Text
   targetAudience String?
-  linkedKitSlugs Json?       // String[]
+  linkedKitSlugs Json? // String[]
 
   // SEO & certificate
-  metaTitle     String?
-  metaDesc      String?
-  enableCert    Boolean      @default(true)
+  metaTitle  String?
+  metaDesc   String?
+  enableCert Boolean @default(true)
 
   // Moderation
-  reviewNote    String?      @db.Text
+  reviewNote String? @db.Text
 
   modules       CourseModule[]
-  enrollments   Enrollment[]  @relation("Enrollments")
-  orderItems    OrderItem[]   @relation("OrderItems")
+  enrollments   Enrollment[]         @relation("Enrollments")
+  orderItems    OrderItem[]          @relation("OrderItems")
   certificates  Certificate[]        @relation("CourseCertificates")
   certTemplate  CertificateTemplate? @relation("CourseCertTemplate")
   discussions   Discussion[]         @relation("CourseDiscussions")
   wishlistItems WishlistItem[]       @relation("CourseWishlist")
 
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("courses")
 }
 
 model CourseModule {
-  id         String    @id @default(cuid())
+  id         String   @id @default(cuid())
   courseId   String
-  course     Course    @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  course     Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
   title      String
-  orderIndex Int       @default(0)
+  orderIndex Int      @default(0)
   lessons    Lesson[]
-  createdAt  DateTime  @default(now())
+  createdAt  DateTime @default(now())
 
   @@map("course_modules")
 }
@@ -212,16 +212,16 @@ model Lesson {
   videoUrl        String?
   articleBody     String?      @db.MediumText
   audioUrl        String?
-  attachments     Json?        // [{ name, url, size }]
+  attachments     Json? // [{ name, url, size }]
   durationSeconds Int?
   isFreePreview   Boolean      @default(false)
   orderIndex      Int          @default(0)
   createdAt       DateTime     @default(now())
   updatedAt       DateTime     @updatedAt
 
-  progress        LessonProgress[]
-  quiz            Quiz?
-  assignment      Assignment?
+  progress   LessonProgress[]
+  quiz       Quiz?
+  assignment Assignment?
 
   @@map("lessons")
 }
@@ -342,12 +342,12 @@ model Certificate {
 // PDF template uploaded by instructor/admin. Fields filled: student_name,
 // course_title, instructor_name, issue_date, verify_code, duration_hours
 model CertificateTemplate {
-  id          String   @id @default(cuid())
-  courseId    String   @unique
-  course      Course   @relation("CourseCertTemplate", fields: [courseId], references: [id], onDelete: Cascade)
-  filePath    String
-  uploadedAt  DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id         String   @id @default(cuid())
+  courseId   String   @unique
+  course     Course   @relation("CourseCertTemplate", fields: [courseId], references: [id], onDelete: Cascade)
+  filePath   String
+  uploadedAt DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
   @@map("certificate_templates")
 }
@@ -379,7 +379,7 @@ model Order {
   user           User           @relation("UserOrders", fields: [userId], references: [id])
   status         OrderStatus    @default(PENDING)
   subtotal       Decimal        @db.Decimal(10, 2)
-  discountAmount Decimal        @db.Decimal(10, 2) @default(0)
+  discountAmount Decimal        @default(0) @db.Decimal(10, 2)
   total          Decimal        @db.Decimal(10, 2)
   couponCode     String?        @db.VarChar(50)
   paymentMethod  PaymentMethod?
@@ -436,22 +436,22 @@ model PasswordResetToken {
 // ─── Community & Discussions ──────────────────────────────────────────────────
 
 model Discussion {
-  id           String            @id @default(cuid())
-  authorId     String
-  author       User              @relation("UserDiscussions", fields: [authorId], references: [id])
-  courseId     String?
-  course       Course?           @relation("CourseDiscussions", fields: [courseId], references: [id])
-  channel      String            @default("general") @db.VarChar(100)
-  title         String           @db.VarChar(255)
-  body          String           @db.Text
-  excerpt       String?          @db.Text
+  id            String            @id @default(cuid())
+  authorId      String
+  author        User              @relation("UserDiscussions", fields: [authorId], references: [id])
+  courseId      String?
+  course        Course?           @relation("CourseDiscussions", fields: [courseId], references: [id])
+  channel       String            @default("general") @db.VarChar(100)
+  title         String            @db.VarChar(255)
+  body          String            @db.Text
+  excerpt       String?           @db.Text
   coverImageUrl String?
-  isPinned      Boolean          @default(false)
-  isResolved   Boolean           @default(false)
-  replies      DiscussionReply[]
-  likes        DiscussionLike[]
-  createdAt    DateTime          @default(now())
-  updatedAt    DateTime          @updatedAt
+  isPinned      Boolean           @default(false)
+  isResolved    Boolean           @default(false)
+  replies       DiscussionReply[]
+  likes         DiscussionLike[]
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
 
   @@index([channel])
   @@index([courseId])
@@ -459,16 +459,16 @@ model Discussion {
 }
 
 model DiscussionReply {
-  id           String         @id @default(cuid())
+  id           String           @id @default(cuid())
   discussionId String
-  discussion   Discussion     @relation(fields: [discussionId], references: [id], onDelete: Cascade)
+  discussion   Discussion       @relation(fields: [discussionId], references: [id], onDelete: Cascade)
   authorId     String
-  author       User           @relation("UserReplies", fields: [authorId], references: [id])
-  body         String         @db.Text
-  isAccepted   Boolean        @default(false)
+  author       User             @relation("UserReplies", fields: [authorId], references: [id])
+  body         String           @db.Text
+  isAccepted   Boolean          @default(false)
   likes        DiscussionLike[]
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
 
   @@map("discussion_replies")
 }
@@ -545,40 +545,40 @@ enum AssignmentSubmissionStatus {
 }
 
 model Assignment {
-  id           String   @id @default(cuid())
-  lessonId     String   @unique
-  lesson       Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  instructions String?  @db.Text
+  id           String                 @id @default(cuid())
+  lessonId     String                 @unique
+  lesson       Lesson                 @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  instructions String?                @db.Text
   rubric       Json?
-  maxScore     Int      @default(100)
+  maxScore     Int                    @default(100)
   dueAt        DateTime?
   submissions  AssignmentSubmission[]
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  createdAt    DateTime               @default(now())
+  updatedAt    DateTime               @updatedAt
 
   @@map("assignments")
 }
 
 model AssignmentSubmission {
-  id             String                     @id @default(cuid())
-  assignmentId   String
-  assignment     Assignment                 @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
-  enrollmentId   String
-  enrollment     Enrollment                 @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
-  userId         String
-  user           User                       @relation("StudentSubmissions", fields: [userId], references: [id])
-  status         AssignmentSubmissionStatus @default(DRAFT)
-  textResponse   String?                    @db.Text
-  githubUrl      String?                    @db.VarChar(500)
-  score          Int?
-  feedback       String?                    @db.Text
-  submittedAt    DateTime?
-  gradedAt       DateTime?
-  gradedById     String?
-  gradedBy       User?                      @relation("GradedSubmissions", fields: [gradedById], references: [id])
-  files          AssignmentSubmissionFile[]
-  createdAt      DateTime                   @default(now())
-  updatedAt      DateTime                   @updatedAt
+  id           String                     @id @default(cuid())
+  assignmentId String
+  assignment   Assignment                 @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  enrollmentId String
+  enrollment   Enrollment                 @relation(fields: [enrollmentId], references: [id], onDelete: Cascade)
+  userId       String
+  user         User                       @relation("StudentSubmissions", fields: [userId], references: [id])
+  status       AssignmentSubmissionStatus @default(DRAFT)
+  textResponse String?                    @db.Text
+  githubUrl    String?                    @db.VarChar(500)
+  score        Int?
+  feedback     String?                    @db.Text
+  submittedAt  DateTime?
+  gradedAt     DateTime?
+  gradedById   String?
+  gradedBy     User?                      @relation("GradedSubmissions", fields: [gradedById], references: [id])
+  files        AssignmentSubmissionFile[]
+  createdAt    DateTime                   @default(now())
+  updatedAt    DateTime                   @updatedAt
 
   @@unique([assignmentId, enrollmentId])
   @@map("assignment_submissions")
@@ -611,16 +611,16 @@ enum PayoutStatus {
 }
 
 model InstructorPayoutProfile {
-  id                String        @id @default(cuid())
-  userId            String        @unique
-  user              User          @relation("InstructorPayoutProfile", fields: [userId], references: [id], onDelete: Cascade)
-  preferredMethod   PayoutMethod  @default(MPESA)
-  mpesaPhone        String?       @db.VarChar(20)
-  bankName          String?       @db.VarChar(100)
-  bankAccountName   String?       @db.VarChar(100)
-  bankAccountNumber String?       @db.VarChar(50)
-  bankSwift         String?       @db.VarChar(20)
-  updatedAt         DateTime      @updatedAt
+  id                String       @id @default(cuid())
+  userId            String       @unique
+  user              User         @relation("InstructorPayoutProfile", fields: [userId], references: [id], onDelete: Cascade)
+  preferredMethod   PayoutMethod @default(MPESA)
+  mpesaPhone        String?      @db.VarChar(20)
+  bankName          String?      @db.VarChar(100)
+  bankAccountName   String?      @db.VarChar(100)
+  bankAccountNumber String?      @db.VarChar(50)
+  bankSwift         String?      @db.VarChar(20)
+  updatedAt         DateTime     @updatedAt
 
   @@map("instructor_payout_profiles")
 }
@@ -664,31 +664,31 @@ enum KitMaterialType {
 }
 
 model Kit {
-  id                 String        @id @default(cuid())
-  slug               String        @unique @db.VarChar(191)
+  id                 String            @id @default(cuid())
+  slug               String            @unique @db.VarChar(191)
   title              String
   subtitle           String?
-  description        String?       @db.Text
+  description        String?           @db.Text
   thumbnailUrl       String?
-  category           String?       @db.VarChar(100)
-  difficulty         KitDifficulty @default(BEGINNER)
-  ageRange           String?       @db.VarChar(50)
-  price              Decimal?      @db.Decimal(10, 2)
-  isFree             Boolean       @default(false)
-  status             KitStatus     @default(DRAFT)
+  category           String?           @db.VarChar(100)
+  difficulty         KitDifficulty     @default(BEGINNER)
+  ageRange           String?           @db.VarChar(50)
+  price              Decimal?          @db.Decimal(10, 2)
+  isFree             Boolean           @default(false)
+  status             KitStatus         @default(DRAFT)
   learningOutcomes   Json?
   projectIdeas       Json?
   relatedCourseSlugs Json?
-  inventoryCount     Int           @default(0)
+  inventoryCount     Int               @default(0)
   components         KitComponent[]
   materials          KitMaterial[]
   gallery            KitGalleryImage[]
-  orderItems         OrderItem[]   @relation("KitOrderItems")
-  purchases          KitPurchase[] @relation("KitPurchases")
+  orderItems         OrderItem[]       @relation("KitOrderItems")
+  purchases          KitPurchase[]     @relation("KitPurchases")
   orgInventory       OrgKitInventory[]
   orgRequests        OrgKitRequest[]
-  createdAt          DateTime      @default(now())
-  updatedAt          DateTime      @updatedAt
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
 
   @@map("kits")
 }
@@ -763,26 +763,26 @@ enum ProgramStatus {
 }
 
 model Program {
-  id             String               @id @default(cuid())
-  slug           String               @unique @db.VarChar(191)
+  id             String                @id @default(cuid())
+  slug           String                @unique @db.VarChar(191)
   title          String
-  type           String               @db.VarChar(50)
+  type           String                @db.VarChar(50)
   thumbnailUrl   String?
   posterUrl      String?
-  description    String?              @db.Text
+  description    String?               @db.Text
   startDate      DateTime?
   endDate        DateTime?
-  format         ProgramFormat        @default(HYBRID)
-  seats          Int                  @default(50)
-  enrolledCount  Int                  @default(0)
-  price          Decimal              @db.Decimal(10, 2) @default(0)
-  status         ProgramStatus        @default(OPEN)
+  format         ProgramFormat         @default(HYBRID)
+  seats          Int                   @default(50)
+  enrolledCount  Int                   @default(0)
+  price          Decimal               @default(0) @db.Decimal(10, 2)
+  status         ProgramStatus         @default(OPEN)
   organizationId String?
-  organization   Organization?        @relation("OrgPrograms", fields: [organizationId], references: [id])
+  organization   Organization?         @relation("OrgPrograms", fields: [organizationId], references: [id])
   registrations  ProgramRegistration[]
   orderItems     OrderItem[]
-  createdAt      DateTime             @default(now())
-  updatedAt      DateTime             @updatedAt
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
 
   @@map("programs")
 }
@@ -808,31 +808,31 @@ enum CompetitionStatus {
 }
 
 model Competition {
-  id            String                  @id @default(cuid())
-  slug          String                  @unique @db.VarChar(191)
+  id            String                    @id @default(cuid())
+  slug          String                    @unique @db.VarChar(191)
   title         String
   thumbnailUrl  String?
-  description   String?                 @db.Text
+  description   String?                   @db.Text
   startDate     DateTime?
   endDate       DateTime?
-  prize         String?                 @db.VarChar(255)
-  teamsCount    Int                     @default(0)
-  status        CompetitionStatus       @default(UPCOMING)
+  prize         String?                   @db.VarChar(255)
+  teamsCount    Int                       @default(0)
+  status        CompetitionStatus         @default(UPCOMING)
   registrations CompetitionRegistration[]
-  createdAt     DateTime                @default(now())
-  updatedAt     DateTime                @updatedAt
+  createdAt     DateTime                  @default(now())
+  updatedAt     DateTime                  @updatedAt
 
   @@map("competitions")
 }
 
 model CompetitionRegistration {
-  id           String      @id @default(cuid())
-  userId       String
-  user         User        @relation("UserCompetitionRegs", fields: [userId], references: [id], onDelete: Cascade)
+  id            String      @id @default(cuid())
+  userId        String
+  user          User        @relation("UserCompetitionRegs", fields: [userId], references: [id], onDelete: Cascade)
   competitionId String
-  competition  Competition @relation(fields: [competitionId], references: [id], onDelete: Cascade)
-  teamName     String?     @db.VarChar(100)
-  registeredAt DateTime    @default(now())
+  competition   Competition @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  teamName      String?     @db.VarChar(100)
+  registeredAt  DateTime    @default(now())
 
   @@unique([userId, competitionId])
   @@map("competition_registrations")
@@ -1138,7 +1138,7 @@ model PricingPlan {
   id        String   @id @default(cuid())
   slug      String   @unique @db.VarChar(191)
   name      String
-  price     Decimal  @db.Decimal(10, 2) @default(0)
+  price     Decimal  @default(0) @db.Decimal(10, 2)
   period    String?  @db.VarChar(50)
   features  Json
   isPopular Boolean  @default(false)
@@ -1161,9 +1161,9 @@ enum MentorStatus {
 }
 
 enum MentorType {
-  ACADEMIC      // Universities, colleges, researchers
-  INDUSTRY      // Companies, startups, professionals
-  INNOVATION    // Founders, investors, ecosystem leaders
+  ACADEMIC // Universities, colleges, researchers
+  INDUSTRY // Companies, startups, professionals
+  INNOVATION // Founders, investors, ecosystem leaders
   GENERAL
 }
 
@@ -1197,48 +1197,48 @@ enum GroupSessionMode {
 }
 
 model MentorProfile {
-  id                    String              @id @default(cuid())
-  slug                  String              @unique @db.VarChar(191)
-  userId                String?             @unique
-  user                  User?               @relation("UserMentorProfile", fields: [userId], references: [id], onDelete: SetNull)
-  mentorType            MentorType          @default(GENERAL)
+  id                    String               @id @default(cuid())
+  slug                  String               @unique @db.VarChar(191)
+  userId                String?              @unique
+  user                  User?                @relation("UserMentorProfile", fields: [userId], references: [id], onDelete: SetNull)
+  mentorType            MentorType           @default(GENERAL)
   displayName           String
-  title                 String?             @db.VarChar(255)
-  company               String?             @db.VarChar(255)
+  title                 String?              @db.VarChar(255)
+  company               String?              @db.VarChar(255)
   companyLogoUrl        String?
   avatarUrl             String?
-  bio                   String?             @db.Text
-  hook                  String?             @db.VarChar(280)
-  quote                 String?             @db.VarChar(500)
+  bio                   String?              @db.Text
+  hook                  String?              @db.VarChar(280)
+  quote                 String?              @db.VarChar(500)
   videoIntroUrl         String?
-  city                  String?             @db.VarChar(100)
-  country               String?             @db.VarChar(100)
-  expertiseTags         Json                @default("[]")
-  tracks                Json                @default("[]")
-  languages             Json                @default("[]")
-  yearsExperience       Int                 @default(0)
+  city                  String?              @db.VarChar(100)
+  country               String?              @db.VarChar(100)
+  expertiseTags         Json                 @default("[]")
+  tracks                Json                 @default("[]")
+  languages             Json                 @default("[]")
+  yearsExperience       Int                  @default(0)
   linkedin              String?
   github                String?
-  learningPath          Json                @default("[]")
-  recommendedCourseIds  Json                @default("[]")
-  recommendedKitSlugs   Json                @default("[]")
-  officeHoursNote       String?             @db.Text
+  learningPath          Json                 @default("[]")
+  recommendedCourseIds  Json                 @default("[]")
+  recommendedKitSlugs   Json                 @default("[]")
+  officeHoursNote       String?              @db.Text
   bookingUrl            String?
-  isFeatured            Boolean             @default(false)
-  isAcceptingRequests   Boolean             @default(true)
-  agreedToCodeOfConduct Boolean             @default(false)
-  studentsHelped        Int                 @default(0)
+  isFeatured            Boolean              @default(false)
+  isAcceptingRequests   Boolean              @default(true)
+  agreedToCodeOfConduct Boolean              @default(false)
+  studentsHelped        Int                  @default(0)
   averageRating         Float?
-  ratingCount           Int                 @default(0)
-  sortOrder             Int                 @default(0)
-  status                MentorStatus        @default(DRAFT)
+  ratingCount           Int                  @default(0)
+  sortOrder             Int                  @default(0)
+  status                MentorStatus         @default(DRAFT)
   requests              MentorRequest[]
   sessions              MentorSession[]
   officeHours           MentorOfficeHour[]
   groupSessions         MentorGroupSession[]
   cohorts               MentorCohort[]
-  createdAt             DateTime            @default(now())
-  updatedAt             DateTime            @updatedAt
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @updatedAt
 
   @@map("mentor_profiles")
 }
@@ -1279,7 +1279,7 @@ model MentorSession {
   meetingUrl      String?
   smsReminderSent Boolean             @default(false)
   // Learner feedback after session
-  rating          Int?                // 1–5
+  rating          Int? // 1–5
   learnerFeedback String?             @db.VarChar(1000)
   ratedAt         DateTime?
   createdAt       DateTime            @default(now())
@@ -1372,12 +1372,12 @@ model MentorCohort {
 }
 
 model MentorCohortMember {
-  id        String       @id @default(cuid())
-  cohortId  String
-  cohort    MentorCohort @relation(fields: [cohortId], references: [id], onDelete: Cascade)
-  userId    String
-  user      User         @relation("UserCohortMemberships", fields: [userId], references: [id], onDelete: Cascade)
-  joinedAt  DateTime     @default(now())
+  id       String       @id @default(cuid())
+  cohortId String
+  cohort   MentorCohort @relation(fields: [cohortId], references: [id], onDelete: Cascade)
+  userId   String
+  user     User         @relation("UserCohortMemberships", fields: [userId], references: [id], onDelete: Cascade)
+  joinedAt DateTime     @default(now())
 
   @@unique([cohortId, userId])
   @@index([userId])
@@ -1394,25 +1394,25 @@ enum ShowcaseStatus {
 }
 
 model ShowcaseProject {
-  id           String          @id @default(cuid())
+  id           String         @id @default(cuid())
   userId       String
-  user         User            @relation("UserShowcaseProjects", fields: [userId], references: [id], onDelete: Cascade)
-  title        String          @db.VarChar(255)
-  tagline      String?         @db.VarChar(280)
-  description  String          @db.Text
+  user         User           @relation("UserShowcaseProjects", fields: [userId], references: [id], onDelete: Cascade)
+  title        String         @db.VarChar(255)
+  tagline      String?        @db.VarChar(280)
+  description  String         @db.Text
   thumbnailUrl String?
   demoUrl      String?
   repoUrl      String?
   videoUrl     String?
-  techStack    Json            @default("[]")
-  track        String?         @db.VarChar(100)
-  status       ShowcaseStatus  @default(DRAFT)
-  isFeatured   Boolean         @default(false)
-  viewCount    Int             @default(0)
-  likeCount    Int             @default(0)
+  techStack    Json           @default("[]")
+  track        String?        @db.VarChar(100)
+  status       ShowcaseStatus @default(DRAFT)
+  isFeatured   Boolean        @default(false)
+  viewCount    Int            @default(0)
+  likeCount    Int            @default(0)
   likes        ShowcaseLike[]
-  createdAt    DateTime        @default(now())
-  updatedAt    DateTime        @updatedAt
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
 
   @@index([userId])
   @@index([status])

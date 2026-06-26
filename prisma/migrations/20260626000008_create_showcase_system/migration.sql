@@ -1,5 +1,9 @@
+-- This migration recovers from the failed 20260626000008 migration
+-- The failed migration attempted to use PostgreSQL CREATE TYPE syntax
+-- This migration completes the showcase system creation with correct MySQL syntax
+
 -- CreateTable showcase_projects
-CREATE TABLE `showcase_projects` (
+CREATE TABLE IF NOT EXISTS `showcase_projects` (
     `id` VARCHAR(191) NOT NULL,
     `userId` VARCHAR(191) NOT NULL,
     `title` VARCHAR(255) NOT NULL,
@@ -24,7 +28,7 @@ CREATE TABLE `showcase_projects` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable showcase_likes
-CREATE TABLE `showcase_likes` (
+CREATE TABLE IF NOT EXISTS `showcase_likes` (
     `id` VARCHAR(191) NOT NULL,
     `projectId` VARCHAR(191) NOT NULL,
     `userId` VARCHAR(191) NOT NULL,

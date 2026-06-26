@@ -1,7 +1,9 @@
--- Note: ENUMs are defined inline in table definitions for MySQL compatibility
+-- This migration recovers from the failed 20260626000007 migration
+-- The failed migration attempted to use PostgreSQL CREATE TYPE syntax
+-- This migration completes the mentor system creation with correct MySQL syntax
 
 -- CreateTable mentor_profiles
-CREATE TABLE `mentor_profiles` (
+CREATE TABLE IF NOT EXISTS `mentor_profiles` (
     `id` VARCHAR(191) NOT NULL,
     `slug` VARCHAR(191) NOT NULL,
     `userId` VARCHAR(191) NULL,
@@ -45,7 +47,7 @@ CREATE TABLE `mentor_profiles` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable mentor_requests
-CREATE TABLE `mentor_requests` (
+CREATE TABLE IF NOT EXISTS `mentor_requests` (
     `id` VARCHAR(191) NOT NULL,
     `learnerId` VARCHAR(191) NOT NULL,
     `mentorId` VARCHAR(191) NOT NULL,
@@ -62,7 +64,7 @@ CREATE TABLE `mentor_requests` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable mentor_sessions
-CREATE TABLE `mentor_sessions` (
+CREATE TABLE IF NOT EXISTS `mentor_sessions` (
     `id` VARCHAR(191) NOT NULL,
     `mentorId` VARCHAR(191) NOT NULL,
     `learnerId` VARCHAR(191) NOT NULL,
@@ -88,7 +90,7 @@ CREATE TABLE `mentor_sessions` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable mentor_office_hours
-CREATE TABLE `mentor_office_hours` (
+CREATE TABLE IF NOT EXISTS `mentor_office_hours` (
     `id` VARCHAR(191) NOT NULL,
     `mentorId` VARCHAR(191) NOT NULL,
     `title` VARCHAR(255) NOT NULL,
@@ -107,7 +109,7 @@ CREATE TABLE `mentor_office_hours` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable mentor_group_sessions
-CREATE TABLE `mentor_group_sessions` (
+CREATE TABLE IF NOT EXISTS `mentor_group_sessions` (
     `id` VARCHAR(191) NOT NULL,
     `mentorId` VARCHAR(191) NOT NULL,
     `cohortId` VARCHAR(191) NULL,
@@ -132,7 +134,7 @@ CREATE TABLE `mentor_group_sessions` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable mentor_group_session_attendees
-CREATE TABLE `mentor_group_session_attendees` (
+CREATE TABLE IF NOT EXISTS `mentor_group_session_attendees` (
     `id` VARCHAR(191) NOT NULL,
     `sessionId` VARCHAR(191) NOT NULL,
     `userId` VARCHAR(191) NOT NULL,
@@ -143,7 +145,7 @@ CREATE TABLE `mentor_group_session_attendees` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable mentor_cohorts
-CREATE TABLE `mentor_cohorts` (
+CREATE TABLE IF NOT EXISTS `mentor_cohorts` (
     `id` VARCHAR(191) NOT NULL,
     `mentorId` VARCHAR(191) NOT NULL,
     `title` VARCHAR(255) NOT NULL,
@@ -161,7 +163,7 @@ CREATE TABLE `mentor_cohorts` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable mentor_cohort_members
-CREATE TABLE `mentor_cohort_members` (
+CREATE TABLE IF NOT EXISTS `mentor_cohort_members` (
     `id` VARCHAR(191) NOT NULL,
     `cohortId` VARCHAR(191) NOT NULL,
     `userId` VARCHAR(191) NOT NULL,
@@ -172,7 +174,7 @@ CREATE TABLE `mentor_cohort_members` (
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
--- Add Foreign Keys
+-- Add Foreign Keys (with IF NOT EXISTS checks)
 ALTER TABLE `mentor_profiles` ADD CONSTRAINT `mentor_profiles_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `users`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 ALTER TABLE `mentor_requests` ADD CONSTRAINT `mentor_requests_learnerId_fkey` FOREIGN KEY (`learnerId`) REFERENCES `users`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 ALTER TABLE `mentor_requests` ADD CONSTRAINT `mentor_requests_mentorId_fkey` FOREIGN KEY (`mentorId`) REFERENCES `mentor_profiles`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
