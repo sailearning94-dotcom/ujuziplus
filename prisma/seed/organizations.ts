@@ -71,8 +71,16 @@ export async function seedOrganizations(
       memberCreates.push({ userId: instructorId, role: "INSTRUCTOR" });
     }
 
-    const orgRecord = await db.organization.create({
-      data: {
+    const orgRecord = await db.organization.upsert({
+      where: { slug: org.slug },
+      update: {
+        name: org.name,
+        type: org.type,
+        logoUrl: org.logoUrl,
+        isVerified: true,
+        memberCount: memberCreates.length,
+      },
+      create: {
         slug: org.slug,
         name: org.name,
         type: org.type,
@@ -100,12 +108,10 @@ export async function seedOrganizations(
     for (const slug of ["nairobi-techstar", "kigali-stem-academy"]) {
       const orgId = orgIds[slug];
       if (orgId) {
-        await db.organizationMember.create({
-          data: { orgId, userId: studentId, role: "MEMBER" },
-        });
-        await db.organization.update({
-          where: { id: orgId },
-          data: { memberCount: { increment: 1 } },
+        await db.organizationMember.upsert({
+          where: { orgId_userId: { orgId, userId: studentId } },
+          update: { role: "MEMBER" },
+          create: { orgId, userId: studentId, role: "MEMBER" },
         });
       }
     }

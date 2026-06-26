@@ -44,7 +44,11 @@ export async function seedPlatformContent(
   ];
 
   for (const p of programs) {
-    await db.program.create({ data: p });
+    await db.program.upsert({
+      where: { slug: p.slug },
+      update: p,
+      create: p,
+    });
     console.log(`  ✓ Program: ${p.title}`);
   }
 
@@ -75,7 +79,11 @@ export async function seedPlatformContent(
   ];
 
   for (const c of competitions) {
-    await db.competition.create({ data: c });
+    await db.competition.upsert({
+      where: { slug: c.slug },
+      update: c,
+      create: c,
+    });
     console.log(`  ✓ Competition: ${c.title}`);
   }
 
@@ -139,7 +147,11 @@ export async function seedPlatformContent(
   ];
 
   for (const s of solutions) {
-    await db.solution.create({ data: { ...s, status: "PUBLISHED" } });
+    await db.solution.upsert({
+      where: { slug: s.slug },
+      update: { ...s, status: "PUBLISHED" },
+      create: { ...s, status: "PUBLISHED" },
+    });
     console.log(`  ✓ Solution: ${s.title}`);
   }
 
@@ -198,7 +210,11 @@ export async function seedPlatformContent(
   ];
 
   for (const r of labResources) {
-    await db.labResource.create({ data: r });
+    await db.labResource.upsert({
+      where: { slug: r.slug },
+      update: r,
+      create: r,
+    });
     console.log(`  ✓ Lab resource: ${r.title}`);
   }
 
@@ -249,8 +265,14 @@ Open-source firmware and published BOMs let ministries audit security before sca
   ];
 
   for (const post of blogPosts) {
-    await db.blogPost.create({
-      data: {
+    await db.blogPost.upsert({
+      where: { slug: post.slug },
+      update: {
+        ...post,
+        status: "PUBLISHED",
+        authorId: instructorId ?? adminId,
+      },
+      create: {
         ...post,
         status: "PUBLISHED",
         authorId: instructorId ?? adminId,
@@ -312,7 +334,11 @@ Open-source firmware and published BOMs let ministries audit security before sca
   ];
 
   for (const plan of pricingPlans) {
-    await db.pricingPlan.create({ data: plan });
+    await db.pricingPlan.upsert({
+      where: { slug: plan.slug },
+      update: plan,
+      create: plan,
+    });
     console.log(`  ✓ Pricing: ${plan.name}`);
   }
 
@@ -357,8 +383,10 @@ Open-source firmware and published BOMs let ministries audit security before sca
     ];
 
     for (const p of projects) {
-      await db.project.create({
-        data: { ...p, creatorId: studentId, isPublished: true },
+      await db.project.upsert({
+        where: { slug: p.slug },
+        update: { ...p, creatorId: studentId, isPublished: true },
+        create: { ...p, creatorId: studentId, isPublished: true },
       });
       console.log(`  ✓ Project: ${p.title}`);
     }
@@ -367,8 +395,10 @@ Open-source firmware and published BOMs let ministries audit security before sca
   // ─── Enroll student in 1 course ───────────────────────────────────────────
   const arduinoCourseId = courseIds["arduino-robotics-african-makers"];
   if (studentId && arduinoCourseId) {
-    await db.enrollment.create({
-      data: { userId: studentId, courseId: arduinoCourseId },
+    await db.enrollment.upsert({
+      where: { userId_courseId: { userId: studentId, courseId: arduinoCourseId } },
+      update: { enrolledAt: new Date() },
+      create: { userId: studentId, courseId: arduinoCourseId },
     });
     console.log("  ✓ Student enrolled in Arduino Robotics for African Makers");
   }
@@ -379,8 +409,10 @@ Open-source firmware and published BOMs let ministries audit security before sca
       where: { slug: "smart-irrigation-soil-moisture" },
     });
     if (solution) {
-      await db.solutionJoin.create({
-        data: {
+      await db.solutionJoin.upsert({
+        where: { userId_solutionId: { userId: studentId, solutionId: solution.id } },
+        update: { labProgress: [0, 1] },
+        create: {
           userId: studentId,
           solutionId: solution.id,
           labProgress: [0, 1],
@@ -474,8 +506,18 @@ Open-source firmware and published BOMs let ministries audit security before sca
 
   for (const m of mentors) {
     const { recommendedCourseIds, recommendedKitSlugs, learningPath, expertiseTags, tracks, languages, ...rest } = m;
-    const created = await db.mentorProfile.create({
-      data: {
+    const created = await db.mentorProfile.upsert({
+      where: { slug: m.slug },
+      update: {
+        ...rest,
+        expertiseTags,
+        tracks,
+        languages,
+        learningPath,
+        recommendedCourseIds,
+        recommendedKitSlugs,
+      },
+      create: {
         ...rest,
         expertiseTags,
         tracks,
@@ -487,32 +529,42 @@ Open-source firmware and published BOMs let ministries audit security before sca
     });
 
     if (m.slug === "amina-mwakyusa") {
-      await db.mentorOfficeHour.create({
-        data: {
-          mentorId: created.id,
-          title: "Robotics office hours",
-          dayOfWeek: 2,
-          startTime: "14:00",
-          endTime: "16:00",
-          timezone: "Africa/Dar_es_Salaam",
-          isActive: true,
-        },
+      const existing = await db.mentorOfficeHour.findFirst({
+        where: { mentorId: created.id, title: "Robotics office hours" },
       });
+      if (!existing) {
+        await db.mentorOfficeHour.create({
+          data: {
+            mentorId: created.id,
+            title: "Robotics office hours",
+            dayOfWeek: 2,
+            startTime: "14:00",
+            endTime: "16:00",
+            timezone: "Africa/Dar_es_Salaam",
+            isActive: true,
+          },
+        });
+      }
       const groupAt = new Date();
       groupAt.setDate(groupAt.getDate() + 14);
       groupAt.setHours(15, 0, 0, 0);
-      await db.mentorGroupSession.create({
-        data: {
-          mentorId: created.id,
-          title: "Line-follower robot Q&A",
-          description: "Open group session for students building line-follower projects.",
-          scheduledAt: groupAt,
-          durationMins: 60,
-          maxAttendees: 25,
-          channelSlug: "mentorship",
-          isActive: true,
-        },
+      const existingGroup = await db.mentorGroupSession.findFirst({
+        where: { mentorId: created.id, title: "Line-follower robot Q&A" },
       });
+      if (!existingGroup) {
+        await db.mentorGroupSession.create({
+          data: {
+            mentorId: created.id,
+            title: "Line-follower robot Q&A",
+            description: "Open group session for students building line-follower projects.",
+            scheduledAt: groupAt,
+            durationMins: 60,
+            maxAttendees: 25,
+            channelSlug: "mentorship",
+            isActive: true,
+          },
+        });
+      }
     }
 
     console.log(`  ✓ Mentor: ${m.displayName}`);
@@ -520,15 +572,20 @@ Open-source firmware and published BOMs let ministries audit security before sca
 
   // Mentorship community thread
   if (studentId) {
-    await db.discussion.create({
-      data: {
-        title: "Welcome to #mentorship — ask practitioners anything",
-        body: "Introduce yourself and share what you're building. Mentors and peers can point you to courses, kits, and projects on UjuziLab.",
-        channel: "mentorship",
-        authorId: adminId ?? studentId,
-        courseId: null,
-      },
+    const existing = await db.discussion.findFirst({
+      where: { channel: "mentorship", title: "Welcome to #mentorship — ask practitioners anything" },
     });
+    if (!existing) {
+      await db.discussion.create({
+        data: {
+          title: "Welcome to #mentorship — ask practitioners anything",
+          body: "Introduce yourself and share what you're building. Mentors and peers can point you to courses, kits, and projects on UjuziLab.",
+          channel: "mentorship",
+          authorId: adminId ?? studentId,
+          courseId: null,
+        },
+      });
+    }
     console.log("  ✓ Mentorship community thread");
   }
 }

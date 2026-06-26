@@ -136,8 +136,17 @@ export async function seedKits(db: PrismaClient): Promise<KitIdMap> {
 
   for (const kit of kits) {
     const { components, materials, gallery, ...data } = kit;
-    const created = await db.kit.create({
-      data: {
+    const created = await db.kit.upsert({
+      where: { slug: kit.slug },
+      update: {
+        ...data,
+        isFree: false,
+        status: "PUBLISHED",
+        learningOutcomes: data.learningOutcomes,
+        projectIdeas: data.projectIdeas,
+        relatedCourseSlugs: data.relatedCourseSlugs,
+      },
+      create: {
         ...data,
         isFree: false,
         status: "PUBLISHED",
