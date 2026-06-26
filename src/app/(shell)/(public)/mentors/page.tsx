@@ -14,8 +14,8 @@ import { MotionGrid, RevealItem } from "@/components/motion/RevealStagger";
 
 export default async function MentorsPage() {
   const [mentors, cohorts, session] = await Promise.all([
-    getPublishedMentors(),
-    getPublicCohorts(),
+    getPublishedMentors().catch(() => []),
+    getPublicCohorts().catch(() => []),
     getAuthSession(),
   ]);
 

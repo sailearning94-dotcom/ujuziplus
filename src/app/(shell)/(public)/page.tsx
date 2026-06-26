@@ -20,14 +20,14 @@ export default async function HomePage() {
 
   const [programs, courses, kits, competitions, organizations, continueCourse, pendingProgram, mentors] =
     await Promise.all([
-      getPrograms(),
-      getPublishedCourses(),
-      getPublishedKits(),
-      getCompetitions(),
-      getAllOrganizations(),
-      userId ? getHomeContinueCourse(userId) : Promise.resolve(null),
-      userId ? getHomePendingProgram(userId) : Promise.resolve(null),
-      getFeaturedMentors(10),
+      getPrograms().catch(() => []),
+      getPublishedCourses().catch(() => []),
+      getPublishedKits().catch(() => []),
+      getCompetitions().catch(() => []),
+      getAllOrganizations().catch(() => []),
+      userId ? getHomeContinueCourse(userId).catch(() => null) : Promise.resolve(null),
+      userId ? getHomePendingProgram(userId).catch(() => null) : Promise.resolve(null),
+      getFeaturedMentors(10).catch(() => []),
     ]);
 
   const kitItems = kits.slice(0, 12);
