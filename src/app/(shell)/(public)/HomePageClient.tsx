@@ -18,7 +18,6 @@ import { HomeProgramCard } from "@/components/home/HomeProgramCard";
 import { HomeCompetitionCard } from "@/components/home/HomeCompetitionCard";
 import { HomeValueBand } from "@/components/home/HomeValueBand";
 import { HomeContinueCompact } from "@/components/home/HomeContinueCompact";
-import { HomeGuestAside } from "@/components/home/HomeGuestAside";
 import type { SerializedMentor } from "@/lib/actions/mentors";
 
 const OrgMarquee = dynamic(
@@ -156,8 +155,6 @@ export function HomePageClient({
                   {...continueCourse}
                   pendingProgram={pendingProgram}
                 />
-              ) : !isAuthenticated ? (
-                <HomeGuestAside />
               ) : undefined
             }
           >
