@@ -52,21 +52,20 @@ const PLATFORM_TABLES = [
   "lab_resources",
   "blog_posts",
   "pricing_plans",
+  "mentor_cohort_members",
+  "mentor_cohorts",
   "mentor_group_session_attendees",
   "mentor_group_sessions",
   "mentor_office_hours",
   "mentor_sessions",
   "mentor_requests",
   "mentor_profiles",
+  "showcase_likes",
+  "showcase_projects",
   "users",
 ] as const;
 
 export async function clearPlatformData(db: PrismaClient): Promise<void> {
-  await db.$executeRawUnsafe("SET FOREIGN_KEY_CHECKS = 0");
-
-  for (const table of PLATFORM_TABLES) {
-    await db.$executeRawUnsafe(`TRUNCATE TABLE \`${table}\``);
-  }
-
-  await db.$executeRawUnsafe("SET FOREIGN_KEY_CHECKS = 1");
+  const quoted = PLATFORM_TABLES.map((table) => `"${table}"`).join(", ");
+  await db.$executeRawUnsafe(`TRUNCATE TABLE ${quoted} CASCADE`);
 }

@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/shared/EmptyState";
@@ -6,8 +8,6 @@ import { PageSection } from "@/components/motion/PageSection";
 import { LearnerPageHero, HeroActions } from "@/components/shared/LearnerPageHero";
 import { FolderKanban } from "lucide-react";
 import { getPublishedProjects } from "@/lib/actions/projects";
-
-export const dynamic = 'force-dynamic';
 
 export default async function ProjectsPage() {
   const projects = await getPublishedProjects();

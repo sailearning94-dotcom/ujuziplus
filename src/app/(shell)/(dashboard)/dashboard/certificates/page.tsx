@@ -45,7 +45,7 @@ export default async function CertificatesPage() {
         </Card>
       ) : (
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {certs.map((cert) => (
+          {certs.map((cert: typeof certs[0]) => (
             <Card key={cert.id} hover className="flex flex-col overflow-hidden p-0">
               {/* Course thumbnail */}
               <div className="relative h-32 w-full bg-gray-100">

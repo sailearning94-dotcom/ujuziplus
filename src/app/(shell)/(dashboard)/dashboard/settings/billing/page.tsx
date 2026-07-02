@@ -123,7 +123,7 @@ export default async function BillingSettingsPage() {
                       {formatCurrency(Number(order.total))}
                     </td>
                     <td className="py-3">
-                      <Badge variant={STATUS_VARIANT[order.status] ?? "secondary"}>
+                      <Badge variant={STATUS_VARIANT[order.status] ?? "outline"}>
                         {order.status.charAt(0) + order.status.slice(1).toLowerCase()}
                       </Badge>
                     </td>

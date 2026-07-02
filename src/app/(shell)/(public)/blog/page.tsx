@@ -1,11 +1,11 @@
+export const dynamic = "force-dynamic";
+
 import { BlogPostCard } from "@/components/shared/BlogPostCard";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { LearnerPageHero } from "@/components/shared/LearnerPageHero";
 import { getPublishedBlogPosts } from "@/lib/actions/blog";
 import { formatDate } from "@/lib/utils";
 import { Newspaper } from "lucide-react";
-
-export const dynamic = 'force-dynamic';
 
 export default async function BlogPage() {
   const posts = await getPublishedBlogPosts();

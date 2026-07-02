@@ -1,11 +1,11 @@
+export const dynamic = "force-dynamic";
+
 import Image from "next/image";
 import Link from "next/link";
 import { getAllOrganizations } from "@/lib/actions/organizations";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { UJUZI } from "@/lib/ujuzi-brand";
-
-export const dynamic = 'force-dynamic';
 
 export default async function OrganizationsPage() {
   const organizations = await getAllOrganizations();

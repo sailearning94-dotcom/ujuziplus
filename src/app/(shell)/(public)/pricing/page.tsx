@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { FaqItem } from "@/components/shared/PricingCard";
 import { PricingPlansGrid } from "@/components/pricing/PricingPlansGrid";
 import { PageSection } from "@/components/motion/PageSection";
@@ -7,8 +9,6 @@ import { LearnerPageHero } from "@/components/shared/LearnerPageHero";
 import { getActivePricingPlans } from "@/lib/actions/pricing";
 import { serializePricingPlan } from "@/lib/serialize";
 import { CreditCard } from "lucide-react";
-
-export const dynamic = 'force-dynamic';
 
 export default async function PricingPage() {
   const plans = (await getActivePricingPlans()).map(serializePricingPlan);

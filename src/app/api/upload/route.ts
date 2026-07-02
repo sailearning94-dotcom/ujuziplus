@@ -5,14 +5,13 @@
  * Returns: { url: "/uploads/<kind>/filename.ext" }
  */
 
-import { mkdirSync } from "fs";
-import { writeFile } from "fs/promises";
+import { writeFile, mkdir } from "fs/promises";
+import { existsSync } from "fs";
 import path from "path";
 import sharp from "sharp";
 import { NextRequest, NextResponse } from "next/server";
 import { getUploadUserId } from "@/lib/upload-auth";
 import { defaultExtension, resolveMimeType } from "@/lib/upload-mime";
-import { existsSync } from "fs";
 
 export const runtime = "nodejs";
 
@@ -125,16 +124,23 @@ export async function POST(req: NextRequest) {
 
     const subDir = path.join(process.cwd(), "public", "uploads", kind);
     if (!existsSync(subDir)) {
-      mkdirSync(subDir, { recursive: true });
+      await mkdir(subDir, { recursive: true });
     }
 
-    const originalExt = defaultExtension(kind, resolvedMime, file.name);
+    // Re-encode raster images (not SVG/GIF, to preserve vector markup and animation)
+    // to normalized, compressed JPEG. When we do, force a .jpg extension so the
+    // file's contents always match its name.
+    const shouldRecompress =
+      kind === "image" && resolvedMime !== "image/svg+xml" && resolvedMime !== "image/gif";
+    const originalExt = shouldRecompress
+      ? "jpg"
+      : defaultExtension(kind, resolvedMime, file.name);
     const filename = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${originalExt}`;
     const filepath = path.join(subDir, filename);
 
     const buffer = Buffer.from(await file.arrayBuffer());
 
-    if (kind === "image" && resolvedMime !== "image/svg+xml") {
+    if (shouldRecompress) {
       const outputBuffer = await sharp(buffer)
         .rotate()
         .jpeg({ quality: 85, mozjpeg: true })

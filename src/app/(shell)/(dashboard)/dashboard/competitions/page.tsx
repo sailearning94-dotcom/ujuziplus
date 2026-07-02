@@ -23,7 +23,7 @@ export default async function DashboardCompetitionsPage() {
     getCompetitions(),
     getUserCompetitionRegistrations(session.user.id),
   ]);
-  const registeredSlugs = new Set(regs.map((r) => r.competition.slug));
+  const registeredSlugs = new Set(regs.map((r: typeof regs[0]) => r.competition.slug));
 
   return (
     <div>
@@ -39,8 +39,8 @@ export default async function DashboardCompetitionsPage() {
         </Card>
       ) : (
         <div className="space-y-4">
-          {competitions.map((c) => {
-            const myReg = regs.find((r) => r.competition.slug === c.slug);
+          {competitions.map((c: typeof competitions[0]) => {
+            const myReg = regs.find((r: typeof regs[0]) => r.competition.slug === c.slug);
             return (
             <Card key={c.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>

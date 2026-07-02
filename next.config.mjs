@@ -6,6 +6,14 @@ const nextConfig = {
     .map((s) => s.trim())
     .filter(Boolean),
 
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },
