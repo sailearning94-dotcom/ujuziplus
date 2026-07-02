@@ -147,7 +147,10 @@ export function CourseCatalog({
           }
         >
           <div className="relative z-10">
-            <div className="course-store-toolbar__row">
+            <h1 className="font-display text-2xl font-bold tracking-tight text-white md:text-3xl lg:text-4xl">
+              Courses
+            </h1>
+            <div className="course-store-toolbar__row mt-4">
             <p className="course-store-toolbar__count">
               {hasActiveFilters ? (
                 <>

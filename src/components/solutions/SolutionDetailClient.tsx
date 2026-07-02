@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { RichTextRenderer } from "@/components/ui/RichTextRenderer";
 import { PdfViewer } from "@/components/ui/PdfViewer";
 import { joinSolution, updateSolutionLabProgress } from "@/lib/actions/solutions";
@@ -124,9 +125,11 @@ export function SolutionDetailClient({
       {/* Hero */}
       <div className="bg-gradient-navy px-4 py-8 sm:px-6">
         <div className="mx-auto max-w-5xl">
-          <Button asChild variant="ghost" size="sm" className="mb-4 text-white/70 hover:bg-white/10 hover:text-white">
-            <Link href="/solutions">← All solutions</Link>
-          </Button>
+          <Breadcrumbs
+            theme="dark"
+            className="mb-4"
+            items={[{ label: "Solutions", href: "/solutions" }, { label: solution.title }]}
+          />
           <div className="flex flex-wrap items-center gap-2 mb-3">
             <span className={`rounded-full px-3 py-1 text-xs font-semibold ${lvl.bg} ${lvl.text} ${lvl.border} border`}>
               {LEVEL_LABEL[solution.level] ?? solution.level}

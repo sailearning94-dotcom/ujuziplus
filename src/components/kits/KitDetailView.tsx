@@ -6,6 +6,7 @@ import { ContentImage } from "@/components/shared/ContentImage";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { formatCurrency } from "@/lib/utils";
 import { KitPurchaseActions } from "@/components/kits/KitPurchaseActions";
 import { RequestKitForSchool } from "@/components/kits/RequestKitForSchool";
@@ -81,9 +82,10 @@ export function KitDetailView({
             )}
           </div>
           <div className="flex-1">
-            <Button asChild variant="ghost" size="sm" className="mb-3">
-              <Link href="/kits">← All kits</Link>
-            </Button>
+            <Breadcrumbs
+              className="mb-3"
+              items={[{ label: "Kits", href: "/kits" }, { label: kit.title }]}
+            />
             {kit.category && <Badge className="mb-2">{kit.category}</Badge>}
             <h1 className="font-display text-2xl font-bold tracking-tight md:text-3xl">{kit.title}</h1>
             {kit.subtitle && <p className="mt-2 text-gray-500">{kit.subtitle}</p>}
@@ -166,6 +168,7 @@ export function KitDetailView({
 
           {tab === 1 && (
             <Card className="overflow-hidden">
+              <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead className="bg-gray-50">
                   <tr>
@@ -184,6 +187,7 @@ export function KitDetailView({
                   ))}
                 </tbody>
               </table>
+              </div>
             </Card>
           )}
 

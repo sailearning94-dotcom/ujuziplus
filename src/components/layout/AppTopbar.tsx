@@ -64,8 +64,12 @@ export function AppTopbar({
           <Menu className="h-5 w-5" />
         </button>
         <form onSubmit={handleSearch} className="relative max-w-md flex-1">
+          <label htmlFor="app-topbar-search" className="sr-only">
+            Search courses, kits, people
+          </label>
           <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
           <input
+            id="app-topbar-search"
             name="q"
             type="search"
             placeholder="Search courses, kits, people..."

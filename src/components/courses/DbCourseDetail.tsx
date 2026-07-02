@@ -14,6 +14,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar } from "@/components/ui/avatar";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { formatCurrency } from "@/lib/utils";
 import { enrollInCourse } from "@/lib/actions/enrollments";
 import { useCartStore } from "@/store/cartStore";
@@ -288,6 +289,14 @@ export function DbCourseDetail({
         )}
         <div className="absolute inset-0 bg-gradient-to-r from-gray-900 via-gray-900/90 to-gray-900/70" />
         <div className="relative mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+          <Breadcrumbs
+            theme="dark"
+            className="mb-4"
+            items={[
+              { label: "Courses", href: "/courses" },
+              { label: course.title },
+            ]}
+          />
           <div className="flex flex-wrap gap-2 mb-3">
             <Badge className="bg-brand/20 text-white border-0">
               {course.level.charAt(0) + course.level.slice(1).toLowerCase()}

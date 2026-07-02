@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Play, ArrowRight } from "lucide-react";
-import { AnimatedProgress } from "@/components/motion/AnimatedProgress";
+import { ProgressBar } from "@/components/ui/progress";
 
 const PLACEHOLDER =
   "https://images.unsplash.com/photo-1518770660439-4636190af475?w=800&h=400&fit=crop";
@@ -61,7 +61,7 @@ export function HomeContinueCompact({
             <span>Progress</span>
             <span>{progressPct}%</span>
           </div>
-          <AnimatedProgress value={progressPct} />
+          <ProgressBar value={progressPct} showMarks />
         </div>
         <Link
           href={`/learn/${slug}/${firstLessonSlug}`}

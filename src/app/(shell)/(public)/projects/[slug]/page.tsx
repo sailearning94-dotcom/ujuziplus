@@ -8,6 +8,7 @@ import { getProjectBySlug, hasUserLikedProject } from "@/lib/actions/projects";
 import { ProjectLikeButton } from "@/components/projects/ProjectLikeButton";
 import { ImageContainer, OptimizedImage } from "@/components/shared/OptimizedImage";
 import { getAuthSession } from "@/lib/auth-server";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 
 export default async function ProjectDetailPage({ params }: { params: { slug: string } }) {
   const session = await getAuthSession();
@@ -35,9 +36,11 @@ export default async function ProjectDetailPage({ params }: { params: { slug: st
         ) : null}
         <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/80 to-gray-900/60" />
         <div className="relative mx-auto max-w-4xl px-4 py-10 sm:px-6">
-          <Button asChild variant="ghost" size="sm" className="mb-4 text-white/70 hover:bg-white/10 hover:text-white">
-            <Link href="/projects">← All projects</Link>
-          </Button>
+          <Breadcrumbs
+            theme="dark"
+            className="mb-4"
+            items={[{ label: "Projects", href: "/projects" }, { label: project.title }]}
+          />
           <div className="flex flex-wrap gap-2">
             <Badge className="border-0 bg-brand/30 text-white">{project.category}</Badge>
             <Badge variant="outline" className="border-white/30 bg-white/10 capitalize text-white/90">

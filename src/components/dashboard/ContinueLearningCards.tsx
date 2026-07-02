@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowRight, BookOpen, Play } from "lucide-react";
-import { AnimatedProgress } from "@/components/motion/AnimatedProgress";
+import { ProgressBar } from "@/components/ui/progress";
 
 export type ContinueCourseItem = {
   id: string;
@@ -64,7 +64,7 @@ export function FeaturedContinueCourse({ course }: { course: ContinueCourseItem 
                   {course.completedLessons}/{course.totalLessons} lessons
                 </span>
               </div>
-              <AnimatedProgress value={course.progressPct} className="learner-featured-course__progress" />
+              <ProgressBar value={course.progressPct} variant="onDark" showMarks />
             </div>
           </div>
           <span className="learner-featured-course__cta inline-flex shrink-0 items-center gap-2 rounded-xl bg-brand px-6 py-3 text-sm font-bold text-white shadow-lg transition group-hover:bg-brand-dark">
@@ -116,7 +116,7 @@ export function ContinueLearningCard({
         <div className="learner-course-card__content">
           <h3 className="learner-course-card__title">{course.course.title}</h3>
           <p className="learner-course-card__instructor">{course.course.instructor.fullName}</p>
-          <AnimatedProgress value={course.progressPct} className="mt-3" />
+          <ProgressBar value={course.progressPct} className="mt-3" showMarks />
           <p className="mt-2 text-xs text-gray-500">
             {course.completedLessons} of {course.totalLessons} lessons
           </p>

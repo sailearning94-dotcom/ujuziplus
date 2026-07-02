@@ -1,4 +1,4 @@
-import type { Course, Module, Notification, Organization, Project, User } from "@/types/app";
+import type { Course, Notification, Organization, Project, User } from "@/types/app";
 
 export const currentUser: User = {
   id: "u-001",
@@ -143,30 +143,6 @@ export const courses: Course[] = [
       "Next.js App Router and SSR",
       "REST API integration",
       "Deploy to production",
-    ],
-  },
-];
-
-export const courseCurriculum: Module[] = [
-  {
-    id: "m-1",
-    title: "Getting Started with Arduino",
-    order: 1,
-    lessons: [
-      { id: "l-1", slug: "introduction", title: "Course Introduction", type: "video", durationMinutes: 8, isFreePreview: true, isCompleted: true },
-      { id: "l-2", slug: "setup-arduino-ide", title: "Setting Up Arduino IDE", type: "video", durationMinutes: 12, isFreePreview: true, isCompleted: true },
-      { id: "l-3", slug: "first-blink", title: "Your First Blink Program", type: "video", durationMinutes: 15, isFreePreview: false, isCompleted: true },
-      { id: "l-4", slug: "quiz-basics", title: "Arduino Basics Quiz", type: "quiz", durationMinutes: 10, isFreePreview: false, isCompleted: false },
-    ],
-  },
-  {
-    id: "m-2",
-    title: "Sensors & Motors",
-    order: 2,
-    lessons: [
-      { id: "l-5", slug: "ultrasonic-sensor", title: "Ultrasonic Distance Sensor", type: "video", durationMinutes: 18, isFreePreview: false, isCompleted: false },
-      { id: "l-6", slug: "motor-control", title: "DC Motor Control", type: "video", durationMinutes: 22, isFreePreview: false, isCompleted: false },
-      { id: "l-7", slug: "lab-motor-test", title: "Practical Lab: Motor Test", type: "assignment", durationMinutes: 45, isFreePreview: false, isCompleted: false },
     ],
   },
 ];

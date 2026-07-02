@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { ArticleEditor } from "@/components/instructor/ArticleEditor";
 import { MediaUploadField } from "@/components/ui/MediaUploadField";
 import { QuizBuilder } from "@/components/instructor/QuizBuilder";
@@ -297,7 +298,7 @@ function LessonForm({
         />
         <div>
           <label className="mb-1.5 block text-sm font-medium text-gray-700">Lesson type</label>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
             {LESSON_TYPES.map((t) => (
               <button
                 key={t.value}
@@ -521,7 +522,7 @@ function StepBasicInfo({ courseId, instructorId, data, onChange, onSaved }: {
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {/* Category — free-text with predefined suggestions */}
         <div>
           <label className="mb-1.5 block text-sm font-medium text-gray-700">Category</label>
@@ -1000,7 +1001,7 @@ function StepPricing({ courseId, instructorId, data, onChange, onSaved }: {
     <Card className="space-y-5">
       <div>
         <label className="mb-3 block text-sm font-medium text-gray-700">Pricing model</label>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {[
             { value: true, label: "Free", desc: "Open to all students, no payment required" },
             { value: false, label: "Paid", desc: "Students purchase access to unlock content" },
@@ -1026,7 +1027,7 @@ function StepPricing({ courseId, instructorId, data, onChange, onSaved }: {
       </div>
 
       {!data.isFree && (
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
             <Input
               label="Price (TZS) *"
@@ -1171,7 +1172,7 @@ function StepReview({ courseId, instructorId, data }: {
   return (
     <Card>
       {/* Summary */}
-      <div className="mb-5 grid grid-cols-2 gap-3 rounded-xl bg-gray-50 p-4 text-sm">
+      <div className="mb-5 grid grid-cols-1 gap-3 rounded-xl bg-gray-50 p-4 text-sm sm:grid-cols-2">
         <div>
           <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 mb-1">Course</p>
           <p className="font-semibold">{data.title}</p>
@@ -1255,9 +1256,13 @@ export function CourseBuilder({
       {/* Header */}
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <Button asChild variant="ghost" size="sm" className="mb-2 -ml-2">
-            <Link href="/instructor/courses">← My courses</Link>
-          </Button>
+          <Breadcrumbs
+            className="mb-2"
+            items={[
+              { label: "My courses", href: "/instructor/courses" },
+              { label: mode === "edit" ? "Edit course" : "Create course" },
+            ]}
+          />
           <h1 className="font-display text-2xl font-bold">
             {mode === "edit" ? "Edit course" : "Create course"}
           </h1>

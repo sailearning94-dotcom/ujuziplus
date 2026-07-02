@@ -19,7 +19,7 @@ export function PricingPlansGrid({
   }[];
 }) {
   return (
-    <MotionGrid className="mt-10 grid gap-6 md:grid-cols-3">
+    <MotionGrid className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {plans.map((plan) => {
         const features = (plan.features as string[]) ?? [];
         const price = Number(plan.price);

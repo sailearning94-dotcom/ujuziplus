@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { OptimizedImage } from "@/components/shared/OptimizedImage";
 import { getAuthSession } from "@/lib/auth-server";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 
 interface Props {
   params: { slug: string };
@@ -52,9 +53,11 @@ export default async function MentorProfilePage({ params }: Props) {
     <div className="learner-canvas">
       <header className="mentor-profile-hero">
         <div className="mentor-profile-hero__inner">
-          <Link href="/mentors" className="mentor-profile-hero__back">
-            ← All mentors
-          </Link>
+          <Breadcrumbs
+            theme="dark"
+            className="mb-6"
+            items={[{ label: "Mentors", href: "/mentors" }, { label: mentor.displayName }]}
+          />
           <div className="mentor-profile-hero__row">
             <Avatar
               src={mentor.avatarUrl}

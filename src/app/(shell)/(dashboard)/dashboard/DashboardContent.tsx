@@ -14,6 +14,7 @@ import {
   DashboardDiscussionsPanel,
   DashboardQuickActions,
 } from "@/components/dashboard/DashboardPanels";
+import { LearningStreak } from "@/components/dashboard/LearningStreak";
 
 export async function DashboardContent({ userId }: { userId: string }) {
   const [data, recentDiscussions] = await Promise.all([
@@ -32,7 +33,7 @@ export async function DashboardContent({ userId }: { userId: string }) {
     }),
   ]);
 
-  const { inProgress, stats, certificates } = data;
+  const { inProgress, stats, certificates, streak } = data;
   const featured = inProgress[0];
   const restCourses = inProgress.slice(1, 4);
 
@@ -132,6 +133,7 @@ export async function DashboardContent({ userId }: { userId: string }) {
         </div>
 
         <aside className="learner-dashboard__aside">
+          <LearningStreak streakDays={streak.streakDays} activeLast7={streak.activeLast7} />
           <DashboardQuickActions />
           <DashboardAchievementsPanel
             certificates={certificates}

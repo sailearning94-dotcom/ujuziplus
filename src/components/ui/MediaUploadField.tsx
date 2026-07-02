@@ -17,7 +17,7 @@
  *  - Clear / replace
  */
 
-import { useState, useRef } from "react";
+import { useState, useRef, useId } from "react";
 import { Upload, Link2, X, FileText, Music, CheckCircle } from "lucide-react";
 import { IMAGE_ACCEPT, uploadMediaFile, type UploadKind } from "@/lib/upload-client";
 
@@ -154,6 +154,7 @@ export function MediaUploadField({
 }: MediaUploadFieldProps) {
   const cfg = KIND_CONFIG[kind] ?? KIND_CONFIG.image;
   const inputRef = useRef<HTMLInputElement>(null);
+  const labelId = useId();
 
   // "upload" = upload from device, "url" = paste a link
   const [mode, setMode] = useState<"upload" | "url">(
@@ -222,13 +223,13 @@ export function MediaUploadField({
   const hasValue = !!value;
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2" role="group" aria-labelledby={label ? labelId : undefined}>
       {/* Label */}
       {label && (
-        <label className="text-sm font-medium">
+        <span id={labelId} className="block text-sm font-medium">
           {label}
           {required && <span className="ml-0.5 text-red-500">*</span>}
-        </label>
+        </span>
       )}
 
       {/* Mode toggle (video and image only — docs/audio stay upload) */}
@@ -344,6 +345,7 @@ export function MediaUploadField({
             ref={inputRef}
             type="file"
             accept={cfg.accept}
+            aria-label={label || "Upload file"}
             className="hidden"
             onChange={handleFilePick}
           />
@@ -358,6 +360,7 @@ export function MediaUploadField({
               type="url"
               className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-brand focus:outline-none"
               placeholder={cfg.urlPlaceholder}
+              aria-label={label ? `${label} URL` : "Media URL"}
               value={urlInput}
               onChange={(e) => setUrlInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleUrlCommit()}
