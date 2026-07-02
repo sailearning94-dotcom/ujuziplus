@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { MediaUploadField } from "@/components/ui/MediaUploadField";
 import { useAppStore } from "@/store/appStore";
 import {
@@ -144,10 +145,12 @@ export function AdminMentorForm({
         />
         <Input label="One-line hook" value={form.hook ?? ""} onChange={(e) => patch({ hook: e.target.value })} placeholder="Built 12 school robotics labs in Dar" />
         <Input label="Featured quote" value={form.quote ?? ""} onChange={(e) => patch({ quote: e.target.value })} />
-        <label className="block text-sm">
-          <span className="font-medium">Bio</span>
-          <textarea className="mt-1 w-full rounded-lg border px-3 py-2 text-sm min-h-[100px]" value={form.bio ?? ""} onChange={(e) => patch({ bio: e.target.value })} />
-        </label>
+        <Textarea
+          label="Bio"
+          className="min-h-[100px]"
+          value={form.bio ?? ""}
+          onChange={(e) => patch({ bio: e.target.value })}
+        />
         <div className="grid gap-4 sm:grid-cols-2">
           <Input label="City" value={form.city ?? ""} onChange={(e) => patch({ city: e.target.value })} />
           <Input label="Country" value={form.country ?? ""} onChange={(e) => patch({ country: e.target.value })} />
@@ -156,10 +159,12 @@ export function AdminMentorForm({
         </div>
         <Input label="Video intro URL" value={form.videoIntroUrl ?? ""} onChange={(e) => patch({ videoIntroUrl: e.target.value })} placeholder="YouTube or Vimeo link" />
         <Input label="Booking / meeting URL" value={form.bookingUrl ?? ""} onChange={(e) => patch({ bookingUrl: e.target.value })} />
-        <label className="block text-sm">
-          <span className="font-medium">Office hours note</span>
-          <textarea className="mt-1 w-full rounded-lg border px-3 py-2 text-sm min-h-[60px]" value={form.officeHoursNote ?? ""} onChange={(e) => patch({ officeHoursNote: e.target.value })} />
-        </label>
+        <Textarea
+          label="Office hours note"
+          className="min-h-[60px]"
+          value={form.officeHoursNote ?? ""}
+          onChange={(e) => patch({ officeHoursNote: e.target.value })}
+        />
 
         <div>
           <p className="text-sm font-medium mb-2">Expertise tags</p>
@@ -226,7 +231,7 @@ export function AdminMentorForm({
             {form.learningPath.map((s, i) => (
               <li key={i} className="flex items-center justify-between rounded-lg bg-gray-50 px-3 py-2 text-sm">
                 <span>{s.title} → {s.href}</span>
-                <button type="button" className="text-red-500 text-xs" onClick={() => patch({ learningPath: form.learningPath.filter((_, j) => j !== i) })}>Remove</button>
+                <Button type="button" size="sm" variant="ghost" className="text-red-500" onClick={() => patch({ learningPath: form.learningPath.filter((_, j) => j !== i) })}>Remove</Button>
               </li>
             ))}
           </ul>

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { MediaUploadField } from "@/components/ui/MediaUploadField";
 import { useAppStore } from "@/store/appStore";
 import {
@@ -69,14 +70,12 @@ export function AdminCompetitionForm({
           value={form.thumbnailUrl ?? ""}
           onChange={(url) => patch({ thumbnailUrl: url })}
         />
-        <label className="block text-sm">
-          <span className="font-medium">Description</span>
-          <textarea
-            className="mt-1 w-full rounded-lg border px-3 py-2 text-sm min-h-[100px]"
-            value={form.description}
-            onChange={(e) => patch({ description: e.target.value })}
-          />
-        </label>
+        <Textarea
+          label="Description"
+          className="min-h-[100px]"
+          value={form.description}
+          onChange={(e) => patch({ description: e.target.value })}
+        />
         <div className="grid gap-4 sm:grid-cols-2">
           <Input label="Start" type="date" value={form.startDate ?? ""} onChange={(e) => patch({ startDate: e.target.value })} />
           <Input label="End" type="date" value={form.endDate ?? ""} onChange={(e) => patch({ endDate: e.target.value })} />

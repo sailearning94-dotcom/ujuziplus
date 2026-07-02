@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Plus, Trash2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   getAssignmentForLesson,
   saveAssignment,
@@ -66,15 +67,13 @@ export function AssignmentBuilder({
     <div className="mt-4 space-y-4 rounded-lg border border-violet-200 bg-violet-50/50 p-4">
       <h4 className="font-semibold text-sm">Assignment: {lessonTitle}</h4>
 
-      <div>
-        <label className="text-sm font-medium">Instructions for students</label>
-        <textarea
-          className="mt-1 w-full rounded-lg border p-3 text-sm h-32"
-          value={instructions}
-          onChange={(e) => setInstructions(e.target.value)}
-          placeholder="What should students submit? Include requirements, file types, and grading criteria…"
-        />
-      </div>
+      <Textarea
+        label="Instructions for students"
+        className="h-32"
+        value={instructions}
+        onChange={(e) => setInstructions(e.target.value)}
+        placeholder="What should students submit? Include requirements, file types, and grading criteria…"
+      />
 
       <div className="grid gap-3 sm:grid-cols-2">
         <Input
@@ -83,15 +82,12 @@ export function AssignmentBuilder({
           value={String(maxScore)}
           onChange={(e) => setMaxScore(Number(e.target.value) || 100)}
         />
-        <div>
-          <label className="text-sm font-medium">Due date (optional)</label>
-          <input
-            type="datetime-local"
-            className="mt-1 w-full rounded-lg border px-3 py-2.5 text-sm"
-            value={dueAt}
-            onChange={(e) => setDueAt(e.target.value)}
-          />
-        </div>
+        <Input
+          label="Due date (optional)"
+          type="datetime-local"
+          value={dueAt}
+          onChange={(e) => setDueAt(e.target.value)}
+        />
       </div>
 
       <div>

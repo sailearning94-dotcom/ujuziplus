@@ -6,6 +6,7 @@ import { useModalStore } from "@/store/modalStore";
 import { useAppStore } from "@/store/appStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 export function ModalRoot() {
   const router = useRouter();
@@ -86,15 +87,14 @@ export function ModalRoot() {
           modal.fields?.map((f) => (
             <div key={f.name} className="mt-3">
               {f.type === "textarea" ? (
-                <>
-                  <label className="text-sm font-medium">{f.label}</label>
-                  <textarea
-                    className="mt-1 w-full rounded-lg border p-3 text-sm h-24"
-                    placeholder={f.placeholder}
-                    value={values[f.name] || ""}
-                    onChange={(e) => setValues((v) => ({ ...v, [f.name]: e.target.value }))}
-                  />
-                </>
+                <Textarea
+                  id={f.name}
+                  label={f.label}
+                  className="h-24"
+                  placeholder={f.placeholder}
+                  value={values[f.name] || ""}
+                  onChange={(e) => setValues((v) => ({ ...v, [f.name]: e.target.value }))}
+                />
               ) : (
                 <Input
                   label={f.label}

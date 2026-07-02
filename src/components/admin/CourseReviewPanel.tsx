@@ -7,6 +7,7 @@ import { Check, X, BookOpen, Eye } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
 import { formatDate } from "@/lib/utils";
 import { approveCourse, rejectCourse } from "@/lib/actions/admin";
 import { useAppStore } from "@/store/appStore";
@@ -106,9 +107,9 @@ export function CourseReviewPanel({ pending, allCourses, adminId, tab: initialTa
               {/* Reject modal */}
               {rejectId === course.id && (
                 <div className="mb-4 rounded-xl border border-red-200 bg-red-50 p-4">
-                  <p className="text-sm font-medium mb-2">Rejection reason (sent to instructor):</p>
-                  <textarea
-                    className="w-full rounded-lg border p-2 text-sm h-20"
+                  <Textarea
+                    label="Rejection reason (sent to instructor)"
+                    className="h-20"
                     value={reason}
                     onChange={(e) => setReason(e.target.value)}
                     placeholder="e.g. Missing curriculum, low-quality content…"

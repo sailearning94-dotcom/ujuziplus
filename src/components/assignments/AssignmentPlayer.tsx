@@ -5,6 +5,7 @@ import { Upload, Github, Loader2, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import {
   saveAssignmentDraft,
@@ -232,9 +233,9 @@ export function AssignmentPlayer({
       </div>
 
       <div className="mt-4">
-        <label className="text-sm font-medium">Written response</label>
-        <textarea
-          className="mt-1 w-full rounded-lg border border-gray-300 p-3 text-sm h-28 disabled:bg-gray-50"
+        <Textarea
+          label="Written response"
+          className="h-28"
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="Describe your approach, findings, and how to run your project…"

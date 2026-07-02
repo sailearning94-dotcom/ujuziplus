@@ -5,6 +5,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { UjuziLoader } from "@/components/ui/UjuziLoader";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { FormAlert } from "@/components/ui/form-alert";
 import { registerUser } from "@/lib/actions/auth";
 import {
   AuthShell,
@@ -12,7 +15,6 @@ import {
   AuthLogo,
   authInputClass,
   authButtonClass,
-  authErrorClass,
 } from "@/components/auth/AuthShell";
 
 export default function RegisterPage() {
@@ -63,47 +65,39 @@ export default function RegisterPage() {
         />
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {error && <div className={authErrorClass}>{error}</div>}
+          {error && <FormAlert variant="error">{error}</FormAlert>}
 
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-gray-700">Full name</label>
-            <input
-              name="fullName"
-              type="text"
-              placeholder="William Mwangi"
-              required
-              className={authInputClass}
-            />
-          </div>
+          <Input
+            label="Full name"
+            name="fullName"
+            type="text"
+            placeholder="William Mwangi"
+            required
+          />
 
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-gray-700">Email</label>
-            <input
-              name="email"
-              type="email"
-              placeholder="you@example.com"
-              required
-              autoComplete="email"
-              className={authInputClass}
-            />
-          </div>
+          <Input
+            label="Email"
+            name="email"
+            type="email"
+            placeholder="you@example.com"
+            required
+            autoComplete="email"
+          />
 
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-gray-700">Password</label>
-            <input
-              name="password"
-              type="password"
-              placeholder="Min. 8 characters"
-              required
-              minLength={8}
-              autoComplete="new-password"
-              className={authInputClass}
-            />
-          </div>
+          <Input
+            label="Password"
+            name="password"
+            type="password"
+            placeholder="Min. 8 characters"
+            required
+            minLength={8}
+            autoComplete="new-password"
+          />
 
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-gray-700">I want to</label>
+          <div className="space-y-1.5">
+            <Label htmlFor="register-role">I want to</Label>
             <select
+              id="register-role"
               name="role"
               className={`${authInputClass} bg-white`}
             >

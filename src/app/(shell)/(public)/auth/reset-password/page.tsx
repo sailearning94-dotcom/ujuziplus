@@ -5,14 +5,14 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { CheckCircle, KeyRound } from "lucide-react";
 import { UjuziLoader } from "@/components/ui/UjuziLoader";
+import { Input } from "@/components/ui/input";
+import { FormAlert } from "@/components/ui/form-alert";
 import { resetPassword } from "@/lib/actions/auth";
 import {
   AuthShell,
   AuthCard,
   AuthLogo,
-  authInputClass,
   authButtonClass,
-  authErrorClass,
 } from "@/components/auth/AuthShell";
 
 function ResetPasswordForm() {
@@ -92,36 +92,28 @@ function ResetPasswordForm() {
         <AuthLogo title="Set new password" subtitle="Minimum 8 characters required." />
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {error && <div className={authErrorClass}>{error}</div>}
+          {error && <FormAlert variant="error">{error}</FormAlert>}
 
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-gray-700">New password</label>
-            <div className="relative">
-              <KeyRound className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-              <input
-                name="password"
-                type="password"
-                required
-                minLength={8}
-                placeholder="Min. 8 characters"
-                autoComplete="new-password"
-                className={`${authInputClass} pl-10`}
-              />
-            </div>
-          </div>
+          <Input
+            label="New password"
+            name="password"
+            type="password"
+            required
+            minLength={8}
+            placeholder="Min. 8 characters"
+            autoComplete="new-password"
+            leftIcon={<KeyRound className="h-4 w-4" />}
+          />
 
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-gray-700">Confirm password</label>
-            <input
-              name="confirm"
-              type="password"
-              required
-              minLength={8}
-              placeholder="Repeat your new password"
-              autoComplete="new-password"
-              className={authInputClass}
-            />
-          </div>
+          <Input
+            label="Confirm password"
+            name="confirm"
+            type="password"
+            required
+            minLength={8}
+            placeholder="Repeat your new password"
+            autoComplete="new-password"
+          />
 
           <button type="submit" disabled={loading} className={authButtonClass}>
             {loading ? <UjuziLoader size="sm" className="ujuzi-loader--on-brand" label="Updating password" /> : "Update password"}

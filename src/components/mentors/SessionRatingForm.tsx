@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Star, Loader2, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 
 const STAR_LABELS = ["", "Poor", "Fair", "Good", "Great", "Outstanding"];
@@ -85,11 +86,9 @@ export function SessionRatingForm({ sessionId, mentorName, onRate }: Props) {
       )}
 
       <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-1.5">
-          Share more (optional)
-        </label>
-        <textarea
-          className="w-full rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm focus:ring-2 focus:ring-amber-200 focus:border-amber-400 focus:outline-none resize-none"
+        <Textarea
+          label="Share more (optional)"
+          className="resize-none focus:ring-amber-200 focus:border-amber-400"
           rows={3}
           maxLength={1000}
           value={feedback}

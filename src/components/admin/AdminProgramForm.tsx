@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { MediaUploadField } from "@/components/ui/MediaUploadField";
 import { useAppStore } from "@/store/appStore";
 import {
@@ -152,15 +153,13 @@ export function AdminProgramForm({
         </div>
 
         {/* Description */}
-        <label className="block text-sm">
-          <span className="font-medium">Description</span>
-          <textarea
-            className="mt-1 w-full rounded-lg border px-3 py-2 text-sm min-h-[120px]"
-            value={form.description}
-            onChange={(e) => patch({ description: e.target.value })}
-            placeholder="Describe the program, what participants will learn, who it is for…"
-          />
-        </label>
+        <Textarea
+          label="Description"
+          className="min-h-[120px]"
+          value={form.description}
+          onChange={(e) => patch({ description: e.target.value })}
+          placeholder="Describe the program, what participants will learn, who it is for…"
+        />
 
         {/* Dates + logistics */}
         <div className="grid gap-4 sm:grid-cols-2">

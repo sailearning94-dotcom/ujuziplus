@@ -4,14 +4,14 @@ import { useState } from "react";
 import Link from "next/link";
 import { CheckCircle, Mail } from "lucide-react";
 import { UjuziLoader } from "@/components/ui/UjuziLoader";
+import { Input } from "@/components/ui/input";
+import { FormAlert } from "@/components/ui/form-alert";
 import { forgotPassword } from "@/lib/actions/auth";
 import {
   AuthShell,
   AuthCard,
   AuthLogo,
-  authInputClass,
   authButtonClass,
-  authErrorClass,
 } from "@/components/auth/AuthShell";
 
 export default function ForgotPasswordPage() {
@@ -96,21 +96,16 @@ export default function ForgotPasswordPage() {
         />
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {error && <div className={authErrorClass}>{error}</div>}
+          {error && <FormAlert variant="error">{error}</FormAlert>}
 
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-gray-700">Email address</label>
-            <div className="relative">
-              <Mail className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
-              <input
-                name="email"
-                type="email"
-                required
-                placeholder="you@example.com"
-                className={`${authInputClass} pl-10`}
-              />
-            </div>
-          </div>
+          <Input
+            label="Email address"
+            name="email"
+            type="email"
+            required
+            placeholder="you@example.com"
+            leftIcon={<Mail className="h-4 w-4" />}
+          />
 
           <button type="submit" disabled={loading} className={authButtonClass}>
             {loading ? <UjuziLoader size="sm" className="ujuzi-loader--on-brand" label="Sending" /> : "Send reset link"}

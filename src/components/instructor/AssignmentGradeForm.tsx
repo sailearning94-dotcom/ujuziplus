@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { gradeSubmission } from "@/lib/actions/assignments";
 import { useAppStore } from "@/store/appStore";
 
@@ -103,15 +104,13 @@ export function AssignmentGradeForm({
           value={score}
           onChange={(e) => setScore(e.target.value)}
         />
-        <div>
-          <label className="text-sm font-medium">Feedback</label>
-          <textarea
-            className="mt-1 w-full rounded-lg border p-3 h-28 text-sm"
-            value={feedback}
-            onChange={(e) => setFeedback(e.target.value)}
-            placeholder="What did the student do well? What could improve?"
-          />
-        </div>
+        <Textarea
+          label="Feedback"
+          className="h-28"
+          value={feedback}
+          onChange={(e) => setFeedback(e.target.value)}
+          placeholder="What did the student do well? What could improve?"
+        />
 
         <div className="flex flex-wrap gap-2">
           <Button onClick={() => submit(false)} disabled={isPending}>

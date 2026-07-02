@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import { Plus, Trash2, Loader2, Check, HelpCircle, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
 import { saveQuiz, getQuizForLesson } from "@/lib/actions/quizzes";
 import type { QuizInput, QuizQuestionInput, QuizOptionInput } from "@/lib/actions/quizzes";
 
@@ -226,12 +227,12 @@ export function QuizBuilder({
           </div>
 
           {/* Question text */}
-          <textarea
+          <Textarea
             rows={2}
             value={q.text}
             onChange={(e) => updateQuestion(qIdx, { text: e.target.value })}
             placeholder="Question text…"
-            className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:ring-2 focus:ring-brand focus:outline-none resize-none"
+            className="min-h-0 py-2 resize-none"
           />
 
           {/* Options */}

@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { submitMentorRequest } from "@/lib/actions/mentors";
 import { useAppStore } from "@/store/appStore";
@@ -63,15 +64,13 @@ export function MentorRequestForm({
           onChange={(e) => setGoal(e.target.value)}
           placeholder="e.g. Build a line-following robot for my school fair"
         />
-        <label className="block text-sm">
-          <span className="font-medium">Your message</span>
-          <textarea
-            className="mt-1 w-full rounded-lg border px-3 py-2 text-sm min-h-[100px]"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            placeholder="Share your current level, timeline, and what you've tried so far…"
-          />
-        </label>
+        <Textarea
+          label="Your message"
+          className="min-h-[100px]"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          placeholder="Share your current level, timeline, and what you've tried so far…"
+        />
         <Button disabled={isPending} onClick={submit} className="w-full sm:w-auto">
           {isPending ? "Sending…" : "Send request"}
         </Button>
