@@ -9,6 +9,7 @@ import { getProgramBySlug, getUserProgramRegistrations } from "@/lib/actions/pro
 import { ProgramRegisterButton } from "@/components/programs/ProgramRegisterButton";
 import { formatCurrency } from "@/lib/utils";
 import { getAuthSession } from "@/lib/auth-server";
+import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import {
   CalendarDays,
   MapPin,
@@ -37,9 +38,11 @@ export default async function ProgramDetailPage({ params }: { params: { slug: st
       {/* Page header — always its own section, never overlaid on the poster */}
       <div className="bg-gradient-navy px-4 py-8 sm:px-6">
         <div className="mx-auto max-w-4xl">
-          <Button asChild variant="ghost" size="sm" className="mb-4 text-white/70 hover:bg-white/10 hover:text-white">
-            <Link href="/programs">← All programs</Link>
-          </Button>
+          <Breadcrumbs
+            theme="dark"
+            className="mb-4"
+            items={[{ label: "Programs", href: "/programs" }, { label: program.title }]}
+          />
           <div className="flex flex-wrap items-center gap-2 mb-2">
             <Badge className="border-0 bg-white/20 text-white">{program.type}</Badge>
             <Badge

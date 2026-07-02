@@ -175,6 +175,7 @@ export function OrgKitsPanel({
 
       {tab === "inventory" && (
         <Card className="overflow-hidden p-0">
+          <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b bg-gray-50 text-left text-gray-500">
@@ -243,6 +244,7 @@ export function OrgKitsPanel({
               })}
             </tbody>
           </table>
+          </div>
           {inventory.length === 0 && (
             <p className="p-8 text-center text-gray-500">
               No kits in inventory yet. Submit a request to procure kits.

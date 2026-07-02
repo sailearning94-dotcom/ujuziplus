@@ -4,6 +4,8 @@ import { useState, useTransition } from "react";
 import { Users, Calendar, BookOpen, Loader2, CheckCircle } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { ProgressBar } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
@@ -66,8 +68,8 @@ export function MentorCohortCard({ cohort, isJoined = false, isAuthenticated, on
   }
 
   return (
-    <div className={cn(
-      "group relative flex flex-col rounded-2xl border bg-white p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-brand/10 hover:border-brand/30",
+    <Card className={cn(
+      "group relative flex flex-col p-5 shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-brand/10 hover:border-brand/30",
       joined && "border-brand/30 bg-brand/5"
     )}>
       <div className="pointer-events-none absolute -right-6 -top-6 h-24 w-24 rounded-full bg-gradient-to-br from-brand/15 to-orange-200/20 opacity-0 transition-opacity duration-300 group-hover:opacity-100" aria-hidden />
@@ -117,12 +119,12 @@ export function MentorCohortCard({ cohort, isJoined = false, isAuthenticated, on
         </div>
 
         {/* Capacity bar */}
-        <div className="mt-2 h-1.5 w-full rounded-full bg-gray-100 overflow-hidden">
-          <div
-            className={cn("h-full rounded-full transition-all", isFull ? "bg-red-400" : "bg-brand")}
-            style={{ width: `${Math.min(100, (cohort.memberCount / cohort.maxMembers) * 100)}%` }}
-          />
-        </div>
+        <ProgressBar
+          className="mt-2"
+          size="sm"
+          value={(cohort.memberCount / cohort.maxMembers) * 100}
+          barClassName={isFull ? "bg-red-400" : "bg-brand"}
+        />
       </div>
 
       {error && <p className="text-xs text-red-600 mb-2">{error}</p>}
@@ -146,6 +148,6 @@ export function MentorCohortCard({ cohort, isJoined = false, isAuthenticated, on
           {isPending ? <><Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5" />Joining…</> : isFull ? "Cohort full" : "Join cohort"}
         </Button>
       )}
-    </div>
+    </Card>
   );
 }

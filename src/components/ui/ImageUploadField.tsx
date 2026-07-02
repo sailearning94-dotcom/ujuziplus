@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useId, useRef, useState } from "react";
 import Image from "next/image";
 import { Upload, Link2, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -22,6 +22,7 @@ export function ImageUploadField({
   const [mode, setMode] = useState<"upload" | "url">("upload");
   const [uploading, setUploading] = useState(false);
   const toast = useAppStore((s) => s.showToast);
+  const labelId = useId();
 
   const uploadFile = async (file: File) => {
     setUploading(true);
@@ -45,9 +46,9 @@ export function ImageUploadField({
   };
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2" role="group" aria-labelledby={labelId}>
       <div className="flex items-center justify-between gap-2">
-        <label className="text-sm font-medium">{label}</label>
+        <span id={labelId} className="text-sm font-medium">{label}</span>
         <div className="flex rounded-lg border p-0.5 text-xs">
           <button
             type="button"
@@ -87,6 +88,7 @@ export function ImageUploadField({
             ref={inputRef}
             type="file"
             accept="image/*"
+            aria-label={label}
             className="hidden"
             disabled={uploading}
             onChange={(e) => {
@@ -98,7 +100,7 @@ export function ImageUploadField({
       ) : (
         <div className="flex gap-2">
           <Input
-            label=""
+            aria-label={`${label} URL`}
             placeholder="https://example.com/photo.jpg"
             value={value}
             onChange={(e) => onChange(e.target.value)}

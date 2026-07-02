@@ -1,5 +1,6 @@
 import type { Config } from "tailwindcss";
 import typography from "@tailwindcss/typography";
+import { UJUZI } from "./src/lib/ujuzi-brand";
 
 const config: Config = {
   darkMode: ["class"],
@@ -7,37 +8,40 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // Values shared with `UJUZI` (src/lib/ujuzi-brand.ts, consumed directly by MUI `sx`
+        // props) are derived from it so the two never drift out of sync. Values with no
+        // UJUZI equivalent (tints/shades unique to Tailwind usage) stay as literals.
         brand: {
-          DEFAULT: "#f39223",
-          light: "#fef3e6",
-          dark: "#d97f12",
+          DEFAULT: UJUZI.orange,
+          light: UJUZI.orangeLight,
+          dark: UJUZI.orangeDark,
           muted: "#f5b366",
           glow: "#ffb347",
         },
         navy: {
-          DEFAULT: "#00004D",
-          light: "#e8e8f5",
-          dark: "#000033",
-          muted: "#1a1a6b",
+          DEFAULT: UJUZI.navy,
+          light: UJUZI.navyLight,
+          dark: UJUZI.navyDark,
+          muted: UJUZI.navyMuted,
         },
         accent: {
-          DEFAULT: "#f39223",
-          light: "#fef3e6",
-          dark: "#d97f12",
+          DEFAULT: UJUZI.accent,
+          light: UJUZI.orangeLight,
+          dark: UJUZI.orangeDark,
         },
         wazi: {
-          sidebar: "#00004D",
-          "sidebar-hover": "#1a1a6b",
-          link: "#f39223",
-          surface: "#F5F5F5",
-          border: "#D9D9D9",
-          muted: "#616161",
+          sidebar: UJUZI.sidebar,
+          "sidebar-hover": UJUZI.sidebarHover,
+          link: UJUZI.link,
+          surface: UJUZI.surface,
+          border: UJUZI.border,
+          muted: UJUZI.textMuted,
         },
         surface: {
-          DEFAULT: "#FFFFFF",
+          DEFAULT: UJUZI.white,
           muted: "#F9FAFB",
           border: "#E5E7EB",
-          elevated: "#FFFFFF",
+          elevated: UJUZI.white,
         },
       },
       fontFamily: {

@@ -35,7 +35,7 @@ export function ProgramsList({
   registered: string[];
 }) {
   return (
-    <MotionGrid className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <MotionGrid className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {programs.map((p) => {
         const isRegistered = registered.includes(p.slug);
         const priceNum = Number(p.price);

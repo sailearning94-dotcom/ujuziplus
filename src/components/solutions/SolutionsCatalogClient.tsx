@@ -3,6 +3,7 @@
 import { useState, useMemo, useTransition } from "react";
 import Link from "next/link";
 import { LearnerPageHero } from "@/components/shared/LearnerPageHero";
+import { EmptyState } from "@/components/shared/EmptyState";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -117,6 +118,7 @@ export function SolutionsCatalogClient({
           <input
             type="text"
             placeholder="Search solutions…"
+            aria-label="Search solutions"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="w-full rounded-lg border border-gray-200 bg-white py-2 pl-9 pr-3 text-sm focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
@@ -145,13 +147,14 @@ export function SolutionsCatalogClient({
 
       {/* Grid */}
       {filtered.length === 0 ? (
-        <div className="mt-12 flex flex-col items-center justify-center gap-3 text-center">
-          <FlaskConical className="h-10 w-10 text-gray-200" />
-          <p className="text-sm text-gray-400">No solutions match your search.</p>
-          <Button variant="ghost" size="sm" onClick={() => { setFilter("All"); setSearch(""); }}>
-            Clear filters
-          </Button>
-        </div>
+        <EmptyState
+          className="mt-12"
+          icon={<FlaskConical className="h-8 w-8 text-brand" />}
+          title="No solutions match your search"
+          description="Try a different search term or clear your filters to see all solutions."
+          actionLabel="Clear filters"
+          onAction={() => { setFilter("All"); setSearch(""); }}
+        />
       ) : (
         <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((s) => {

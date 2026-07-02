@@ -153,6 +153,7 @@ export function OrgMembersPanel({
       )}
 
       <Card className="overflow-hidden p-0">
+        <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b bg-gray-50 text-left text-gray-500">
@@ -205,6 +206,7 @@ export function OrgMembersPanel({
             ))}
           </tbody>
         </table>
+        </div>
         {members.length === 0 && (
           <p className="p-8 text-center text-gray-500">No members yet. Send an invite to get started.</p>
         )}

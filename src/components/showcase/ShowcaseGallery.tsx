@@ -230,6 +230,7 @@ export function ShowcaseGallery({ projects, isAuthenticated, onLike }: Props) {
           <input
             type="search"
             placeholder="Search projects, creators, technologies…"
+            aria-label="Search projects, creators, technologies"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             className="flex-1 min-w-48 rounded-xl border border-gray-200 px-4 py-2 text-sm focus:ring-2 focus:ring-brand/20 focus:border-brand/40 focus:outline-none"

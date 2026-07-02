@@ -206,6 +206,7 @@ export function DbLearnPlayer({
     (l) => l.id === activeKey || l.slug === activeKey
   );
   const lessonMeta = allLessons[currentIndex] ?? allLessons[0];
+  const currentModule = modules.find((m) => m.lessons.some((l) => l.id === lessonMeta?.id));
   const lesson = lessonMeta ? contentById[lessonMeta.id] ?? lessonMeta : undefined;
   const prev = allLessons[currentIndex - 1];
   const next = allLessons[currentIndex + 1];
@@ -218,7 +219,8 @@ export function DbLearnPlayer({
   const progressPct = totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
   const isCurrentDone = lesson ? localCompletedIds.has(lesson.id) : false;
 
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
   const [isPending, startTransition] = useTransition();
   const reduceMotion = useReducedMotion();
   const [certVerifyCode, setCertVerifyCode] = useState<string | null>(null);
@@ -326,6 +328,25 @@ export function DbLearnPlayer({
     completingRef.current = false;
   }, [lesson?.id]);
 
+  useEffect(() => {
+    const mql = window.matchMedia("(min-width: 1024px)");
+    const sync = () => {
+      setIsDesktop(mql.matches);
+      setSidebarOpen(mql.matches);
+    };
+    sync();
+    mql.addEventListener("change", sync);
+    return () => mql.removeEventListener("change", sync);
+  }, []);
+
+  const selectLesson = useCallback(
+    (l: LessonRow) => {
+      if (!isDesktop) setSidebarOpen(false);
+      void navTo(l);
+    },
+    [isDesktop, navTo]
+  );
+
   return (
     <div className="flex h-screen flex-col overflow-hidden bg-gray-950">
       {/* Course-complete modal */}
@@ -391,8 +412,14 @@ export function DbLearnPlayer({
         >
           ← My courses
         </Link>
-        <span className="hidden max-w-xs truncate text-sm font-semibold text-white sm:block">
-          {course.title}
+        <span className="hidden max-w-md items-center gap-1.5 truncate text-sm sm:flex">
+          <span className="font-semibold text-white">{course.title}</span>
+          {currentModule && (
+            <>
+              <span className="text-gray-600">/</span>
+              <span className="truncate text-gray-400">{currentModule.title}</span>
+            </>
+          )}
         </span>
         <div className="flex items-center gap-3">
           <span className="text-xs font-medium text-brand">{progressPct}%</span>
@@ -405,12 +432,21 @@ export function DbLearnPlayer({
         </div>
       </div>
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden relative">
+        {/* Backdrop (mobile only, shown while the drawer is open) */}
+        {sidebarOpen && !isDesktop && (
+          <div
+            className="fixed inset-x-0 bottom-0 top-14 z-30 bg-black/50 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+            aria-hidden="true"
+          />
+        )}
+
         {/* Sidebar */}
         <aside
-          className={`flex flex-col border-r border-gray-800 bg-gray-900 transition-all duration-200 ${
-            sidebarOpen ? "w-72 shrink-0" : "w-0 overflow-hidden"
-          }`}
+          className={`fixed bottom-0 left-0 top-14 z-40 flex w-72 transform flex-col border-r border-gray-800 bg-gray-900 transition-transform duration-200 lg:static lg:top-0 lg:z-auto lg:translate-x-0 lg:transition-[width] ${
+            sidebarOpen ? "translate-x-0" : "-translate-x-full"
+          } ${sidebarOpen ? "lg:w-72 lg:shrink-0" : "lg:w-0 lg:overflow-hidden"}`}
         >
           <div className="border-b border-gray-800 p-4">
             <p className="text-xs font-bold uppercase tracking-wider text-gray-400">
@@ -439,7 +475,7 @@ export function DbLearnPlayer({
                     <button
                       key={l.id}
                       type="button"
-                      onClick={() => void navTo(l)}
+                      onClick={() => selectLesson(l)}
                       className={`flex w-full items-center gap-2 border-l-2 px-4 py-2.5 text-left text-sm transition ${
                         active
                           ? "border-brand bg-gray-800/80 text-white"

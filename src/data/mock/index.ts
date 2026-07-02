@@ -1,4 +1,4 @@
-import type { Course, Module, Notification, Organization, Project, User } from "@/types/app";
+import type { Course, Notification, Organization, Project, User } from "@/types/app";
 
 // Empty mock data - replace with database queries on production
 export const currentUser: User = {
@@ -20,8 +20,6 @@ export const platformStats = {
 };
 
 export const courses: Course[] = [];
-
-export const courseCurriculum: Module[] = [];
 
 export const projects: Project[] = [];
 

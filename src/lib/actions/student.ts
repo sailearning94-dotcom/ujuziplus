@@ -31,7 +31,7 @@ const getStudentDashboardCached = cache(async (userId: string) => {
             instructor: { select: { fullName: true } },
           },
         },
-        progress: { select: { lessonId: true } },
+        progress: { select: { lessonId: true, completedAt: true } },
       },
     }),
     db.certificate.findMany({
@@ -71,12 +71,16 @@ const getStudentDashboardCached = cache(async (userId: string) => {
   const inProgress = enriched.filter((e) => !e.completedAt);
   const completed = enriched.filter((e) => !!e.completedAt);
 
+  const completionDates = enrollments.flatMap((e) => e.progress.map((p) => p.completedAt));
+  const streak = computeStreak(completionDates);
+
   return {
     enrollments: enriched,
     inProgress,
     completed,
     certificates,
     discussions,
+    streak,
     stats: {
       activeCourses: inProgress.length,
       completedCourses: completed.length,
@@ -84,6 +88,27 @@ const getStudentDashboardCached = cache(async (userId: string) => {
     },
   };
 });
+
+/** Consecutive-day learning streak computed from lesson-completion timestamps (UTC calendar days). */
+function computeStreak(completionDates: Date[]): { streakDays: number; activeLast7: boolean[] } {
+  const DAY_MS = 24 * 60 * 60 * 1000;
+  const toDayKey = (d: Date) => Math.floor(d.getTime() / DAY_MS);
+  const activeDays = new Set(completionDates.map(toDayKey));
+  const todayKey = Math.floor(Date.now() / DAY_MS);
+
+  // Today doesn't have to be active yet for the streak to still be "alive" —
+  // it only breaks once a full day passes with no activity.
+  let streakDays = 0;
+  let cursor = activeDays.has(todayKey) ? todayKey : todayKey - 1;
+  while (activeDays.has(cursor)) {
+    streakDays++;
+    cursor--;
+  }
+
+  const activeLast7 = Array.from({ length: 7 }, (_, i) => activeDays.has(todayKey - (6 - i)));
+
+  return { streakDays, activeLast7 };
+}
 
 export async function getMyCourses(userId: string) {
   const data = await getStudentDashboard(userId);

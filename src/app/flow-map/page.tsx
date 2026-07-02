@@ -113,6 +113,7 @@ export default function FlowMapPage() {
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 placeholder="Filter routes..."
+                aria-label="Filter routes"
                 className="w-full rounded-lg border pl-10 pr-4 py-2 text-sm"
               />
             </div>

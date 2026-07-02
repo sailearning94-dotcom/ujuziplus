@@ -185,6 +185,7 @@ export function InstructorEarningsPanel({
       {payouts.length > 0 && (
         <Card className="p-6">
           <h3 className="font-semibold mb-4">Payout history</h3>
+          <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b text-left text-xs text-gray-500">
@@ -209,6 +210,7 @@ export function InstructorEarningsPanel({
               ))}
             </tbody>
           </table>
+          </div>
         </Card>
       )}
     </div>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import type { Session } from "next-auth";
 import { Box, IconButton, AppBar, Toolbar, Avatar, Button } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
+import SearchIcon from "@mui/icons-material/Search";
 import { UjuziLogo } from "@/components/brand/UjuziLogo";
 
 /** Mobile-only header for guests and non-student signed-in users on public pages. */
@@ -38,6 +39,9 @@ export function PublicMobileHeader({
         </IconButton>
         <UjuziLogo variant="full" theme="light" logoHeight={40} href="/" />
         <Box sx={{ flex: 1 }} />
+        <IconButton component={Link} href="/search" aria-label="Search" sx={{ mr: isAuthenticated ? 0 : 0.5 }}>
+          <SearchIcon />
+        </IconButton>
         {isAuthenticated && user ? (
           <Link href="/dashboard">
             <Avatar
