@@ -53,11 +53,13 @@ export async function registerUser(formData: FormData) {
     const { fullName, email, password, role } = result.data;
     const normalizedEmail = email.toLowerCase().trim();
 
+    // Check duplicate email
     const existing = await db.user.findUnique({ where: { email: normalizedEmail } });
     if (existing) {
       return { error: "An account with this email already exists." };
     }
 
+    // Auto-generate unique username from email prefix
     const base = normalizedEmail.split("@")[0].replace(/[^a-z0-9]+/g, "_").toLowerCase() || "user";
     let username = base;
     let attempt = 0;
@@ -72,6 +74,7 @@ export async function registerUser(formData: FormData) {
       data: { fullName, email: normalizedEmail, username, passwordHash, role },
     });
 
+    // Send welcome email (non-blocking — don't fail registration if email fails)
     sendEmail({
       to: normalizedEmail,
       subject: "Welcome to UjuziLab!",
@@ -85,42 +88,6 @@ export async function registerUser(formData: FormData) {
     console.error("REGISTER ERROR:", err);
     return { error: "Registration failed. Please try again or contact support." };
   }
-}
-
-  const { fullName, email, password, role } = result.data;
-  const normalizedEmail = email.toLowerCase().trim();
-
-  // Check duplicate email
-  const existing = await db.user.findUnique({ where: { email: normalizedEmail } });
-  if (existing) {
-    return { error: "An account with this email already exists." };
-  }
-
-  // Auto-generate unique username from email prefix
-  const base = normalizedEmail.split("@")[0].replace(/[^a-z0-9_]/gi, "_").toLowerCase();
-  let username = base;
-  let attempt = 0;
-  while (await db.user.findUnique({ where: { username } })) {
-    attempt++;
-    username = `${base}${attempt}`;
-  }
-
-  const passwordHash = await hash(password, 12);
-
-  await db.user.create({
-    data: { fullName, email: normalizedEmail, username, passwordHash, role },
-  });
-
-  // Send welcome email (non-blocking — don't fail registration if email fails)
-  sendEmail({
-    to: normalizedEmail,
-    subject: "Welcome to UjuziLab!",
-    html: welcomeEmail(fullName),
-  }).then((result) => {
-    if (!result.ok) console.error("Welcome email failed:", result.error);
-  });
-
-  return { success: true };
 }
 
 // ─── Forgot password ──────────────────────────────────────────────────────────

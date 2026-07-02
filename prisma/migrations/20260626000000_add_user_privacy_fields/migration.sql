@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE users ADD COLUMN publicProfile BOOLEAN NOT NULL DEFAULT true;
+ALTER TABLE users ADD COLUMN showCoursesOnProfile BOOLEAN NOT NULL DEFAULT true;
+ALTER TABLE users ADD COLUMN showCertificatesOnProfile BOOLEAN NOT NULL DEFAULT true;

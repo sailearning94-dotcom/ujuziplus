@@ -70,24 +70,7 @@ interface AppState {
   dismissToast: (id: string) => void;
 }
 
-const defaultEnrollments: EnrollmentRecord[] = [
-  {
-    courseId: "c-001",
-    courseSlug: "arduino-robotics-fundamentals",
-    progress: 65,
-    status: "active",
-    enrolledAt: "2026-04-01",
-    completedLessons: ["l-1", "l-2", "l-3"],
-  },
-  {
-    courseId: "c-002",
-    courseSlug: "python-ai-starter",
-    progress: 100,
-    status: "completed",
-    enrolledAt: "2025-11-01",
-    completedLessons: ["l-1", "l-2", "l-3", "l-4"],
-  },
-];
+const defaultEnrollments: EnrollmentRecord[] = [];
 
 export const useAppStore = create<AppState>()(
   persist(

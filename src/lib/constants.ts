@@ -1,8 +1,8 @@
 export const PLATFORM = {
-  name: "UjuziLab",
-  tagline: "Building Africa's Next Generation of Innovators",
-  externalBrand: "UjuziHub",
-  url: "https://ujuzihub.com",
+  name: "ujuziPlus",
+  tagline: "Africa's modern learning and innovation ecosystem",
+  externalBrand: "UjuziLab",
+  url: "https://ujuziplus.co.tz",
 } as const;
 
 /** Main lab navigation (sidebar) */

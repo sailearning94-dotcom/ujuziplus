@@ -42,7 +42,7 @@ const MENTOR_TYPE_CONFIG = {
 export default async function MentorProfilePage({ params }: Props) {
   const [session, mentor] = await Promise.all([
     getAuthSession(),
-    getMentorDetailBySlug(params.slug),
+    getMentorDetailBySlug(params.slug).catch(() => null),
   ]);
   if (!mentor) notFound();
 

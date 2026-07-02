@@ -18,6 +18,7 @@ const nextConfig = {
     remotePatterns: [
       { protocol: "https", hostname: "images.unsplash.com" },
       { protocol: "https", hostname: "api.dicebear.com" },
+      { protocol: "https", hostname: "ujuziplus.co.tz" },
       // Allow locally-uploaded images served from /uploads/
       { protocol: "http", hostname: "localhost" },
     ],

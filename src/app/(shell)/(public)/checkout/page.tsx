@@ -142,8 +142,8 @@ export default function CheckoutPage() {
           const confirmRes = await confirmPayment(orderId, userId, paymentMethod, ref);
           if (!confirmRes.success) {
             // If already processed by webhook, still treat as success
-            const errorMsg = (confirmRes as any).error ?? "Failed to confirm payment.";
-            if (typeof errorMsg === "string" && (errorMsg.includes("already processed") || errorMsg.includes("current state"))) {
+            const errorMsg = (confirmRes as { error?: string }).error ?? "Failed to confirm payment.";
+            if (errorMsg.includes("already processed") || errorMsg.includes("current state")) {
               clearCart();
               setStep("done");
               setTimeout(() => router.replace(`/checkout/success/${orderId}`), 1200);

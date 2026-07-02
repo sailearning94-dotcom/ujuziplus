@@ -12,7 +12,7 @@ export const dynamic = "force-dynamic";
 export default async function ShowcasePage() {
   const [session, projects] = await Promise.all([
     getAuthSession(),
-    getShowcaseProjects(),
+    getShowcaseProjects().catch(() => []),
   ]);
 
   const isAuthenticated = !!session?.user;

@@ -5,8 +5,8 @@ import { getAuthSession } from "@/lib/auth-server";
 export default async function SolutionsPage() {
   const session = await getAuthSession();
   const [solutions, joinedSlugs] = await Promise.all([
-    getPublishedSolutions(),
-    session?.user?.id ? getUserJoinedSolutionSlugs(session.user.id) : Promise.resolve([]),
+    getPublishedSolutions().catch(() => []),
+    session?.user?.id ? getUserJoinedSolutionSlugs(session.user.id).catch(() => []) : Promise.resolve([]),
   ]);
 
   return (

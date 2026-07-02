@@ -1,0 +1,7 @@
+-- Extend NotificationType enum with mentor/program values.
+--
+-- notifications.type is stored as VARCHAR(191) with no native enum type or
+-- CHECK constraint in this project's Postgres schema, so adding new
+-- NotificationType values (MENTOR_REQUEST, MENTOR_REQUEST_UPDATE,
+-- MENTOR_SESSION_SCHEDULED, MENTOR_SESSION_REMINDER, PROGRAM_REGISTERED) is a
+-- Prisma-schema-level change only and requires no column alteration here.
