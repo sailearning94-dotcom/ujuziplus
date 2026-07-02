@@ -2,27 +2,16 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { LearnerPageHero } from "@/components/shared/LearnerPageHero";
-import {
-  Box,
-  Typography,
-  Tabs,
-  Tab,
-  List,
-  ListItemButton,
-  ListItemText,
-  Paper,
-  Button,
-  Card,
-  CardContent,
-  CardActions,
-} from "@mui/material";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { WAZILAB_LAB_FILTERS } from "@/lib/wazilab-theme";
 import { WaziLabGrid } from "@/components/layout/wazilab/WaziLabGrid";
 import { toggleLabResourceBookmark } from "@/lib/actions/lab-resources";
 import { useAppStore } from "@/store/appStore";
-import { useRouter } from "next/navigation";
 import { Reveal } from "@/components/motion/Reveal";
+import { cn } from "@/lib/utils";
 
 type ResourceItem = {
   id: string;
@@ -42,7 +31,7 @@ export function LabResourcesClient({
   userId: string | null;
 }) {
   const [typeFilter, setTypeFilter] = useState<string | null>(null);
-  const [tab, setTab] = useState(0);
+  const [tab, setTab] = useState<0 | 1>(0);
   const [saved, setSaved] = useState(new Set(savedIds));
   const [isPending, startTransition] = useTransition();
   const showToast = useAppStore((s) => s.showToast);
@@ -74,85 +63,113 @@ export function LabResourcesClient({
   };
 
   return (
-    <Box className="learner-canvas" sx={{ px: { xs: 2, sm: 3 }, py: 3 }}>
+    <div className="learner-canvas px-4 py-6 sm:px-6 lg:px-8">
       <LearnerPageHero
         banner="lab-resources"
         title="Lab Resources"
         subtitle="Hardware components, guides, and reference materials for hands-on labs."
       />
 
-      <Tabs value={tab} onChange={(_, v) => setTab(v)} sx={{ mt: 2 }}>
-        <Tab label="All resources" />
-        <Tab label={`My lab (${saved.size})`} />
-      </Tabs>
+      <div className="mt-6 flex gap-1 border-b border-gray-200">
+        <button
+          type="button"
+          onClick={() => setTab(0)}
+          className={cn(
+            "border-b-2 px-4 py-2.5 text-sm font-medium transition",
+            tab === 0 ? "border-brand text-brand" : "border-transparent text-gray-500 hover:text-gray-700"
+          )}
+        >
+          All resources
+        </button>
+        <button
+          type="button"
+          onClick={() => setTab(1)}
+          className={cn(
+            "border-b-2 px-4 py-2.5 text-sm font-medium transition",
+            tab === 1 ? "border-brand text-brand" : "border-transparent text-gray-500 hover:text-gray-700"
+          )}
+        >
+          My lab ({saved.size})
+        </button>
+      </div>
 
       <Reveal delay={0.06}>
-      <Box sx={{ mt: 3, display: "flex", flexDirection: { xs: "column", lg: "row" }, gap: 3 }}>
-        <Paper variant="outlined" sx={{ width: { lg: 200 }, flexShrink: 0, borderRadius: 2 }}>
-          <Typography variant="overline" sx={{ display: "block", px: 2, pt: 2, color: "text.secondary" }}>
-            Filter by category
-          </Typography>
-          <List dense>
-            <ListItemButton selected={!typeFilter} onClick={() => setTypeFilter(null)}>
-              <ListItemText primary="All" />
-            </ListItemButton>
-            {WAZILAB_LAB_FILTERS.map((f) => (
-              <ListItemButton key={f} selected={typeFilter === f} onClick={() => setTypeFilter(f)}>
-                <ListItemText primary={f} />
-              </ListItemButton>
-            ))}
-          </List>
-        </Paper>
-
-        <Box sx={{ flex: 1 }}>
-          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-            Showing {filtered.length} item{filtered.length !== 1 ? "s" : ""}
-          </Typography>
-          <WaziLabGrid>
-            {filtered.map((item) => (
-              <Card
-                key={item.slug}
-                sx={{
-                  transition: "transform 0.25s ease, box-shadow 0.25s ease",
-                  "&:hover": {
-                    transform: "translateY(-3px)",
-                    boxShadow: "0 8px 20px rgba(243,146,35,0.12)",
-                  },
-                }}
+        <div className="mt-6 flex flex-col gap-6 lg:flex-row">
+          <Card className="h-fit w-full shrink-0 p-4 lg:w-52">
+            <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
+              Filter by category
+            </p>
+            <div className="mt-2 space-y-1">
+              <button
+                type="button"
+                onClick={() => setTypeFilter(null)}
+                className={cn(
+                  "block w-full rounded-lg px-3 py-2 text-left text-sm transition",
+                  !typeFilter ? "bg-brand text-white" : "text-gray-600 hover:bg-gray-50"
+                )}
               >
-                <CardContent sx={{ pb: 1 }}>
-                  <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                    {item.title}
-                  </Typography>
-                  <Typography variant="caption" color="text.secondary" className="capitalize">
-                    {item.type.toLowerCase()}
-                    {item.category ? ` · ${item.category}` : ""}
-                  </Typography>
-                </CardContent>
-                <CardActions>
-                  <Button
-                    size="small"
-                    variant={saved.has(item.id) ? "contained" : "outlined"}
-                    disabled={isPending}
-                    onClick={() => toggleSave(item.id, item.title)}
-                  >
-                    {saved.has(item.id) ? "Saved" : "My lab"}
-                  </Button>
-                  <Button size="small" component={Link} href={`/lab-resources/${item.slug}`}>
-                    Learn more
-                  </Button>
-                </CardActions>
+                All
+              </button>
+              {WAZILAB_LAB_FILTERS.map((f) => (
+                <button
+                  key={f}
+                  type="button"
+                  onClick={() => setTypeFilter(f)}
+                  className={cn(
+                    "block w-full rounded-lg px-3 py-2 text-left text-sm transition",
+                    typeFilter === f ? "bg-brand text-white" : "text-gray-600 hover:bg-gray-50"
+                  )}
+                >
+                  {f}
+                </button>
+              ))}
+            </div>
+          </Card>
+
+          <div className="flex-1">
+            <p className="mb-4 text-sm text-gray-500">
+              Showing {filtered.length} item{filtered.length !== 1 ? "s" : ""}
+            </p>
+
+            {filtered.length === 0 ? (
+              <Card className="py-16 text-center text-sm text-gray-400">
+                {tab === 1
+                  ? "Nothing saved yet. Browse resources and add to My lab."
+                  : "No resources found."}
               </Card>
-            ))}
-          </WaziLabGrid>
-          {filtered.length === 0 && (
-            <Typography variant="body2" color="text.secondary" sx={{ py: 8, textAlign: "center" }}>
-              {tab === 1 ? "Nothing saved yet. Browse resources and add to My lab." : "No resources found."}
-            </Typography>
-          )}
-        </Box>
-      </Box>
+            ) : (
+              <WaziLabGrid>
+                {filtered.map((item) => (
+                  <Card
+                    key={item.slug}
+                    hover
+                    className="flex flex-col p-4 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-card-hover"
+                  >
+                    <p className="text-sm font-semibold text-gray-900">{item.title}</p>
+                    <p className="mt-1 text-xs capitalize text-gray-500">
+                      {item.type.toLowerCase()}
+                      {item.category ? ` · ${item.category}` : ""}
+                    </p>
+                    <div className="mt-4 flex items-center gap-2">
+                      <Button
+                        size="sm"
+                        variant={saved.has(item.id) ? "primary" : "outline"}
+                        disabled={isPending}
+                        onClick={() => toggleSave(item.id, item.title)}
+                      >
+                        {saved.has(item.id) ? "Saved" : "My lab"}
+                      </Button>
+                      <Button asChild size="sm" variant="ghost">
+                        <Link href={`/lab-resources/${item.slug}`}>Learn more</Link>
+                      </Button>
+                    </div>
+                  </Card>
+                ))}
+              </WaziLabGrid>
+            )}
+          </div>
+        </div>
       </Reveal>
-    </Box>
+    </div>
   );
 }

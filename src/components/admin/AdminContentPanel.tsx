@@ -119,9 +119,10 @@ export function AdminContentPanel({
                   </div>
                 </div>
                 {rejectingId === s.id && (
-                  <div className="flex gap-2 mt-2">
-                    <input
-                      className="flex-1 rounded-lg border px-3 py-1.5 text-sm"
+                  <div className="flex gap-2 mt-2 items-end">
+                    <Input
+                      label="Rejection reason"
+                      className="flex-1"
                       placeholder="Reason for rejection (shown to author)"
                       value={rejectReason}
                       onChange={(e) => setRejectReason(e.target.value)}

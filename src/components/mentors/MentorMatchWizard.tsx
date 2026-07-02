@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Textarea } from "@/components/ui/textarea";
 import { MentorCard } from "./MentorCard";
 import { MENTOR_TRACKS } from "@/lib/mentors/tracks";
 import { matchMentors, type SerializedMentor } from "@/lib/actions/mentors";
@@ -77,11 +78,9 @@ export function MentorMatchWizard({ mentors }: { mentors: SerializedMentor[] }) 
 
         {step === 1 && (
           <div>
-            <label className="block text-sm font-medium mb-2">
-              What do you want to achieve?
-            </label>
-            <textarea
-              className="w-full rounded-lg border px-3 py-2 text-sm min-h-[90px]"
+            <Textarea
+              label="What do you want to achieve?"
+              className="min-h-[90px]"
               value={goal}
               onChange={(e) => setGoal(e.target.value)}
               placeholder="e.g. I want to prototype an IoT weather station for my community…"

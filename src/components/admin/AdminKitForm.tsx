@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { ImageUploadField } from "@/components/ui/ImageUploadField";
 import { useAppStore } from "@/store/appStore";
@@ -202,14 +203,12 @@ export function AdminKitForm({
         <h2 className="font-semibold">Basic info</h2>
         <Input label="Title *" value={form.title} onChange={(e) => patch({ title: e.target.value })} />
         <Input label="Subtitle" value={form.subtitle} onChange={(e) => patch({ subtitle: e.target.value })} />
-        <label className="block text-sm">
-          <span className="font-medium">Description</span>
-          <textarea
-            className="mt-1 w-full rounded-lg border px-3 py-2 text-sm min-h-[100px]"
-            value={form.description}
-            onChange={(e) => patch({ description: e.target.value })}
-          />
-        </label>
+        <Textarea
+          label="Description"
+          className="min-h-[100px]"
+          value={form.description}
+          onChange={(e) => patch({ description: e.target.value })}
+        />
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="text-sm">
             <span className="font-medium">Category</span>

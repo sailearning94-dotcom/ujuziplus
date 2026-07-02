@@ -6,14 +6,14 @@ import { useSearchParams } from "next/navigation";
 import { signIn, getSession } from "next-auth/react";
 import { Eye, EyeOff } from "lucide-react";
 import { UjuziLoader } from "@/components/ui/UjuziLoader";
+import { Input } from "@/components/ui/input";
+import { FormAlert } from "@/components/ui/form-alert";
 import { resolvePostLoginPath } from "@/lib/auth/roles";
 import {
   AuthShell,
   AuthCard,
   AuthLogo,
-  authInputClass,
   authButtonClass,
-  authErrorClass,
 } from "@/components/auth/AuthShell";
 
 function LoginForm() {
@@ -67,41 +67,38 @@ function LoginForm() {
         />
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {error && <div className={authErrorClass}>{error}</div>}
+          {error && <FormAlert variant="error">{error}</FormAlert>}
+
+          <Input
+            label="Email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="you@example.com"
+            required
+            autoComplete="email"
+          />
 
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-gray-700">Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
+            <Input
+              label="Password"
+              type={showPw ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
               required
-              autoComplete="email"
-              className={authInputClass}
+              autoComplete="current-password"
+              rightIcon={
+                <button
+                  type="button"
+                  onClick={() => setShowPw(!showPw)}
+                  className="text-gray-400 hover:text-gray-600"
+                  aria-label={showPw ? "Hide password" : "Show password"}
+                >
+                  {showPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              }
             />
-          </div>
-
-          <div>
-            <label className="mb-1.5 block text-sm font-medium text-gray-700">Password</label>
-            <div className="relative">
-              <input
-                type={showPw ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                required
-                autoComplete="current-password"
-                className={`${authInputClass} pr-11`}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPw(!showPw)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-              >
-                {showPw ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-              </button>
-            </div>
             <div className="mt-1 text-right">
               <Link href="/auth/forgot-password" className="text-xs font-medium text-brand hover:underline">
                 Forgot password?

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { ImageUploadField } from "@/components/ui/ImageUploadField";
 import { createProject } from "@/lib/actions/projects";
@@ -64,15 +65,13 @@ export function SubmitProjectForm({ userId }: { userId: string }) {
         {step === 0 && (
           <div className="space-y-4">
             <Input label="Project title" value={title} onChange={(e) => setTitle(e.target.value)} required />
-            <div>
-              <label className="text-sm font-medium">Description</label>
-              <textarea
-                className="mt-1 w-full rounded-lg border p-3 h-32 text-sm"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                required
-              />
-            </div>
+            <Textarea
+              label="Description"
+              className="h-32"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              required
+            />
             <Input
               label="Category"
               placeholder="IoT, AI, Robotics..."

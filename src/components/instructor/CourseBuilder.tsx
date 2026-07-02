@@ -19,6 +19,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { ArticleEditor } from "@/components/instructor/ArticleEditor";
@@ -509,13 +511,14 @@ function StepBasicInfo({ courseId, instructorId, data, onChange, onSaved }: {
 
       <div>
         <div className="mb-1.5 flex items-baseline justify-between">
-          <label className="text-sm font-medium text-gray-700">Description *</label>
+          <Label htmlFor="course-description">Description *</Label>
           <span className={cn("text-xs", descLen < 50 ? "text-amber-500" : "text-gray-400")}>
             {descLen} chars {descLen < 50 ? "— aim for 50+" : ""}
           </span>
         </div>
-        <textarea
-          className="w-full rounded-xl border border-gray-200 p-3 text-sm h-28 focus:ring-2 focus:ring-brand/20 focus:border-brand/40 focus:outline-none resize-none"
+        <Textarea
+          id="course-description"
+          className="h-28 resize-none"
           value={data.description ?? ""}
           placeholder="What will students build or achieve? Who is this for? What makes this course special?"
           onChange={(e) => onChange({ description: e.target.value })}
@@ -932,15 +935,13 @@ function StepRequirements({ courseId, instructorId, data, publishedKits, onChang
         </div>
       </div>
 
-      <div>
-        <label className="mb-1.5 block text-sm font-medium text-gray-700">Prerequisites</label>
-        <textarea
-          className="w-full rounded-xl border border-gray-200 p-3 text-sm h-20 focus:ring-2 focus:ring-brand/20 focus:outline-none resize-none"
-          placeholder="e.g. Basic programming knowledge, curiosity about electronics, no prior robotics experience needed"
-          value={data.prerequisites ?? ""}
-          onChange={(e) => onChange({ prerequisites: e.target.value })}
-        />
-      </div>
+      <Textarea
+        label="Prerequisites"
+        className="h-20 resize-none"
+        placeholder="e.g. Basic programming knowledge, curiosity about electronics, no prior robotics experience needed"
+        value={data.prerequisites ?? ""}
+        onChange={(e) => onChange({ prerequisites: e.target.value })}
+      />
 
       <Input
         label="Target audience"
@@ -1091,13 +1092,14 @@ function StepSEO({ courseId, instructorId, data, onChange, onSaved }: {
 
       <div>
         <div className="mb-1.5 flex items-baseline justify-between">
-          <label className="text-sm font-medium text-gray-700">SEO description</label>
+          <Label htmlFor="course-seo-description">SEO description</Label>
           <span className={cn("text-xs", metaLen > 160 ? "text-red-500" : metaLen > 120 ? "text-green-600" : "text-gray-400")}>
             {metaLen}/160
           </span>
         </div>
-        <textarea
-          className="w-full rounded-xl border border-gray-200 p-3 text-sm h-20 focus:ring-2 focus:ring-brand/20 focus:outline-none resize-none"
+        <Textarea
+          id="course-seo-description"
+          className="h-20 resize-none"
           value={data.metaDesc ?? ""}
           placeholder="150–160 characters shown in Google search results. Describe the course and its value concisely."
           onChange={(e) => onChange({ metaDesc: e.target.value })}

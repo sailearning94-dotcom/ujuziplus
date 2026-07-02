@@ -120,8 +120,5 @@ export const authInputClass =
 export const authButtonClass =
   "flex h-11 w-full items-center justify-center rounded-xl bg-brand font-semibold text-white shadow-sm transition hover:bg-brand-dark hover:shadow-md disabled:opacity-60 active:scale-[0.98]";
 
-export const authErrorClass =
-  "rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700";
-
 export const authSuccessClass =
   "rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800";

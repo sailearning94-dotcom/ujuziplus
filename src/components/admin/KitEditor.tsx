@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { KIT_CATEGORIES } from "@/data/mock/kits";
 import {
@@ -124,14 +125,12 @@ export function KitEditor({ kitId, mode = "create" }: { kitId?: string; mode?: "
           <Card className="space-y-4">
             <Input label="Kit title" value={form.title} onChange={(e) => patch({ title: e.target.value })} />
             <Input label="Subtitle" value={form.subtitle} onChange={(e) => patch({ subtitle: e.target.value })} />
-            <div>
-              <label className="text-sm font-medium">Description</label>
-              <textarea
-                className="mt-1 w-full rounded-lg border border-gray-300 p-3 text-sm h-28"
-                value={form.description}
-                onChange={(e) => patch({ description: e.target.value })}
-              />
-            </div>
+            <Textarea
+              label="Description"
+              className="h-28"
+              value={form.description}
+              onChange={(e) => patch({ description: e.target.value })}
+            />
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <label className="text-sm font-medium">Category</label>
@@ -287,6 +286,7 @@ export function KitEditor({ kitId, mode = "create" }: { kitId?: string; mode?: "
                       <td>
                         <input
                           className="w-full rounded border px-2 py-1"
+                          aria-label="Component name"
                           value={c.name}
                           placeholder="Arduino Uno"
                           onChange={(e) =>
@@ -303,6 +303,7 @@ export function KitEditor({ kitId, mode = "create" }: { kitId?: string; mode?: "
                           type="number"
                           min={1}
                           className="w-full rounded border px-2 py-1"
+                          aria-label="Quantity"
                           value={c.quantity}
                           onChange={(e) =>
                             patch({
@@ -316,6 +317,7 @@ export function KitEditor({ kitId, mode = "create" }: { kitId?: string; mode?: "
                       <td>
                         <input
                           className="w-full rounded border px-2 py-1"
+                          aria-label="Notes"
                           value={c.description ?? ""}
                           onChange={(e) =>
                             patch({
@@ -401,8 +403,9 @@ export function KitEditor({ kitId, mode = "create" }: { kitId?: string; mode?: "
                     </select>
                   </div>
                 </div>
-                <textarea
-                  className="w-full rounded-lg border p-2 text-sm"
+                <Textarea
+                  label="Description"
+                  className="min-h-0"
                   rows={2}
                   placeholder="Description for learners..."
                   value={m.description}
