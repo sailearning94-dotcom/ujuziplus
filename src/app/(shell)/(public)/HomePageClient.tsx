@@ -36,6 +36,10 @@ const HomeMentorSpotlight = dynamic(
   () => import("@/components/home/HomeMentorSpotlight").then((m) => ({ default: m.HomeMentorSpotlight })),
   { loading: () => <div className="h-56 animate-pulse rounded-3xl bg-gray-100" /> }
 );
+const HomeRoboticsShowcase = dynamic(
+  () => import("@/components/home/HomeRoboticsShowcase").then((m) => ({ default: m.HomeRoboticsShowcase })),
+  { ssr: false, loading: () => <div className="h-[60vh] animate-pulse rounded-3xl bg-gray-900" /> }
+);
 
 type ContinueCourse = {
   title: string;
@@ -220,6 +224,12 @@ export function HomePageClient({
           </Box>
         </Reveal>
       )}
+
+      <Reveal className="mt-8" delay={0.06}>
+        <Box sx={contentShellSx}>
+          <HomeRoboticsShowcase />
+        </Box>
+      </Reveal>
 
       <div className="home-catalog-zone">
         {kits.length > 0 && (
