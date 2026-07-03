@@ -8,7 +8,7 @@ import { KitCard } from "@/components/kits/KitCard";
 import { toKitCatalogItem } from "@/components/kits/KitCatalogItem";
 import { Button } from "@/components/ui/button";
 import { PLATFORM } from "@/lib/constants";
-import { Reveal } from "@/components/motion/Reveal";
+import { DossierSection } from "@/components/motion/DossierSection";
 import { PlatformPulse } from "@/components/motion/StemDisciplineTicker";
 import { HomeHeroSearch } from "@/components/home/HomeHeroSearch";
 import { HomeTopicExplorer } from "@/components/home/HomeTopicExplorer";
@@ -186,21 +186,28 @@ export function HomePageClient({
             {!isAuthenticated && <TrustStrip />}
           </LearnerPageHero>
         </div>
+      </Box>
 
-        <div className="home-discover-stack">
-          {courses.length > 0 && (
+      {courses.length > 0 && (
+        <DossierSection align="left">
+          <Box sx={contentShellSx}>
             <div className="home-discover-panel">
               <HomeQuickCoursePeek courses={courses} />
             </div>
-          )}
+          </Box>
+        </DossierSection>
+      )}
+
+      <DossierSection align="right">
+        <Box sx={contentShellSx}>
           <div className="home-discover-panel">
             <HomeTopicExplorer />
           </div>
-        </div>
-      </Box>
+        </Box>
+      </DossierSection>
 
       {(spotlightCourse || spotlightProgram || spotlightKit) && (
-        <Reveal className="mt-8" delay={0.06}>
+        <DossierSection align="left">
           <Box sx={contentShellSx}>
             <HomeFeaturedSpotlight
               course={spotlightCourse}
@@ -208,28 +215,28 @@ export function HomePageClient({
               kit={spotlightKit}
             />
           </Box>
-        </Reveal>
+        </DossierSection>
       )}
 
       {spotlightMentor && (
-        <Reveal className="mt-8" delay={0.065}>
+        <DossierSection align="right">
           <Box sx={contentShellSx}>
             <HomeMentorSpotlight mentor={spotlightMentor} />
           </Box>
-        </Reveal>
+        </DossierSection>
       )}
 
       {mentors.length >= 3 && (
-        <Reveal className="mt-4" delay={0.07}>
+        <DossierSection align="left">
           <Box sx={contentShellSx}>
             <HomeMentorRail mentors={mentors} />
           </Box>
-        </Reveal>
+        </DossierSection>
       )}
 
       <div className="home-catalog-zone">
         {kits.length > 0 && (
-          <Reveal className="mt-2" delay={0.07}>
+          <DossierSection align="right">
             <Box sx={contentShellSx}>
               <HomeCatalogRail
                 title="Hands-on learning kits"
@@ -244,11 +251,11 @@ export function HomePageClient({
                 ))}
               </HomeCatalogRail>
             </Box>
-          </Reveal>
+          </DossierSection>
         )}
 
         {programs.length > 0 && (
-          <Reveal className="mt-2" delay={0.08}>
+          <DossierSection align="left">
             <Box sx={contentShellSx}>
               <HomeCatalogRail
                 title="Bootcamps & programs"
@@ -263,11 +270,11 @@ export function HomePageClient({
                 ))}
               </HomeCatalogRail>
             </Box>
-          </Reveal>
+          </DossierSection>
         )}
 
         {competitions.length > 0 && (
-          <Reveal className="mt-2" delay={0.09}>
+          <DossierSection align="right">
             <Box sx={contentShellSx}>
               <HomeCatalogRail
                 title="Competitions & challenges"
@@ -282,24 +289,24 @@ export function HomePageClient({
                 ))}
               </HomeCatalogRail>
             </Box>
-          </Reveal>
+          </DossierSection>
         )}
       </div>
 
-      <Reveal className="mt-8" delay={0.05}>
+      <DossierSection align="left">
         <Box sx={contentShellSx}>
           <HomeValueBand />
         </Box>
-      </Reveal>
+      </DossierSection>
 
       {organizations.length >= 3 && (
-        <Reveal className="mt-8" delay={0.05}>
+        <DossierSection align="right">
           <OrgMarquee orgs={organizations} />
-        </Reveal>
+        </DossierSection>
       )}
 
       {!isAuthenticated && (
-        <Reveal className="mt-6">
+        <DossierSection align="center">
           <Box sx={contentShellSx}>
             <div className="cta-band cta-band--live">
               <Typography sx={{ fontWeight: 800, fontSize: "1.375rem", mb: 1, letterSpacing: "-0.02em" }}>
@@ -318,7 +325,7 @@ export function HomePageClient({
               </div>
             </div>
           </Box>
-        </Reveal>
+        </DossierSection>
       )}
       </Box>
     </Box>

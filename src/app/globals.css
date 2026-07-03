@@ -1169,6 +1169,46 @@
     @apply mt-8 space-y-10;
   }
 
+  /* ── Dossier-style alternating reveal sections ── */
+  .dossier-section {
+    display: flex;
+    width: 100%;
+    padding: 6vh 0;
+  }
+
+  .dossier-section--left {
+    justify-content: flex-start;
+  }
+
+  .dossier-section--right {
+    justify-content: flex-end;
+  }
+
+  .dossier-section--center {
+    justify-content: center;
+  }
+
+  .dossier-section__inner {
+    width: 100%;
+    max-width: 640px;
+  }
+
+  .dossier-section--center .dossier-section__inner {
+    max-width: 720px;
+    text-align: center;
+  }
+
+  @media (max-width: 900px) {
+    .dossier-section {
+      justify-content: center !important;
+      padding: 3.5vh 0;
+    }
+
+    .dossier-section__inner {
+      max-width: 100%;
+    }
+  }
+
   .home-hero-search {
     @apply relative flex items-center gap-2 rounded-2xl border border-white/25 bg-white/95 p-1.5 shadow-[0_16px_40px_-12px_rgba(0,0,0,0.35)] backdrop-blur-md;
   }
