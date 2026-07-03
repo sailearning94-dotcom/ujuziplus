@@ -44,9 +44,12 @@ export default async function ProgramDetailPage({ params }: { params: { slug: st
             items={[{ label: "Programs", href: "/programs" }, { label: program.title }]}
           />
           <div className="flex flex-wrap items-center gap-2 mb-2">
-            <Badge className="border-0 bg-white/20 text-white">{program.type}</Badge>
+            <Badge variant="outline" className="border-0 bg-white/20 text-white shadow-none backdrop-blur-none">
+              {program.type}
+            </Badge>
             <Badge
-              className={`border-0 text-white ${
+              variant="outline"
+              className={`border-0 text-white shadow-none backdrop-blur-none ${
                 program.status === "OPEN" ? "bg-green-400/80" : "bg-gray-400/80"
               }`}
             >

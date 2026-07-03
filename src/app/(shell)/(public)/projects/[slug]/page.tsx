@@ -42,7 +42,9 @@ export default async function ProjectDetailPage({ params }: { params: { slug: st
             items={[{ label: "Projects", href: "/projects" }, { label: project.title }]}
           />
           <div className="flex flex-wrap gap-2">
-            <Badge className="border-0 bg-brand/30 text-white">{project.category}</Badge>
+            <Badge variant="outline" className="border-0 bg-brand/30 text-white shadow-none backdrop-blur-none">
+              {project.category}
+            </Badge>
             <Badge variant="outline" className="border-white/30 bg-white/10 capitalize text-white/90">
               {project.status.toLowerCase()}
             </Badge>
