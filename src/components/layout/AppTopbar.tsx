@@ -59,7 +59,10 @@ export function AppTopbar({
         <button
           type="button"
           className="rounded-xl p-2 transition hover:bg-gray-100 lg:hidden"
-          onClick={onMenuClick}
+          onClick={(e) => {
+            e.currentTarget.blur();
+            onMenuClick?.();
+          }}
         >
           <Menu className="h-5 w-5" />
         </button>
