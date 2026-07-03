@@ -36,9 +36,9 @@ const HomeMentorSpotlight = dynamic(
   () => import("@/components/home/HomeMentorSpotlight").then((m) => ({ default: m.HomeMentorSpotlight })),
   { loading: () => <div className="h-56 animate-pulse rounded-3xl bg-gray-100" /> }
 );
-const HomeRoboticsShowcase = dynamic(
-  () => import("@/components/home/HomeRoboticsShowcase").then((m) => ({ default: m.HomeRoboticsShowcase })),
-  { ssr: false, loading: () => <div className="h-[60vh] animate-pulse rounded-3xl bg-gray-900" /> }
+const HomeHeroBackground = dynamic(
+  () => import("@/components/home/HomeHeroBackground").then((m) => ({ default: m.HomeHeroBackground })),
+  { ssr: false }
 );
 
 type ContinueCourse = {
@@ -135,8 +135,10 @@ export function HomePageClient({
   const spotlightMentor = mentors.find((m) => m.isFeatured) ?? mentors[0] ?? null;
 
   return (
-    <Box className="learner-canvas home-landing" sx={{ py: { xs: 2, md: 2.5 } }}>
-      <Box sx={contentShellSx}>
+    <Box className="learner-canvas home-landing" sx={{ py: { xs: 2, md: 2.5 }, position: "relative" }}>
+      <HomeHeroBackground />
+      <Box sx={{ position: "relative", zIndex: 1 }}>
+        <Box sx={contentShellSx}>
         <div className="home-fold">
           <LearnerPageHero
             size="default"
@@ -224,12 +226,6 @@ export function HomePageClient({
           </Box>
         </Reveal>
       )}
-
-      <Reveal className="mt-8" delay={0.06}>
-        <Box sx={contentShellSx}>
-          <HomeRoboticsShowcase />
-        </Box>
-      </Reveal>
 
       <div className="home-catalog-zone">
         {kits.length > 0 && (
@@ -324,6 +320,7 @@ export function HomePageClient({
           </Box>
         </Reveal>
       )}
+      </Box>
     </Box>
   );
 }

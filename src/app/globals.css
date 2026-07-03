@@ -960,11 +960,17 @@
   }
 
   .org-marquee-section__label {
-    @apply mb-5 px-4 text-center text-xs font-bold uppercase tracking-[0.18em] text-gray-400;
+    @apply mb-5 mx-auto w-fit rounded-full px-4 py-1.5 text-center text-xs font-bold uppercase tracking-[0.18em] text-gray-400;
+    background-color: rgb(255 255 255 / 0.82);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
   }
 
   .org-marquee-section__cta {
-    @apply mt-5 text-center text-sm font-semibold;
+    @apply mt-5 w-fit mx-auto rounded-full px-4 py-1.5 text-center text-sm font-semibold;
+    background-color: rgb(255 255 255 / 0.82);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
   }
 
   .org-marquee-section__cta a {
@@ -1255,7 +1261,13 @@
   }
 
   .home-spotlight__head {
-    @apply mb-5 flex flex-wrap items-end justify-between gap-3;
+    @apply mb-5 flex flex-wrap items-end justify-between gap-3 rounded-2xl;
+    background-color: rgb(255 255 255 / 0.82);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    padding: 0.75rem 1rem;
+    margin-left: -1rem;
+    margin-right: -1rem;
   }
 
   .home-spotlight__eyebrow {
@@ -1352,7 +1364,13 @@
   }
 
   .home-rail__header {
-    @apply mb-4 flex flex-wrap items-end justify-between gap-3;
+    @apply mb-4 flex flex-wrap items-end justify-between gap-3 rounded-2xl;
+    background-color: rgb(255 255 255 / 0.82);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    padding: 0.75rem 1rem;
+    margin-left: -1rem;
+    margin-right: -1rem;
   }
 
   .home-rail__title {
