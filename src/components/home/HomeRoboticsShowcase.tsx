@@ -428,7 +428,7 @@ export function HomeRoboticsShowcase() {
           <div className={`${styles.corner} ${styles.br}`} />
 
           <div className={`${styles.hudLabel} ${styles.tagDesignation}`}>
-            Build&nbsp;<span className={styles.accent}>Robotics-07</span> // Learner Showcase
+            Build&nbsp;<span className={styles.accent}>Robotics-07</span> {"//"} Learner Showcase
           </div>
           <div className={`${styles.hudLabel} ${styles.tagStatus}`}>
             <span><span className={styles.statusDot} />Render&nbsp;Active</span>
@@ -519,9 +519,9 @@ export function HomeRoboticsShowcase() {
             <h3>Integrated HUD overlay</h3>
             <p>
               Amber flight-reference lines and cyan targeting brackets are baked
-              directly into the model's materials &mdash; the same graphic language
+              directly into the model&apos;s materials &mdash; the same graphic language
               this showcase borrows for its own interface, tying the viewer to the
-              object it's presenting.
+              object it&apos;s presenting.
             </p>
           </div>
         </section>
@@ -531,7 +531,7 @@ export function HomeRoboticsShowcase() {
             <div className={styles.fileTag}><span>File 04 / 04</span><span className={styles.accent}>Sequence</span></div>
             <h3>Build something like this</h3>
             <p>
-              That's the full animation, scrubbed across the page. This model was
+              That&apos;s the full animation, scrubbed across the page. This model was
               rendered using the same 3D and engineering-design skills taught in
               our Robotics track &mdash; scroll back up to replay it, or explore the
               courses that get you here.
