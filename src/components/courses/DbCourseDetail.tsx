@@ -298,7 +298,7 @@ export function DbCourseDetail({
             ]}
           />
           <div className="flex flex-wrap gap-2 mb-3">
-            <Badge className="bg-brand/20 text-white border-0">
+            <Badge variant="outline" className="bg-brand/20 text-white border-0 shadow-none backdrop-blur-none">
               {course.level.charAt(0) + course.level.slice(1).toLowerCase()}
             </Badge>
             {course.category && (

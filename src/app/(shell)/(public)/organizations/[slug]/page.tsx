@@ -35,7 +35,11 @@ export default async function OrganizationPublicPage({ params }: { params: { slu
             <p className="capitalize text-blue-100">
               {org.type.toLowerCase()} · {org.memberCount.toLocaleString()} members
             </p>
-            {org.isVerified && <Badge className="mt-2 bg-white/20">Verified partner</Badge>}
+            {org.isVerified && (
+              <Badge variant="outline" className="mt-2 border-0 bg-white/20 text-white shadow-none backdrop-blur-none">
+                Verified partner
+              </Badge>
+            )}
           </div>
         </div>
       </div>

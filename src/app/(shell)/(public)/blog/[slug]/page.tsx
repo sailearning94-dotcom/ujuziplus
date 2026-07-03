@@ -17,7 +17,9 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
           <Button asChild variant="ghost" size="sm" className="mb-6 text-white/70 hover:bg-white/10 hover:text-white">
             <Link href="/blog">← Blog</Link>
           </Button>
-          <Badge className="border-0 bg-white/20 text-white">{post.category}</Badge>
+          <Badge variant="outline" className="border-0 bg-white/20 text-white shadow-none backdrop-blur-none">
+            {post.category}
+          </Badge>
           <h1 className="mt-4 font-display text-3xl font-bold tracking-tight text-white md:text-4xl text-balance drop-shadow-lg">
             {post.title}
           </h1>
