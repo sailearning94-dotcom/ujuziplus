@@ -1,2 +1,2 @@
 -- AlterTable
-ALTER TABLE programs ADD COLUMN posterUrl VARCHAR(191) NULL;
+ALTER TABLE `programs` ADD COLUMN `posterUrl` VARCHAR(191) NULL;

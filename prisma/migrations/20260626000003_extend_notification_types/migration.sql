@@ -1,7 +1,2 @@
--- Extend NotificationType enum with mentor/program values.
---
--- notifications.type is stored as VARCHAR(191) with no native enum type or
--- CHECK constraint in this project's Postgres schema, so adding new
--- NotificationType values (MENTOR_REQUEST, MENTOR_REQUEST_UPDATE,
--- MENTOR_SESSION_SCHEDULED, MENTOR_SESSION_REMINDER, PROGRAM_REGISTERED) is a
--- Prisma-schema-level change only and requires no column alteration here.
+-- Extend NotificationType enum with missing values
+ALTER TABLE `notifications` MODIFY `type` ENUM('REPLY_ON_POST', 'LIKE_ON_POST', 'NEW_ENROLLMENT', 'COURSE_COMPLETE', 'CERTIFICATE_ISSUED', 'ASSIGNMENT_SUBMITTED', 'ASSIGNMENT_GRADED', 'ASSIGNMENT_REVISION_REQUESTED', 'MENTOR_REQUEST', 'MENTOR_REQUEST_UPDATE', 'MENTOR_SESSION_SCHEDULED', 'MENTOR_SESSION_REMINDER', 'PROGRAM_REGISTERED', 'SYSTEM') NOT NULL;

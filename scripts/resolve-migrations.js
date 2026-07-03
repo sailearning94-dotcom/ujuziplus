@@ -43,7 +43,7 @@ async function resolveMigrations() {
 
     for (const table of tablesToDrop) {
       try {
-        await prisma.$executeRawUnsafe(`DROP TABLE IF EXISTS "${table}" CASCADE`);
+        await prisma.$executeRawUnsafe(`DROP TABLE IF EXISTS \`${table}\``);
         console.log(`   ✓ Dropped ${table}`);
       } catch (_) {}
     }

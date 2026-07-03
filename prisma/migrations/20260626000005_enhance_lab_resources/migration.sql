@@ -1,4 +1,4 @@
 -- AlterTable
-ALTER TABLE lab_resources ADD COLUMN content TEXT NULL;
-ALTER TABLE lab_resources ADD COLUMN pdfUrls JSON NULL;
-ALTER TABLE lab_resources ADD COLUMN imageUrls JSON NULL;
+ALTER TABLE `lab_resources` ADD COLUMN `content` LONGTEXT NULL,
+ADD COLUMN `pdfUrls` JSON NULL,
+ADD COLUMN `imageUrls` JSON NULL;
