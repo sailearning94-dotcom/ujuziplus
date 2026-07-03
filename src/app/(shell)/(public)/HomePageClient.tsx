@@ -301,9 +301,9 @@ export function HomePageClient({
       </DossierSection>
 
       {organizations.length >= 3 && (
-        <DossierSection align="right">
+        <Reveal className="mt-8" delay={0.05}>
           <OrgMarquee orgs={organizations} />
-        </DossierSection>
+        </Reveal>
       )}
 
       {!isAuthenticated && (
