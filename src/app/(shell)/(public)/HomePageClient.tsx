@@ -136,6 +136,7 @@ export function HomePageClient({
 
   return (
     <Box className="learner-canvas home-landing" sx={{ py: { xs: 2, md: 2.5 }, position: "relative" }}>
+      <div className="home-hero-trail" aria-hidden="true" />
       <HomeHeroBackground />
       <Box sx={{ position: "relative", zIndex: 1 }}>
         <Box sx={contentShellSx}>
