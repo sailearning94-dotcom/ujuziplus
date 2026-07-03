@@ -1,5 +1,11 @@
+.anchor {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
 .bg {
-  position: fixed;
+  position: absolute;
   inset: 0;
   z-index: 0;
   pointer-events: none;
@@ -12,4 +18,19 @@
   width: 100%;
   height: 100%;
   display: block;
+}
+
+@media (max-width: 1023px) {
+  .anchor {
+    height: 46vh;
+    min-height: 320px;
+  }
+
+  .bg {
+    position: relative !important;
+    left: auto !important;
+    top: auto !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
 }

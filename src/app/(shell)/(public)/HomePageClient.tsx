@@ -99,7 +99,7 @@ type OrgItem = {
 };
 
 const contentShellSx = {
-  maxWidth: 1280,
+  maxWidth: 720,
   mx: "auto",
   px: { xs: 2, sm: 3 },
 } as const;
@@ -136,8 +136,11 @@ export function HomePageClient({
 
   return (
     <Box className="learner-canvas home-landing" sx={{ py: { xs: 2, md: 2.5 }, position: "relative" }}>
-      <HomeHeroBackground />
-      <Box sx={{ position: "relative", zIndex: 1 }}>
+      <div className="home-split">
+        <div className="home-split__stage">
+          <HomeHeroBackground />
+        </div>
+        <div className="home-split__column">
         <Box sx={contentShellSx}>
         <div className="home-fold">
           <LearnerPageHero
@@ -320,7 +323,8 @@ export function HomePageClient({
           </Box>
         </Reveal>
       )}
-      </Box>
+        </div>
+      </div>
     </Box>
   );
 }

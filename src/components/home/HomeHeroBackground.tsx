@@ -7,7 +7,32 @@ const MODEL_PATH = "/models/attack_helicopter_concept.glb";
 
 export function HomeHeroBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const anchorRef = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(false);
+  const [fixedRect, setFixedRect] = useState<{ left: number; width: number } | null>(null);
+
+  // The grid column this sits in is a normal (non-fixed) flow element that
+  // sizes/positions the column; ancestors up the tree set overflow-x:hidden
+  // for unrelated reasons, which breaks position:sticky. Track the anchor's
+  // horizontal bounds instead and apply position:fixed ourselves so the
+  // visual stays pinned regardless of that ancestor overflow.
+  useEffect(() => {
+    const anchor = anchorRef.current;
+    if (!anchor) return;
+    const update = () => {
+      const rect = anchor.getBoundingClientRect();
+      setFixedRect({ left: rect.left, width: rect.width });
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(anchor);
+    window.addEventListener("resize", update);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", update);
+    };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -156,9 +181,10 @@ export function HomeHeroBackground() {
       }
 
       function onResize() {
-        if (!canvas) return;
-        const w = window.innerWidth;
-        const h = window.innerHeight;
+        const container = containerRef.current;
+        if (!canvas || !container) return;
+        const w = container.clientWidth || window.innerWidth;
+        const h = container.clientHeight || window.innerHeight;
         camera.aspect = w / h;
         camera.updateProjectionMatrix();
         renderer.setSize(w, h);
@@ -168,6 +194,9 @@ export function HomeHeroBackground() {
 
       window.addEventListener("scroll", onScroll, { passive: true });
       window.addEventListener("resize", onResize);
+
+      const resizeObserver = new ResizeObserver(onResize);
+      if (containerRef.current) resizeObserver.observe(containerRef.current);
       onResize();
 
       function frameObjectToCamera(object: any) {
@@ -291,6 +320,7 @@ export function HomeHeroBackground() {
         cancelAnimationFrame(rafId);
         window.removeEventListener("scroll", onScroll);
         window.removeEventListener("resize", onResize);
+        resizeObserver.disconnect();
         renderer.dispose();
         composer.dispose?.();
         scene.traverse((child: any) => {
@@ -310,8 +340,19 @@ export function HomeHeroBackground() {
   }, []);
 
   return (
-    <div className={styles.bg} aria-hidden="true">
-      <canvas className={styles.canvas} ref={canvasRef} style={{ opacity: ready ? 1 : 0, transition: "opacity 0.8s ease" }} />
+    <div ref={anchorRef} className={styles.anchor}>
+      <div
+        className={styles.bg}
+        ref={containerRef}
+        aria-hidden="true"
+        style={
+          fixedRect
+            ? { position: "fixed", top: 0, left: fixedRect.left, width: fixedRect.width, height: "100vh" }
+            : undefined
+        }
+      >
+        <canvas className={styles.canvas} ref={canvasRef} style={{ opacity: ready ? 1 : 0, transition: "opacity 0.8s ease" }} />
+      </div>
     </div>
   );
 }
