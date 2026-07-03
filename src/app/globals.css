@@ -197,6 +197,15 @@
     background-color: #f4f7fb;
   }
 
+  .learner-canvas.home-landing {
+    background-color: #ffffff;
+  }
+
+  .home-landing.learner-canvas::before,
+  .home-landing.learner-canvas::after {
+    display: none;
+  }
+
   .learner-canvas::before {
     content: "";
     position: fixed;
