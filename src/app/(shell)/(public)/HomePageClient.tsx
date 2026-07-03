@@ -9,6 +9,7 @@ import { toKitCatalogItem } from "@/components/kits/KitCatalogItem";
 import { Button } from "@/components/ui/button";
 import { PLATFORM } from "@/lib/constants";
 import { DossierSection } from "@/components/motion/DossierSection";
+import { Reveal } from "@/components/motion/Reveal";
 import { PlatformPulse } from "@/components/motion/StemDisciplineTicker";
 import { HomeHeroSearch } from "@/components/home/HomeHeroSearch";
 import { HomeTopicExplorer } from "@/components/home/HomeTopicExplorer";
@@ -207,7 +208,7 @@ export function HomePageClient({
       </DossierSection>
 
       {(spotlightCourse || spotlightProgram || spotlightKit) && (
-        <DossierSection align="left">
+        <Reveal className="mt-8" delay={0.06}>
           <Box sx={contentShellSx}>
             <HomeFeaturedSpotlight
               course={spotlightCourse}
@@ -215,7 +216,7 @@ export function HomePageClient({
               kit={spotlightKit}
             />
           </Box>
-        </DossierSection>
+        </Reveal>
       )}
 
       {spotlightMentor && (
