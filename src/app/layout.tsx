@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Poppins, JetBrains_Mono, Roboto } from "next/font/google";
+import { Inter, Poppins, JetBrains_Mono, Roboto, Orbitron } from "next/font/google";
 import "./globals.css";
 import "@/styles/wazilab.css";
 import { PLATFORM } from "@/lib/constants";
@@ -19,6 +19,11 @@ const poppins = Poppins({
 const jetbrains = JetBrains_Mono({
   subsets: ["latin"],
   variable: "--font-jetbrains",
+});
+const orbitron = Orbitron({
+  weight: ["600", "700", "800"],
+  subsets: ["latin"],
+  variable: "--font-orbitron",
 });
 
 export const metadata: Metadata = {
@@ -41,7 +46,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${roboto.variable} ${inter.variable} ${poppins.variable} ${jetbrains.variable}`}>
+    <html lang="en" className={`${roboto.variable} ${inter.variable} ${poppins.variable} ${jetbrains.variable} ${orbitron.variable}`}>
       <body className="font-sans" style={{ fontFamily: "var(--font-roboto), var(--font-inter), system-ui, sans-serif" }}>
         <AppProviders>{children}</AppProviders>
       </body>

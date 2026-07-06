@@ -136,9 +136,10 @@ export function HomePageClient({
   const spotlightMentor = mentors.find((m) => m.isFeatured) ?? mentors[0] ?? null;
 
   return (
-    <Box className="learner-canvas home-landing" sx={{ py: { xs: 2, md: 2.5 }, position: "relative" }}>
+    <Box className="learner-canvas home-landing" sx={{ pb: { xs: 2, md: 2.5 }, position: "relative" }}>
       <HomeHeroBackground />
-      <Box sx={{ position: "relative", zIndex: 1 }}>
+      <div className="home-hero-mask">
+        <Box sx={{ position: "relative", zIndex: 1, pt: { xs: 2, md: 2.5 } }}>
         <Box sx={contentShellSx}>
         <div className="home-fold">
           <LearnerPageHero
@@ -192,12 +193,14 @@ export function HomePageClient({
       {courses.length > 0 && (
         <DossierSection align="left">
           <Box sx={contentShellSx}>
-            <div className="home-discover-panel">
+            <div className="home-discover-panel home-discover-panel--fade">
               <HomeQuickCoursePeek courses={courses} />
             </div>
           </Box>
         </DossierSection>
       )}
+      </Box>
+      </div>
 
       <DossierSection align="right">
         <Box sx={contentShellSx}>
@@ -328,7 +331,6 @@ export function HomePageClient({
           </Box>
         </DossierSection>
       )}
-      </Box>
     </Box>
   );
 }

@@ -197,6 +197,11 @@
     background-color: #f4f7fb;
   }
 
+  .home-landing,
+  .home-landing * {
+    cursor: url("/cursor-orange.svg") 24 24, auto;
+  }
+
   .learner-canvas::before {
     content: "";
     position: fixed;
@@ -1012,6 +1017,17 @@
   }
 
   /* ── Home landing (Udemy / edX style) ── */
+  .home-hero-mask {
+    @apply relative z-10;
+    background: linear-gradient(
+      to bottom,
+      #f4f7fb 0%,
+      #f4f7fb 85%,
+      rgb(244 247 251 / 0.6) 92%,
+      rgb(244 247 251 / 0) 100%
+    );
+  }
+
   .home-fold {
     @apply w-full min-w-0;
   }
@@ -1088,6 +1104,17 @@
 
   .home-discover-panel {
     @apply rounded-3xl border border-gray-200/80 bg-white p-4 shadow-soft ring-1 ring-gray-100/80 md:p-5;
+  }
+
+  .home-discover-panel--fade {
+    @apply border-transparent shadow-none ring-0;
+    background: linear-gradient(
+      to bottom,
+      #fff 0%,
+      #fff 45%,
+      rgb(255 255 255 / 0.55) 65%,
+      rgb(255 255 255 / 0) 85%
+    );
   }
 
   .home-discover-panel .home-topics__head {
@@ -1301,13 +1328,7 @@
   }
 
   .home-spotlight__head {
-    @apply mb-5 flex flex-wrap items-end justify-between gap-3 rounded-2xl;
-    background-color: rgb(255 255 255 / 0.82);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    padding: 0.75rem 1rem;
-    margin-left: -1rem;
-    margin-right: -1rem;
+    @apply mb-5 flex flex-wrap items-end justify-between gap-3;
   }
 
   .home-spotlight__eyebrow {
@@ -1404,13 +1425,7 @@
   }
 
   .home-rail__header {
-    @apply mb-4 flex flex-wrap items-end justify-between gap-3 rounded-2xl;
-    background-color: rgb(255 255 255 / 0.82);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    padding: 0.75rem 1rem;
-    margin-left: -1rem;
-    margin-right: -1rem;
+    @apply mb-4 flex flex-wrap items-end justify-between gap-3;
   }
 
   .home-rail__title {
@@ -3656,6 +3671,74 @@
     background-size: 200% 100%;
     animation: shimmer 2.5s ease-in-out infinite;
     box-shadow: 0 0 12px rgb(243 146 35 / 0.4);
+  }
+
+  .scifi-heading {
+    position: relative;
+    display: inline-block;
+    font-family: var(--font-orbitron), sans-serif;
+    font-weight: 700;
+    color: transparent;
+    -webkit-text-stroke: 2px #f39223;
+    paint-order: stroke fill;
+    text-shadow: 0 0 10px rgb(243 146 35 / 0.55);
+    animation: scifiFlicker 2.6s linear infinite;
+    letter-spacing: 0.03em;
+  }
+
+  .scifi-heading--done {
+    animation: scifiFlicker 4.5s linear infinite;
+  }
+
+  .scifi-heading__cursor {
+    display: inline-block;
+    width: 0.5ch;
+    margin-left: 2px;
+    background: #ffb347;
+    box-shadow: 0 0 8px rgb(243 146 35 / 0.8);
+    animation: scifiCursorBlink 0.9s steps(1) infinite;
+    vertical-align: -0.05em;
+    height: 0.85em;
+  }
+
+  .scifi-heading--done .scifi-heading__cursor {
+    display: none;
+  }
+
+  @keyframes scifiFlicker {
+    0%,
+    92%,
+    100% {
+      opacity: 1;
+      text-shadow: 0 0 10px rgb(243 146 35 / 0.55);
+    }
+    93% {
+      opacity: 0.85;
+      text-shadow: 0 0 4px rgb(243 146 35 / 0.3);
+    }
+    95% {
+      opacity: 1;
+      text-shadow: 0 0 12px rgb(243 146 35 / 0.7);
+    }
+    96% {
+      opacity: 0.75;
+      text-shadow: 0 0 2px rgb(243 146 35 / 0.2);
+    }
+    97% {
+      opacity: 1;
+      text-shadow: 0 0 10px rgb(243 146 35 / 0.55);
+    }
+  }
+
+  @keyframes scifiCursorBlink {
+    0%,
+    50% {
+      opacity: 1;
+    }
+    50.01%,
+    100% {
+      opacity: 0;
+    }
   }
 
   .stagger-1 { animation-delay: 80ms; opacity: 0; }

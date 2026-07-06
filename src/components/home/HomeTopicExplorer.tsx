@@ -16,6 +16,7 @@ import {
 import { CATEGORIES } from "@/lib/constants";
 import { getCategoryImageUrl } from "@/lib/home-category-images";
 import { MarqueeRow } from "@/components/home/MarqueeRow";
+import { SciFiHeading } from "@/components/home/SciFiHeading";
 
 const TOPIC_ICONS: Record<string, LucideIcon> = {
   "AI & Machine Learning": Cpu,
@@ -56,7 +57,9 @@ export function HomeTopicExplorer() {
   return (
     <section className="home-topics" aria-label="Browse by topic">
       <div className="home-topics__head">
-        <h2 className="home-topics__title">Explore top categories</h2>
+        <h2 className="home-topics__title">
+          <SciFiHeading text="Explore top categories" />
+        </h2>
         <Link href="/courses" className="home-topics__link">
           View all topics
         </Link>

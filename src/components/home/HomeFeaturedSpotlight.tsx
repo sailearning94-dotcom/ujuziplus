@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Play, Package, Rocket } from "lucide-react";
+import { SciFiHeading } from "@/components/home/SciFiHeading";
 
 const PLACEHOLDER =
   "https://images.unsplash.com/photo-1518770660439-4636190af475?w=1200&h=700&fit=crop";
@@ -46,7 +47,9 @@ export function HomeFeaturedSpotlight({
       <div className="home-spotlight__head">
         <div>
           <p className="home-spotlight__eyebrow">Start here</p>
-          <h2 className="home-spotlight__title">Featured picks for new learners</h2>
+          <h2 className="home-spotlight__title">
+            <SciFiHeading text="Featured picks for new learners" />
+          </h2>
         </div>
         <Link href="/courses" className="home-spotlight__link">
           Browse catalog

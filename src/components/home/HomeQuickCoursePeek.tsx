@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { MarqueeRow } from "@/components/home/MarqueeRow";
 import { HomeCourseCard } from "@/components/home/HomeCourseCard";
+import { SciFiHeading } from "@/components/home/SciFiHeading";
 
 type CourseItem = {
   id: string;
@@ -30,7 +31,7 @@ export function HomeQuickCoursePeek({ courses }: { courses: CourseItem[] }) {
         <div className="home-rail__copy">
           <h2 className="home-trending-rail__title">
             <span className="home-trending-rail__live" aria-hidden />
-            Trending now
+            <SciFiHeading text="Trending now" />
           </h2>
           <p className="home-rail__desc">
             Popular courses learners are starting this week.

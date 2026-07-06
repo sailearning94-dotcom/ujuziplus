@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { MarqueeRow } from "@/components/home/MarqueeRow";
 import { MentorCard } from "@/components/mentors/MentorCard";
+import { SciFiHeading } from "@/components/home/SciFiHeading";
 import type { SerializedMentor } from "@/lib/actions/mentors";
 
 export function HomeMentorRail({ mentors }: { mentors: SerializedMentor[] }) {
@@ -18,7 +19,7 @@ export function HomeMentorRail({ mentors }: { mentors: SerializedMentor[] }) {
         <div className="home-rail__copy">
           <h2 className="home-mentor-rail__title">
             <span className="home-mentor-rail__pulse" aria-hidden />
-            Learn from industry builders
+            <SciFiHeading text="Learn from industry builders" />
           </h2>
           <p className="home-rail__desc">
             Practitioners who guide what to learn next — robotics, IoT, coding &amp; more.

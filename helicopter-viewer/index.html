@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Concept-07 // Rotorcraft Dossier</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --bg:#ffffff;
+    --bg-2:#f2f4f6;
+    --panel:rgba(255,255,255,0.7);
+    --line:rgba(20,30,36,0.12);
+    --line-strong:rgba(20,30,36,0.28);
+    --cyan:#0891a8;
+    --cyan-dim:rgba(8,145,168,0.3);
+    --amber:#c67a10;
+    --amber-dim:rgba(198,122,16,0.3);
+    --text:#12181b;
+    --text-dim:#4b5a60;
+    --text-faint:#8a969b;
+    --font-display:'Space Grotesk', sans-serif;
+    --font-body:'Inter', sans-serif;
+    --font-mono:'JetBrains Mono', monospace;
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{
+    margin:0; padding:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--font-body);
+    scroll-behavior:auto;
+  }
+  body{ position:relative; }
+
+  ::selection{ background:var(--cyan-dim); color:#fff; }
+
+  a, button{ font-family:inherit; }
+  :focus-visible{ outline:2px solid var(--cyan); outline-offset:3px; }
+
+  /* ---------- fixed 3d viewport ---------- */
+  #scene-canvas{
+    position:fixed; inset:0;
+    width:100%; height:100%;
+    z-index:0;
+    display:block;
+    background:
+      radial-gradient(ellipse at 50% 30%, #f7f9fa 0%, #ffffff 55%, #ffffff 100%);
+  }
+
+  /* faint technical grid over the backdrop, purely decorative */
+  #grid-overlay{
+    position:fixed; inset:0; z-index:1; pointer-events:none;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 64px 64px;
+    opacity:0.25;
+    mask-image: radial-gradient(ellipse at 50% 40%, black 0%, transparent 72%);
+  }
+
+  /* ---------- fixed HUD chrome ---------- */
+  #hud{
+    position:fixed; inset:0; z-index:3; pointer-events:none;
+  }
+
+  .corner{
+    position:absolute; width:28px; height:28px;
+    border:1.5px solid var(--cyan-dim);
+    opacity:0.8;
+  }
+  .corner.tl{ top:20px; left:20px; border-right:none; border-bottom:none; }
+  .corner.tr{ top:20px; right:20px; border-left:none; border-bottom:none; }
+  .corner.bl{ bottom:20px; left:20px; border-right:none; border-top:none; }
+  .corner.br{ bottom:20px; right:20px; border-left:none; border-top:none; }
+
+  .hud-label{
+    position:absolute;
+    font-family:var(--font-mono);
+    font-size:11px;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:var(--text-dim);
+  }
+  .hud-label .accent{ color:var(--cyan); }
+
+  #tag-designation{ top:34px; left:56px; }
+  #tag-status{ top:34px; right:56px; text-align:right; }
+  #tag-status span{ display:block; }
+  #tag-status .status-dot{
+    display:inline-block; width:6px; height:6px; border-radius:50%;
+    background:var(--amber); margin-right:6px;
+    box-shadow:0 0 8px var(--amber);
+  }
+
+  /* scrub bar, bottom-left telemetry readout (signature element) */
+  #telemetry{
+    position:absolute; left:56px; bottom:32px;
+    font-family:var(--font-mono);
+    color:var(--text-dim);
+    font-size:12px;
+    letter-spacing:0.06em;
+    display:flex; align-items:center; gap:14px;
+  }
+  #telemetry .tc{
+    color:var(--cyan);
+    font-size:13px;
+    min-width:96px;
+  }
+  #telemetry .clip-label{ color:var(--text-faint); }
+  .scrub-track{
+    position:relative;
+    width:140px; height:3px;
+    background:var(--line-strong);
+    overflow:hidden;
+  }
+  .scrub-fill{
+    position:absolute; left:0; top:0; bottom:0;
+    width:0%;
+    background:var(--amber);
+    box-shadow:0 0 8px var(--amber-dim);
+    transition:width 0.05s linear;
+  }
+
+  /* vertical progress rail, right edge */
+  #rail{
+    position:absolute; right:40px; top:50%;
+    transform:translateY(-50%);
+    height:min(46vh, 340px);
+    width:2px;
+    background:var(--line-strong);
+  }
+  #rail-fill{
+    position:absolute; left:0; bottom:0; width:100%;
+    height:0%;
+    background:linear-gradient(180deg, var(--cyan), var(--amber));
+    box-shadow:0 0 10px var(--cyan-dim);
+  }
+  #rail-marker{
+    position:absolute; left:50%; bottom:0%;
+    width:9px; height:9px;
+    transform:translate(-50%, 50%);
+    border-radius:50%;
+    background:var(--bg);
+    border:2px solid var(--cyan);
+  }
+
+  /* scroll cue */
+  #scroll-cue{
+    position:absolute; bottom:34px; left:50%; transform:translateX(-50%);
+    font-family:var(--font-mono);
+    font-size:10.5px; letter-spacing:0.22em; text-transform:uppercase;
+    color:var(--text-dim);
+    text-align:center;
+    transition:opacity 0.5s ease;
+  }
+  #scroll-cue .chev{
+    display:block; margin:8px auto 0; width:10px; height:10px;
+    border-right:1.5px solid var(--cyan);
+    border-bottom:1.5px solid var(--cyan);
+    transform:rotate(45deg);
+    animation:cue-bounce 1.8s ease-in-out infinite;
+  }
+  @keyframes cue-bounce{
+    0%,100%{ transform:translateY(0) rotate(45deg); opacity:0.4; }
+    50%{ transform:translateY(6px) rotate(45deg); opacity:1; }
+  }
+
+  /* ---------- loading / error overlay ---------- */
+  #loader{
+    position:fixed; inset:0; z-index:10;
+    background:var(--bg);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:18px;
+    transition:opacity 0.6s ease, visibility 0.6s ease;
+  }
+  #loader.hidden{ opacity:0; visibility:hidden; pointer-events:none; }
+  #loader .mark{
+    font-family:var(--font-mono);
+    font-size:12px; letter-spacing:0.3em; text-transform:uppercase;
+    color:var(--text-dim);
+  }
+  #loader .bar{
+    width:220px; height:2px; background:var(--line-strong); overflow:hidden;
+  }
+  #loader .bar-fill{
+    height:100%; width:0%; background:var(--cyan);
+    box-shadow:0 0 8px var(--cyan-dim);
+    transition:width 0.2s ease;
+  }
+  #loader .pct{ font-family:var(--font-mono); font-size:11px; color:var(--text-faint); }
+  #loader .error{
+    display:none; max-width:420px; text-align:center;
+    font-family:var(--font-mono); font-size:12px; line-height:1.7;
+    color:var(--amber); padding:0 20px;
+  }
+
+  /* ---------- scroll content ---------- */
+  #content{
+    position:relative; z-index:2;
+    pointer-events:none; /* let drags reach the canvas by default */
+  }
+  #content a, #content button{ pointer-events:auto; }
+
+  .hero{
+    height:100vh;
+    display:flex; flex-direction:column; justify-content:center;
+    padding:0 8vw;
+  }
+  .eyebrow{
+    font-family:var(--font-mono);
+    font-size:12px; letter-spacing:0.24em; text-transform:uppercase;
+    color:var(--cyan);
+    margin-bottom:18px;
+  }
+  .eyebrow::before{ content:'// '; color:var(--text-faint); }
+
+  h1.title{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:clamp(2.6rem, 7vw, 6rem);
+    line-height:0.98;
+    margin:0;
+    color:var(--text);
+    letter-spacing:-0.01em;
+    max-width:16ch;
+  }
+  h1.title em{
+    font-style:normal;
+    color:transparent;
+    -webkit-text-stroke:1px var(--cyan-dim);
+  }
+  .hero-sub{
+    margin-top:22px;
+    max-width:46ch;
+    font-size:1rem;
+    line-height:1.6;
+    color:var(--text-dim);
+  }
+  .hero-controls{
+    margin-top:34px;
+    display:flex; gap:28px;
+    font-family:var(--font-mono);
+    font-size:11.5px;
+    letter-spacing:0.06em;
+    color:var(--text-faint);
+  }
+  .hero-controls span b{ color:var(--text-dim); font-weight:600; }
+
+  .section{
+    min-height:100vh;
+    display:flex; align-items:center;
+    padding:6vh 8vw;
+  }
+  .section.align-left{ justify-content:flex-start; }
+  .section.align-right{ justify-content:flex-end; }
+
+  .panel{
+    pointer-events:auto;
+    max-width:440px;
+    background:var(--panel);
+    backdrop-filter:blur(14px) saturate(120%);
+    -webkit-backdrop-filter:blur(14px) saturate(120%);
+    border:1px solid var(--line);
+    padding:2.4rem 2.2rem;
+    opacity:0;
+    transform:translateY(24px);
+    transition:opacity 0.7s ease, transform 0.7s ease;
+  }
+  .panel.visible{ opacity:1; transform:translateY(0); }
+
+  .panel .file-tag{
+    font-family:var(--font-mono);
+    font-size:11px; letter-spacing:0.14em;
+    color:var(--text-faint);
+    display:flex; justify-content:space-between;
+    margin-bottom:16px;
+    border-bottom:1px solid var(--line);
+    padding-bottom:12px;
+  }
+  .panel .file-tag .accent{ color:var(--amber); }
+
+  .panel h2{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:1.7rem;
+    margin:0 0 14px;
+    color:var(--text);
+  }
+  .panel p{
+    font-size:0.96rem;
+    line-height:1.75;
+    color:var(--text-dim);
+    margin:0 0 12px;
+  }
+  .panel p:last-child{ margin-bottom:0; }
+
+  .spec-row{
+    display:flex; justify-content:space-between;
+    font-family:var(--font-mono);
+    font-size:11.5px;
+    padding:8px 0;
+    border-top:1px solid var(--line);
+    color:var(--text-faint);
+  }
+  .spec-row:first-of-type{ border-top:none; margin-top:4px; }
+  .spec-row span:last-child{ color:var(--cyan); }
+
+  .closing{
+    justify-content:center;
+    text-align:center;
+    flex-direction:column;
+  }
+  .closing .panel{ max-width:520px; margin:0 auto; text-align:left; }
+
+  footer{
+    position:relative; z-index:2;
+    padding:40px 8vw 60px;
+    font-family:var(--font-mono);
+    font-size:10.5px;
+    color:var(--text-faint);
+    letter-spacing:0.05em;
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;
+    pointer-events:auto;
+  }
+
+  @media (max-width: 720px){
+    #rail, #tag-status, #hero-controls{ display:none; }
+    .hero-controls{ flex-direction:column; gap:8px; }
+    .section{ padding:6vh 6vw; justify-content:center !important; }
+    .panel{ max-width:100%; }
+    #telemetry{ left:20px; bottom:20px; }
+    #telemetry .scrub-track{ width:90px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .panel{ transition:opacity 0.2s linear; transform:none !important; }
+    #scroll-cue .chev{ animation:none; }
+  }
+</style>
+</head>
+<body>
+
+  <canvas id="scene-canvas"></canvas>
+  <div id="grid-overlay"></div>
+
+  <div id="hud">
+    <div class="corner tl"></div>
+    <div class="corner tr"></div>
+    <div class="corner bl"></div>
+    <div class="corner br"></div>
+
+    <div class="hud-label" id="tag-designation">Unit&nbsp;<span class="accent">Concept-07</span> // Rotorcraft</div>
+    <div class="hud-label" id="tag-status">
+      <span><span class="status-dot"></span>Render&nbsp;Active</span>
+      <span id="viewport-size">—</span>
+    </div>
+
+    <div id="telemetry">
+      <span class="tc" id="tc-readout">00:00 / 00:00</span>
+      <div class="scrub-track"><div class="scrub-fill" id="scrub-fill"></div></div>
+      <span class="clip-label" id="clip-label">SEQ</span>
+    </div>
+
+    <div id="rail">
+      <div id="rail-fill"></div>
+      <div id="rail-marker"></div>
+    </div>
+
+    <div id="scroll-cue">
+      Scroll to run sequence
+      <span class="chev"></span>
+    </div>
+  </div>
+
+  <div id="loader">
+    <div class="mark">Loading Concept Model</div>
+    <div class="bar"><div class="bar-fill" id="loader-bar"></div></div>
+    <div class="pct" id="loader-pct">0%</div>
+    <div class="error" id="loader-error"></div>
+  </div>
+
+  <div id="content">
+
+    <section class="hero">
+      <div class="eyebrow">Design study / rotary-wing platform</div>
+      <h1 class="title">Attack Helicopter <em>Concept</em></h1>
+      <p class="hero-sub">
+        A rendered study exploring a shrouded coaxial rotor and an integrated
+        holographic targeting layer. Scroll to run the sequence, drag to
+        inspect the airframe from any angle.
+      </p>
+      <div class="hero-controls">
+        <span><b>Scroll</b> — play sequence</span>
+        <span><b>Drag</b> — rotate view</span>
+      </div>
+    </section>
+
+    <section class="section align-left">
+      <div class="panel" data-panel>
+        <div class="file-tag"><span>File 01 / 04</span><span class="accent">Overview</span></div>
+        <h2>Shrouded rotor system</h2>
+        <p>
+          The concept replaces an exposed main rotor with a ducted ring,
+          reducing blade signature while keeping a familiar rotary-wing
+          silhouette. The ring itself doubles as a mounting surface for the
+          aircraft's sensor band.
+        </p>
+        <p>
+          Every surface on the model was built to read clearly at low
+          altitude and at a glance — a design study, not an engineering
+          spec.
+        </p>
+      </div>
+    </section>
+
+    <section class="section align-right">
+      <div class="panel" data-panel>
+        <div class="file-tag"><span>File 02 / 04</span><span class="accent">Airframe</span></div>
+        <h2>Angular low-profile hull</h2>
+        <p>
+          The fuselage trades curvature for faceted plating, breaking up the
+          silhouette the way faceted stealth hulls do. The cockpit sits
+          low and forward, tucked beneath the rotor shroud.
+        </p>
+        <div class="spec-row"><span>Rotor type</span><span>Shrouded coaxial</span></div>
+        <div class="spec-row"><span>Hull language</span><span>Faceted / low-profile</span></div>
+        <div class="spec-row"><span>Format</span><span>glTF Binary (.glb)</span></div>
+      </div>
+    </section>
+
+    <section class="section align-left">
+      <div class="panel" data-panel>
+        <div class="file-tag"><span>File 03 / 04</span><span class="accent">Systems</span></div>
+        <h2>Integrated HUD overlay</h2>
+        <p>
+          Amber flight-reference lines and cyan targeting brackets are baked
+          directly into the model's materials — the same graphic language
+          this page borrows for its own interface, tying the viewer to the
+          object it's showing.
+        </p>
+      </div>
+    </section>
+
+    <section class="section closing">
+      <div class="panel" data-panel>
+        <div class="file-tag"><span>File 04 / 04</span><span class="accent">Sequence</span></div>
+        <h2>End of run</h2>
+        <p>
+          That's the full animation, scrubbed across the page. Scroll back
+          up to replay it from the start, or keep dragging — the camera
+          stays free the whole way through.
+        </p>
+      </div>
+    </section>
+
+  </div>
+
+  <footer>
+    <span>Concept-07 — rendered model, viewer built with three.js</span>
+    <span id="footer-fps">—</span>
+  </footer>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.164.1/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.164.1/examples/jsm/"
+    }
+  }
+  </script>
+
+  <script type="module">
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+    import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+    import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+    import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+    import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+
+    // ---------- config ----------
+    const MODEL_PATH = './attack_helicopter_concept.glb';
+    const REDUCED_MOTION = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const SCRUB_EASE = REDUCED_MOTION ? 1 : 0.085;
+
+    const BLOOM_STRENGTH = 0.6;
+    const BLOOM_RADIUS = 0.4;
+    const BLOOM_THRESHOLD = 0.85;
+
+    // Tint applied to the HUD glyph stencils (white-on-transparent alpha
+    // textures) recovered from the spec-gloss data below.
+    const HUD_TINT = { HUD1: 0xffaa33, HUD2: 0xffaa33, HUD3: 0x66ffee };
+
+    // ---------- dom refs ----------
+    const canvas = document.getElementById('scene-canvas');
+    const loader = document.getElementById('loader');
+    const loaderBar = document.getElementById('loader-bar');
+    const loaderPct = document.getElementById('loader-pct');
+    const loaderError = document.getElementById('loader-error');
+    const tcReadout = document.getElementById('tc-readout');
+    const scrubFill = document.getElementById('scrub-fill');
+    const railFill = document.getElementById('rail-fill');
+    const railMarker = document.getElementById('rail-marker');
+    const scrollCue = document.getElementById('scroll-cue');
+    const viewportSizeTag = document.getElementById('viewport-size');
+    const footerFps = document.getElementById('footer-fps');
+
+    // ---------- renderer / scene / camera ----------
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true, powerPreference:'high-performance' });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 0.85;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xffffff);
+
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(4, 3, 6);
+
+    // ---------- lights ----------
+    const ambientFill = new THREE.HemisphereLight(0xffffff, 0xcccccc, 1.1);
+    scene.add(ambientFill);
+
+    const key = new THREE.DirectionalLight(0xffffff, 1.1);
+    key.position.set(5, 10, 7);
+    scene.add(key);
+
+    const fill = new THREE.DirectionalLight(0xffffff, 0.5);
+    fill.position.set(-6, 4, -5);
+    scene.add(fill);
+
+    // ---------- controls ----------
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
+    controls.enablePan = false;
+    controls.enableZoom = false; // wheel is reserved for page scroll / animation scrub
+    controls.minPolarAngle = Math.PI * 0.15;
+    controls.maxPolarAngle = Math.PI * 0.85;
+    controls.rotateSpeed = 0.6;
+    controls.target.set(0, 0, 0);
+
+    // ---------- post-processing ----------
+    const composer = new EffectComposer(renderer);
+    composer.addPass(new RenderPass(scene, camera));
+
+    const bloomPass = new UnrealBloomPass(
+      new THREE.Vector2(window.innerWidth, window.innerHeight),
+      BLOOM_STRENGTH,
+      BLOOM_RADIUS,
+      BLOOM_THRESHOLD
+    );
+    composer.addPass(bloomPass);
+    composer.addPass(new OutputPass());
+
+    // ---------- KHR_materials_pbrSpecularGlossiness recovery ----------
+    // This GLB stores every material's real base color via the deprecated
+    // KHR_materials_pbrSpecularGlossiness extension, which GLTFLoader
+    // doesn't understand and silently drops. With no pbrMetallicRoughness
+    // block to fall back on, GLTFLoader defaults every material to
+    // metalness=1/roughness=1 with a black base color — and with no
+    // environment map for specular IBL, that renders as pure black. This
+    // function manually parses the GLB's JSON + BIN chunks, recovers each
+    // material's diffuseTexture/diffuseFactor/glossinessFactor from the raw
+    // extension data, and returns everything needed to patch the loaded
+    // three.js materials afterward.
+    async function recoverSpecGlossData(url) {
+      const buf = await fetch(url).then((r) => r.arrayBuffer());
+      const dv = new DataView(buf);
+      let offset = 12;
+      let json = null;
+      let binChunk = null;
+      while (offset < buf.byteLength) {
+        const chunkLength = dv.getUint32(offset, true);
+        const chunkType = dv.getUint32(offset + 4, true);
+        const chunkData = buf.slice(offset + 8, offset + 8 + chunkLength);
+        if (chunkType === 0x4e4f534a) json = JSON.parse(new TextDecoder().decode(chunkData));
+        else if (chunkType === 0x004e4942) binChunk = chunkData;
+        offset += 8 + chunkLength;
+      }
+
+      async function decodeImageForTexture(texIndex) {
+        const image = json.images[json.textures[texIndex].source];
+        const bv = json.bufferViews[image.bufferView];
+        const bytes = binChunk.slice(bv.byteOffset || 0, (bv.byteOffset || 0) + bv.byteLength);
+        const blob = new Blob([bytes], { type: image.mimeType });
+        return createImageBitmap(blob);
+      }
+
+      const byMaterialName = {};
+      await Promise.all(
+        (json.materials || []).map(async (mat) => {
+          const specGloss = mat.extensions && mat.extensions.KHR_materials_pbrSpecularGlossiness;
+          if (!specGloss) return;
+          const entry = {
+            diffuseFactor: specGloss.diffuseFactor || [1, 1, 1, 1],
+            glossinessFactor: specGloss.glossinessFactor ?? 1,
+          };
+          if (specGloss.diffuseTexture) {
+            entry.diffuseImage = await decodeImageForTexture(specGloss.diffuseTexture.index);
+          }
+          byMaterialName[mat.name] = entry;
+        })
+      );
+      return byMaterialName;
+    }
+
+    // Given a decoded diffuse image, detect whether it's a "white-on-transparent
+    // stencil" (flat white RGB, glyph shapes carried entirely in alpha, as used
+    // by the HUD screen overlays) vs. a normal color texture, by sampling pixels.
+    function isWhiteStencil(image) {
+      const c = document.createElement('canvas');
+      c.width = image.width;
+      c.height = image.height;
+      const ctx = c.getContext('2d');
+      ctx.drawImage(image, 0, 0);
+      const { data } = ctx.getImageData(0, 0, c.width, c.height);
+      let opaqueSamples = 0;
+      let nonWhiteOpaque = 0;
+      for (let i = 0; i < data.length; i += 4 * 97) {
+        if (data[i + 3] < 10) continue;
+        opaqueSamples++;
+        if (data[i] < 250 || data[i + 1] < 250 || data[i + 2] < 250) nonWhiteOpaque++;
+      }
+      return opaqueSamples > 0 && nonWhiteOpaque / opaqueSamples < 0.05;
+    }
+
+    // ---------- loading ----------
+    let mixer = null;
+    let action = null;
+    let clipDuration = 0;
+    let currentTime = 0;
+    let targetTime = 0;
+    let scrollMax = 1;
+
+    const gltfLoader = new GLTFLoader();
+
+    gltfLoader.load(
+      MODEL_PATH,
+      (gltf) => {
+        const model = gltf.scene;
+        scene.add(model);
+
+        // The GLB bundles a background "landscape" (city-block meshes using
+        // the landscape_black/landscape_blue materials) meant to sit under
+        // the helicopter against a black scene. On the white page background
+        // that opaque black landscape reads as a large dark smudge, so hide
+        // it — this viewer only shows the aircraft itself.
+        model.traverse((child) => {
+          if (child.isMesh && child.material && /^landscape_/.test(child.material.name)) {
+            child.visible = false;
+          }
+        });
+
+        // Boost emissive neon trim
+        model.traverse((child) => {
+          if (child.isMesh && child.material) {
+            const materials = Array.isArray(child.material) ? child.material : [child.material];
+            materials.forEach((mat) => {
+              const isEmissive = mat.emissive && (mat.emissiveMap || mat.emissive.getHex() !== 0x000000);
+              if (!isEmissive) return;
+              if (mat.name === 'HUD1' || mat.name === 'HUD2' || mat.name === 'HUD3') return;
+              mat.emissiveIntensity = Math.max(mat.emissiveIntensity ?? 1, 1.5);
+            });
+          }
+        });
+
+        const meshesByMaterialName = {};
+        model.traverse((child) => {
+          if (child.isMesh && child.material) {
+            const name = child.material.name;
+            (meshesByMaterialName[name] = meshesByMaterialName[name] || []).push(child);
+          }
+        });
+
+        recoverSpecGlossData(MODEL_PATH).then((byMaterialName) => {
+          Object.entries(byMaterialName).forEach(([matName, data]) => {
+            const meshes = meshesByMaterialName[matName];
+            if (!meshes) return;
+
+            if (data.diffuseImage && isWhiteStencil(data.diffuseImage)) {
+              // White-on-transparent stencil (HUD screen glyphs): the shape
+              // lives in alpha only, so tint it per-layer instead of
+              // drawing it white.
+              const tex = new THREE.Texture(data.diffuseImage);
+              tex.needsUpdate = true;
+              tex.colorSpace = THREE.NoColorSpace;
+              const tint = HUD_TINT[matName] ?? 0xffaa33;
+              meshes.forEach((mesh) => {
+                mesh.material = new THREE.MeshBasicMaterial({
+                  color: tint,
+                  alphaMap: tex,
+                  transparent: true,
+                  blending: THREE.AdditiveBlending,
+                  depthWrite: false,
+                  side: THREE.DoubleSide,
+                  opacity: 0.65,
+                });
+              });
+              return;
+            }
+
+            // Normal base-color recovery: restore the diffuse texture/color
+            // as the material's map/color, keeping its existing emissive
+            // glow map.
+            let tex = null;
+            if (data.diffuseImage) {
+              tex = new THREE.Texture(data.diffuseImage);
+              tex.needsUpdate = true;
+              tex.colorSpace = THREE.SRGBColorSpace;
+            }
+            const [r, g, b] = data.diffuseFactor;
+            meshes.forEach((mesh) => {
+              const mat = mesh.material;
+              if (tex) mat.map = tex;
+              mat.color.setRGB(r, g, b);
+              // GLTFLoader has no pbrMetallicRoughness block to read here,
+              // so it defaulted metalness/roughness to 1/1. Spec/gloss
+              // materials aren't PBR-metallic — force metalness off and
+              // derive roughness from glossinessFactor so the surface is
+              // actually lit instead of reading black.
+              mat.metalness = 0;
+              mat.roughness = 1 - data.glossinessFactor;
+              // These parts (rotor discs, canopy) were authored as
+              // alpha-blended "glass" against a black backdrop — on a
+              // light page background that blend reads as a dark smudge
+              // instead of glass. Make them opaque so they render as
+              // clean lit metal regardless of what's behind them.
+              mat.transparent = false;
+              mat.opacity = 1;
+              mat.depthWrite = true;
+              mat.needsUpdate = true;
+            });
+          });
+        });
+
+        frameObjectToCamera(model, camera, controls);
+
+        if (gltf.animations && gltf.animations.length > 0) {
+          mixer = new THREE.AnimationMixer(model);
+          const clip = gltf.animations[0];
+          clipDuration = clip.duration;
+          action = mixer.clipAction(clip);
+          action.play();
+          action.paused = true; // scrubbed manually from scroll position, not real time
+          action.time = 0;
+          document.getElementById('clip-label').textContent = 'SEQ // ' + clip.name.slice(0, 18).toUpperCase();
+        } else {
+          document.getElementById('clip-label').textContent = 'NO SEQUENCE FOUND';
+        }
+
+        recomputeScrollBounds();
+        onScroll();
+        loader.classList.add('hidden');
+      },
+      (xhr) => {
+        if (xhr.total) {
+          const pct = Math.min(100, Math.round((xhr.loaded / xhr.total) * 100));
+          loaderBar.style.width = pct + '%';
+          loaderPct.textContent = pct + '%';
+        }
+      },
+      (err) => {
+        console.error('Failed to load model:', err);
+        loaderBar.parentElement.style.display = 'none';
+        loaderPct.style.display = 'none';
+        loaderError.style.display = 'block';
+        loaderError.textContent =
+          'Could not load "attack_helicopter_concept.glb". ' +
+          'Make sure the file sits next to this HTML file, and that you are ' +
+          'viewing this page through a local server (not double-clicked as a ' +
+          'file:// URL) — browsers block model loading from the filesystem directly.';
+      }
+    );
+
+    function frameObjectToCamera(object, cam, ctrl) {
+      const box = new THREE.Box3().setFromObject(object);
+      const size = box.getSize(new THREE.Vector3()).length();
+      const center = box.getCenter(new THREE.Vector3());
+
+      ctrl.target.copy(center);
+      cam.position.copy(center).add(new THREE.Vector3(size * 0.6, size * 0.4, size * 0.6));
+      cam.near = size / 100;
+      cam.far = size * 100;
+      cam.updateProjectionMatrix();
+      ctrl.update();
+    }
+
+    // ---------- scroll → scrub mapping ----------
+    function recomputeScrollBounds() {
+      scrollMax = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+    }
+
+    function onScroll() {
+      const progress = THREE.MathUtils.clamp(window.scrollY / scrollMax, 0, 1);
+      if (clipDuration) targetTime = progress * clipDuration;
+
+      scrubFill.style.width = (progress * 100).toFixed(1) + '%';
+      railFill.style.height = (progress * 100).toFixed(1) + '%';
+      railMarker.style.bottom = (progress * 100).toFixed(1) + '%';
+      scrollCue.style.opacity = progress > 0.03 ? '0' : '1';
+    }
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    // ---------- panel reveal on scroll ----------
+    const panels = document.querySelectorAll('[data-panel]');
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.25 });
+    panels.forEach((p) => io.observe(p));
+
+    // ---------- resize ----------
+    function onResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      composer.setSize(window.innerWidth, window.innerHeight);
+      viewportSizeTag.textContent = window.innerWidth + ' × ' + window.innerHeight;
+      recomputeScrollBounds();
+      onScroll();
+    }
+    window.addEventListener('resize', onResize);
+    onResize();
+
+    // ---------- render loop ----------
+    let frameCount = 0, fpsAccum = 0, lastFpsUpdate = performance.now();
+
+    function formatTC(t) {
+      const m = Math.floor(t / 60).toString().padStart(2, '0');
+      const s = Math.floor(t % 60).toString().padStart(2, '0');
+      return m + ':' + s;
+    }
+
+    function animate() {
+      requestAnimationFrame(animate);
+      const now = performance.now();
+
+      if (action && clipDuration) {
+        currentTime += (targetTime - currentTime) * SCRUB_EASE;
+        action.time = THREE.MathUtils.clamp(currentTime, 0, Math.max(0, clipDuration - 0.001));
+        mixer.update(0);
+        tcReadout.textContent = formatTC(action.time) + ' / ' + formatTC(clipDuration);
+      }
+
+      controls.update();
+      composer.render();
+
+      frameCount++;
+      if (now - lastFpsUpdate > 500) {
+        fpsAccum = Math.round((frameCount * 1000) / (now - lastFpsUpdate));
+        footerFps.textContent = fpsAccum + ' fps';
+        frameCount = 0;
+        lastFpsUpdate = now;
+      }
+    }
+    animate();
+  </script>
+
+</body>
+</html>

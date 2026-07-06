@@ -189,6 +189,7 @@ export function HomeHeroBackground() {
           if (cancelled) return;
           model = gltf.scene;
           scene.add(model);
+          model.rotation.y = -Math.PI / 2;
           baseQuat = model.rotation.y;
 
           model.traverse((child: any) => {

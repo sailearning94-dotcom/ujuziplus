@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { HomeCarousel } from "@/components/home/HomeCarousel";
+import { SciFiHeading } from "@/components/home/SciFiHeading";
 
 export function HomeCatalogRail({
   title,
@@ -23,7 +24,9 @@ export function HomeCatalogRail({
     <section className="home-rail">
       <div className="home-rail__header">
         <div className="home-rail__copy">
-          <h2 className="home-rail__title">{title}</h2>
+          <h2 className="home-rail__title">
+            <SciFiHeading text={title} />
+          </h2>
           {description && <p className="home-rail__desc">{description}</p>}
         </div>
         {seeAllHref && (
