@@ -123,14 +123,18 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const subDir = path.join(process.cwd(), "public", "uploads", kind);
-    if (!existsSync(subDir)) {
-      mkdirSync(subDir, { recursive: true });
+    // Use Railway volume path in production, otherwise use local path
+    const uploadBasePath = process.env.RAILWAY_VOLUME_MOUNT_PATH 
+      ? path.join(process.env.RAILWAY_VOLUME_MOUNT_PATH, "uploads", kind)
+      : path.join(process.cwd(), "public", "uploads", kind);
+    
+    if (!existsSync(uploadBasePath)) {
+      mkdirSync(uploadBasePath, { recursive: true });
     }
 
     const originalExt = defaultExtension(kind, resolvedMime, file.name);
     const filename = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${originalExt}`;
-    const filepath = path.join(subDir, filename);
+    const filepath = path.join(uploadBasePath, filename);
 
     const buffer = Buffer.from(await file.arrayBuffer());
 

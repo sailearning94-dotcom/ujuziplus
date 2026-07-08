@@ -14,6 +14,8 @@ const nextConfig = {
       // Allow locally-uploaded images served from /uploads/
       { protocol: "http", hostname: "localhost" },
     ],
+    // Disable image optimization for uploaded files to avoid 400 errors
+    unoptimized: true,
   },
 
   // Allow large file uploads (videos up to 500 MB)
