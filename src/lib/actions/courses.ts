@@ -6,9 +6,23 @@
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { CourseLevel, LessonType } from "@prisma/client";
+import { revalidateCourseCatalog } from "@/lib/revalidate-catalog";
 
 function revalidateCourseEdit(courseId: string) {
   revalidatePath(`/instructor/courses/${courseId}/edit`);
+}
+
+/**
+ * Edits to published-facing fields (title/slug, pricing, SEO) must also bust
+ * the public catalog/detail caches, not just the instructor's own edit page —
+ * otherwise a course flipped to free (or repriced, or retitled) keeps
+ * serving stale cached data to learners for up to 2 minutes, or indefinitely
+ * if nothing else happens to revalidate that tag.
+ */
+async function revalidatePublicCourse(courseId: string) {
+  revalidateCourseEdit(courseId);
+  const course = await db.course.findUnique({ where: { id: courseId }, select: { slug: true } });
+  revalidateCourseCatalog(course?.slug);
 }
 
 // ─── Shared result type ───────────────────────────────────────────────────────
@@ -118,7 +132,7 @@ export async function saveBasicInfo(
     },
   });
 
-  revalidatePath(`/instructor/courses/${courseId}/edit`);
+  await revalidatePublicCourse(courseId);
   return { success: true, data: undefined };
 }
 
@@ -407,7 +421,7 @@ export async function saveRequirements(
       linkedKitSlugs: data.linkedKitSlugs,
     },
   });
-  revalidateCourseEdit(courseId);
+  await revalidatePublicCourse(courseId);
   return { success: true, data: undefined };
 }
 
@@ -425,7 +439,7 @@ export async function savePricing(
     where: { id: courseId, instructorId },
     data: { isFree: data.isFree, price, discountPrice },
   });
-  revalidateCourseEdit(courseId);
+  await revalidatePublicCourse(courseId);
   return { success: true, data: undefined };
 }
 
@@ -444,7 +458,7 @@ export async function saveSEO(
       enableCert: data.enableCert,
     },
   });
-  revalidateCourseEdit(courseId);
+  await revalidatePublicCourse(courseId);
   return { success: true, data: undefined };
 }
 
