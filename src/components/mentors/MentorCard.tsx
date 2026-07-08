@@ -61,7 +61,7 @@ export function MentorCard({
           <Avatar
             src={mentor.avatarUrl}
             alt={mentor.displayName}
-            size={variant === "spotlight" ? "xl" : "lg"}
+            size="2xl"
             className="mentor-card__avatar"
           />
           {mentor.isFeatured && (
