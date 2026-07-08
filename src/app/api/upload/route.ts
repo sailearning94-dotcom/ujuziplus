@@ -123,10 +123,8 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Use Railway volume path in production, otherwise use local path
-    const uploadBasePath = process.env.RAILWAY_VOLUME_MOUNT_PATH 
-      ? path.join(process.env.RAILWAY_VOLUME_MOUNT_PATH, kind)
-      : path.join(process.cwd(), "public", "uploads", kind);
+    // Use local public/uploads path (Railway volume should be mounted at /app/public/uploads)
+    const uploadBasePath = path.join(process.cwd(), "public", "uploads", kind);
     
     if (!existsSync(uploadBasePath)) {
       mkdirSync(uploadBasePath, { recursive: true });
