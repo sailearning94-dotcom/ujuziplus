@@ -90,7 +90,15 @@ export async function GET(
         }
         form.flatten();
         pdfBytes = await pdfDoc.save();
-      } catch {
+      } catch (templateErr) {
+        // Falling back silently here means a missing/corrupt template file
+        // (or one with no fillable form) always looks identical to "no
+        // template uploaded" from the outside — log which one it actually
+        // was so this is diagnosable instead of a silent downgrade.
+        console.error(
+          `Certificate template for course "${cert.course.title}" failed to render (path: ${templatePath}), falling back to default:`,
+          templateErr
+        );
         pdfBytes = await generateDefault(fields, params.verifyCode);
       }
     } else {

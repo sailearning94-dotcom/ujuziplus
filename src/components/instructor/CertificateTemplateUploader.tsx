@@ -36,6 +36,7 @@ export function CertificateTemplateUploader({ courseId }: { courseId: string }) 
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState("");
+  const [warning, setWarning] = useState("");
   const [saved, setSaved] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
@@ -58,6 +59,7 @@ export function CertificateTemplateUploader({ courseId }: { courseId: string }) 
       return;
     }
     setError("");
+    setWarning("");
     setUploading(true);
     setProgress(0);
 
@@ -81,8 +83,12 @@ export function CertificateTemplateUploader({ courseId }: { courseId: string }) 
       const res = await saveCertificateTemplate(courseId, filePath);
       if (!res.success) { setError(res.error); return; }
       setExisting({ filePath });
-      setSaved(true);
-      setTimeout(() => setSaved(false), 3000);
+      if (res.data?.warning) {
+        setWarning(res.data.warning);
+      } else {
+        setSaved(true);
+        setTimeout(() => setSaved(false), 3000);
+      }
     };
     xhr.onerror = () => { setUploading(false); setError("Upload failed."); };
     xhr.open("POST", "/api/upload");
@@ -188,6 +194,11 @@ export function CertificateTemplateUploader({ courseId }: { courseId: string }) 
       {saved && (
         <p className="flex items-center gap-1.5 text-sm text-green-600">
           <Check className="h-4 w-4" />Template saved successfully.
+        </p>
+      )}
+      {warning && (
+        <p className="flex items-start gap-1.5 text-sm text-amber-600">
+          <Info className="h-4 w-4 shrink-0 mt-0.5" />{warning}
         </p>
       )}
       {error && <p className="text-sm text-red-600">{error}</p>}
