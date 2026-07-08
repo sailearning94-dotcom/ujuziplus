@@ -7,6 +7,7 @@ import { getLearnerShowcaseProjects } from "@/lib/actions/showcase";
 import { CheckCircle, Clock, XCircle, Eye } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import { ShowcaseSubmissionActions } from "@/components/showcase/ShowcaseSubmissionActions";
 
 const STATUS_CONFIG = {
   DRAFT:          { label: "Draft",         icon: <Clock className="h-3.5 w-3.5" />,        color: "warning" as const },
@@ -50,6 +51,9 @@ export default async function ShowcaseSubmitPage() {
                       <Link href="/showcase" className="text-xs text-brand hover:underline flex items-center gap-1">
                         <Eye className="h-3 w-3" />View
                       </Link>
+                    )}
+                    {["DRAFT", "REJECTED"].includes(p.status) && (
+                      <ShowcaseSubmissionActions projectId={p.id} title={p.title} />
                     )}
                   </div>
                 </Card>

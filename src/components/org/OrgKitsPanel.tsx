@@ -11,6 +11,7 @@ import {
   submitOrgKitRequest,
   updateOrgKitRequestStatus,
   adjustOrgKitInventory,
+  removeOrgKitInventory,
 } from "@/lib/actions/org-kits";
 import { useAppStore } from "@/store/appStore";
 import type { OrgKitRequestStatus } from "@prisma/client";
@@ -93,6 +94,17 @@ export function OrgKitsPanel({
       const res = await updateOrgKitRequestStatus(orgSlug, requestId, status, userId);
       if (res.success) {
         showToast(`Request ${status.toLowerCase()}`, "success");
+        router.refresh();
+      } else showToast(res.error ?? "Failed", "error");
+    });
+  };
+
+  const removeInventoryItem = (item: InventoryRow) => {
+    if (!confirm(`Remove "${item.kit.title}" from inventory? This cannot be undone.`)) return;
+    startTransition(async () => {
+      const res = await removeOrgKitInventory(orgSlug, item.id, userId);
+      if (res.success) {
+        showToast("Removed from inventory", "success");
         router.refresh();
       } else showToast(res.error ?? "Failed", "error");
     });
@@ -236,6 +248,17 @@ export function OrgKitsPanel({
                           }}
                         >
                           Adjust
+                        </Button>
+                      )}
+                      {isOrgAdmin && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                          disabled={isPending}
+                          onClick={() => removeInventoryItem(item)}
+                        >
+                          Remove
                         </Button>
                       )}
                     </td>

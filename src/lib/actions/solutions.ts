@@ -457,3 +457,38 @@ export async function adminUpsertSolution(input: {
   revalidatePath("/solutions");
   return { success: true, data: undefined };
 }
+
+export async function adminDeleteSolution(solutionId: string): Promise<ActionResult> {
+  await requireAdmin();
+
+  let solution;
+  try {
+    solution = await db.solution.delete({ where: { id: solutionId } });
+  } catch {
+    return { success: false, error: "Not found." };
+  }
+
+  revalidatePath("/admin/content");
+  revalidatePath("/solutions");
+  revalidatePath(`/solutions/${solution.slug}`);
+  return { success: true, data: undefined };
+}
+
+/** Author deletes their own DRAFT or REJECTED solution */
+export async function deleteSolutionDraft(solutionId: string): Promise<ActionResult> {
+  const { user } = await requireUser();
+  const solution = await db.solution.findUnique({ where: { id: solutionId } });
+  if (!solution) return { success: false, error: "Not found." };
+  if (solution.authorId !== user.id && user.role !== "ADMIN") {
+    return { success: false, error: "Not authorised." };
+  }
+  if (!["DRAFT", "REJECTED"].includes(solution.status)) {
+    return { success: false, error: "Only drafts and rejected submissions can be deleted." };
+  }
+
+  await db.solution.delete({ where: { id: solutionId } });
+
+  revalidatePath("/solutions");
+  revalidatePath("/dashboard/lab");
+  return { success: true, data: undefined };
+}

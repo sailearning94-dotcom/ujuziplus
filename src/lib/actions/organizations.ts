@@ -381,6 +381,21 @@ export async function createOrgAdminCredentials(
   return { success: true, data: { userId: user.id } };
 }
 
+export async function adminDeleteOrganization(orgId: string): Promise<ActionResult> {
+  await requireAdmin();
+
+  try {
+    await db.organization.delete({ where: { id: orgId } });
+  } catch {
+    return { success: false, error: "Could not delete this organization. Try again or contact support." };
+  }
+
+  revalidatePath("/admin/organizations");
+  revalidatePath("/organizations");
+  revalidateTag("published-organizations");
+  return { success: true, data: undefined };
+}
+
 export async function getOrgAdminUsers(orgId: string) {
   await requireAdmin();
   return db.organizationMember.findMany({

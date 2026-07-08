@@ -487,23 +487,61 @@ export async function getInstructorCourses(instructorId: string) {
   return db.course.findMany({
     where: { instructorId },
     orderBy: { updatedAt: "desc" },
-    include: { _count: { select: { modules: true } } },
+    include: { _count: { select: { modules: true, enrollments: true, certificates: true } } },
   });
 }
 
 // ─── Delete draft ─────────────────────────────────────────────────────────────
 
+/**
+ * Shared by the instructor and admin delete flows: archives a course instead
+ * of hard-deleting it if it has enrollment or certificate history to
+ * preserve, otherwise hard-deletes it (published courses are always
+ * protected from hard delete, since they're reachable from the public
+ * catalog). The count-check and the resulting write run inside one
+ * transaction so a concurrent enrollment can't slip in between the check and
+ * the delete.
+ */
+export async function archiveOrDeleteCourse(courseId: string): Promise<ActionResult<{ archived: boolean }>> {
+  try {
+    const archived = await db.$transaction(async (tx) => {
+      const course = await tx.course.findUnique({
+        where: { id: courseId },
+        include: { _count: { select: { enrollments: true, certificates: true } } },
+      });
+      if (!course) throw new Error("NOT_FOUND");
+
+      const hasStudentHistory = course._count.enrollments > 0 || course._count.certificates > 0;
+
+      if (hasStudentHistory || course.status === "PUBLISHED") {
+        // Enrollments, progress, and issued certificates must be preserved,
+        // and published courses stay reachable from the catalog, so retire
+        // the course instead of hard-deleting it.
+        await tx.course.update({ where: { id: courseId }, data: { status: "ARCHIVED" } });
+        return true;
+      }
+
+      await tx.course.delete({ where: { id: courseId } });
+      return false;
+    });
+
+    revalidatePath("/instructor/courses");
+    revalidatePath("/admin/courses");
+    return { success: true, data: { archived } };
+  } catch (err) {
+    if (err instanceof Error && err.message === "NOT_FOUND") {
+      return { success: false, error: "Not found." };
+    }
+    return { success: false, error: "Could not delete this course. Try again or contact support." };
+  }
+}
+
 export async function deleteCourse(
   courseId: string,
   instructorId: string
-): Promise<ActionResult> {
+): Promise<ActionResult<{ archived: boolean }>> {
   const course = await db.course.findFirst({ where: { id: courseId, instructorId } });
   if (!course) return { success: false, error: "Not found." };
-  if (course.status === "PUBLISHED") {
-    return { success: false, error: "Cannot delete a published course." };
-  }
 
-  await db.course.delete({ where: { id: courseId } });
-  revalidatePath("/instructor/courses");
-  return { success: true, data: undefined };
+  return archiveOrDeleteCourse(courseId);
 }

@@ -258,3 +258,37 @@ export async function adminUpdateShowcaseProject(
   revalidatePath("/showcase");
   return { success: true, data: undefined };
 }
+
+export async function adminDeleteShowcaseProject(projectId: string): Promise<ActionResult> {
+  await requireAdmin();
+
+  try {
+    await db.showcaseProject.delete({ where: { id: projectId } });
+  } catch {
+    return { success: false, error: "Project not found." };
+  }
+
+  revalidateTag("showcase-projects");
+  revalidatePath("/showcase");
+  revalidatePath("/admin/showcase");
+  return { success: true, data: undefined };
+}
+
+/** Owner deletes their own draft or rejected showcase project */
+export async function deleteShowcaseProject(projectId: string): Promise<ActionResult> {
+  const { user } = await requireUser();
+
+  const project = await db.showcaseProject.findFirst({
+    where: { id: projectId, userId: user.id },
+  });
+  if (!project) return { success: false, error: "Project not found." };
+  if (!["DRAFT", "REJECTED"].includes(project.status)) {
+    return { success: false, error: "You can only delete projects that are in draft or rejected status." };
+  }
+
+  await db.showcaseProject.delete({ where: { id: projectId } });
+
+  revalidateTag("showcase-projects");
+  revalidatePath("/dashboard/showcase");
+  return { success: true, data: undefined };
+}

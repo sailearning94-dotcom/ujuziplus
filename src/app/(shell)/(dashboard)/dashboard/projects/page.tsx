@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/shared/PageHeader";
+import { ProjectCardActions } from "@/components/dashboard/ProjectCardActions";
 import { getUserProjects } from "@/lib/actions/projects";
 import { getAuthSession } from "@/lib/auth-server";
 
@@ -38,6 +39,9 @@ export default async function DashboardProjectsPage() {
                 <Badge variant="accent" className="capitalize">{p.status.toLowerCase()}</Badge>
                 {!p.isPublished && <Badge variant="warning" className="ml-1">Hidden</Badge>}
                 <h3 className="mt-2 font-semibold">{p.title}</h3>
+                <div className="mt-2">
+                  <ProjectCardActions userId={session.user.id} projectId={p.id} title={p.title} />
+                </div>
               </div>
             </Card>
           </Link>

@@ -5,12 +5,13 @@
  */
 import Link from "next/link";
 import Image from "next/image";
-import { Plus, Clock, Eye } from "lucide-react";
+import { Plus, Clock } from "lucide-react";
 import { redirect } from "next/navigation";
 import { getInstructorCourses } from "@/lib/actions/courses";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { CourseCardActions } from "@/components/instructor/CourseCardActions";
 import { getAuthSession } from "@/lib/auth-server";
 
 const STATUS_VARIANT: Record<string, "warning" | "accent" | "success" | "error" | "default"> = {
@@ -103,19 +104,12 @@ export default async function InstructorCoursesPage({
                 </div>
               </div>
 
-              <div className="flex flex-col gap-2 shrink-0">
-                <Button asChild variant="outline" size="sm">
-                  <Link href={`/instructor/courses/${c.id}/edit`}>Edit</Link>
-                </Button>
-                <Button asChild variant="ghost" size="sm">
-                  <Link href={`/instructor/courses/${c.id}/analytics`}>Analytics</Link>
-                </Button>
-                <Button asChild variant="ghost" size="sm">
-                  <Link href={`/instructor/courses/${c.id}/preview`}>
-                    <Eye className="h-3 w-3 mr-1" />Preview
-                  </Link>
-                </Button>
-              </div>
+              <CourseCardActions
+                courseId={c.id}
+                instructorId={session.user.id}
+                status={c.status}
+                hasStudentHistory={c._count.enrollments > 0 || c._count.certificates > 0}
+              />
             </Card>
           ))}
         </div>

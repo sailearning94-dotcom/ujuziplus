@@ -6,8 +6,9 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
-import { CheckCircle, XCircle, Star, ExternalLink, Github, Eye } from "lucide-react";
+import { CheckCircle, XCircle, Star, ExternalLink, Github, Eye, Trash2 } from "lucide-react";
 import { ShowcaseStatus } from "@prisma/client";
+import { useAppStore } from "@/store/appStore";
 
 type Project = {
   id: string;
@@ -45,13 +46,16 @@ const STATUS_COLOR: Record<ShowcaseStatus, string> = {
 export function AdminShowcaseClient({
   projects,
   onUpdate,
+  onDelete,
 }: {
   projects: Project[];
   onUpdate: (id: string, updates: { status?: ShowcaseStatus; isFeatured?: boolean }) => Promise<{ success: boolean; error?: string }>;
+  onDelete: (id: string) => Promise<{ success: boolean; error?: string }>;
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [filter, setFilter] = useState<"ALL" | ShowcaseStatus>("PENDING_REVIEW");
+  const showToast = useAppStore((s) => s.showToast);
 
   const visible = filter === "ALL" ? projects : projects.filter((p) => p.status === filter);
 
@@ -59,6 +63,15 @@ export function AdminShowcaseClient({
     startTransition(async () => {
       await onUpdate(id, updates);
       router.refresh();
+    });
+  }
+
+  function handleDelete(id: string, title: string) {
+    if (!confirm(`Delete "${title}" permanently? This cannot be undone.`)) return;
+    startTransition(async () => {
+      const res = await onDelete(id);
+      if (res.success) { showToast("Project deleted", "success"); router.refresh(); }
+      else showToast(res.error ?? "Delete failed", "error");
     });
   }
 
@@ -165,6 +178,15 @@ export function AdminShowcaseClient({
                     >
                       <Star className={`h-3.5 w-3.5 mr-1.5 ${p.isFeatured ? "fill-amber-400 text-amber-500" : ""}`} />
                       {p.isFeatured ? "Unfeature" : "Feature"}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      disabled={isPending}
+                      onClick={() => handleDelete(p.id, p.title)}
+                    >
+                      <Trash2 className="h-3.5 w-3.5 mr-1.5" />Delete
                     </Button>
                   </div>
                 </div>

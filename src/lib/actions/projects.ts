@@ -161,3 +161,37 @@ export async function adminToggleProjectPublished(
   revalidatePath("/projects");
   return { success: true, data: undefined };
 }
+
+export async function adminDeleteProject(projectId: string): Promise<ActionResult> {
+  await requireAdmin();
+
+  let project;
+  try {
+    project = await db.project.delete({ where: { id: projectId } });
+  } catch {
+    return { success: false, error: "Not found." };
+  }
+
+  revalidatePath("/admin/content");
+  revalidatePath("/projects");
+  revalidatePath(`/projects/${project.slug}`);
+  return { success: true, data: undefined };
+}
+
+/** Creator deletes their own project */
+export async function deleteProject(userId: string, projectId: string): Promise<ActionResult> {
+  const { user } = await requireUser();
+  assertSelfOrAdmin(user.id, userId, user.role);
+
+  const project = await db.project.findUnique({ where: { id: projectId } });
+  if (!project) return { success: false, error: "Not found." };
+  if (project.creatorId !== userId && user.role !== "ADMIN") {
+    return { success: false, error: "Not authorised." };
+  }
+
+  await db.project.delete({ where: { id: projectId } });
+
+  revalidatePath("/projects");
+  revalidatePath("/dashboard/projects");
+  return { success: true, data: undefined };
+}

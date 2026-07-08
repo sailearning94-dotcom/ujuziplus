@@ -112,3 +112,19 @@ export async function adminUpsertLabResource(input: {
   revalidatePath(`/lab-resources/${data.slug}`);
   return { success: true, data: { slug: data.slug } };
 }
+
+export async function adminDeleteLabResource(id: string): Promise<ActionResult> {
+  await requireAdmin();
+
+  let resource;
+  try {
+    resource = await db.labResource.delete({ where: { id } });
+  } catch {
+    return { success: false, error: "Not found." };
+  }
+
+  revalidatePath("/admin/content");
+  revalidatePath("/lab-resources");
+  revalidatePath(`/lab-resources/${resource.slug}`);
+  return { success: true, data: undefined };
+}

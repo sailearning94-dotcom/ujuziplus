@@ -7,10 +7,11 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { UserPlus, Users, ChevronDown, ChevronUp } from "lucide-react";
+import { UserPlus, Users, ChevronDown, ChevronUp, Trash2 } from "lucide-react";
 import {
   adminCreateOrganization,
   adminUpdateOrganization,
+  adminDeleteOrganization,
   createOrgAdminCredentials,
 } from "@/lib/actions/organizations";
 import { useAppStore } from "@/store/appStore";
@@ -125,6 +126,19 @@ export function AdminOrganizationsPanel({ organizations }: { organizations: OrgR
     });
   };
 
+  const deleteOrg = (org: OrgRow) => {
+    const message =
+      org._count.members > 0
+        ? `"${org.name}" has ${org._count.members} member${org._count.members !== 1 ? "s" : ""}. Deleting it will remove their organization membership and all kit inventory/requests. This cannot be undone. Continue?`
+        : `Delete "${org.name}" permanently? This cannot be undone.`;
+    if (!confirm(message)) return;
+    startTransition(async () => {
+      const res = await adminDeleteOrganization(org.id);
+      if (res.success) { showToast("Organization deleted", "success"); router.refresh(); }
+      else showToast(res.error ?? "Delete failed", "error");
+    });
+  };
+
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
@@ -203,6 +217,15 @@ export function AdminOrganizationsPanel({ organizations }: { organizations: OrgR
                     onClick={() => toggleVerified(org)}
                   >
                     {org.isVerified ? "Unverify" : "Verify"}
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                    disabled={isPending}
+                    onClick={() => deleteOrg(org)}
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
                   </Button>
                 </div>
               </div>

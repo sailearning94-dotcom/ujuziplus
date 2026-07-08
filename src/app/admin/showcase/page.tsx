@@ -1,4 +1,4 @@
-import { getAdminShowcaseProjects, adminUpdateShowcaseProject } from "@/lib/actions/showcase";
+import { getAdminShowcaseProjects, adminUpdateShowcaseProject, adminDeleteShowcaseProject } from "@/lib/actions/showcase";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { AdminShowcaseClient } from "./AdminShowcaseClient";
@@ -29,7 +29,11 @@ export default async function AdminShowcasePage() {
         ))}
       </div>
 
-      <AdminShowcaseClient projects={projects} onUpdate={adminUpdateShowcaseProject} />
+      <AdminShowcaseClient
+        projects={projects}
+        onUpdate={adminUpdateShowcaseProject}
+        onDelete={adminDeleteShowcaseProject}
+      />
     </div>
   );
 }

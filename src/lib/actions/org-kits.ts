@@ -191,6 +191,25 @@ export async function updateOrgKitRequestStatus(
   return { success: true, data: undefined };
 }
 
+export async function removeOrgKitInventory(
+  orgSlug: string,
+  inventoryId: string,
+  actorUserId: string
+): Promise<ActionResult> {
+  const access = await requireOrgMember(orgSlug, actorUserId, ["ADMIN"]);
+  if (!access.ok) return { success: false, error: access.error };
+
+  const row = await db.orgKitInventory.findFirst({
+    where: { id: inventoryId, orgId: access.org.id },
+  });
+  if (!row) return { success: false, error: "Inventory row not found." };
+
+  await db.orgKitInventory.delete({ where: { id: inventoryId } });
+
+  revalidatePath(`/org/${orgSlug}/kits`);
+  return { success: true, data: undefined };
+}
+
 export async function adjustOrgKitInventory(
   orgSlug: string,
   inventoryId: string,

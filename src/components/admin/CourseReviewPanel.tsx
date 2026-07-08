@@ -3,13 +3,13 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Check, X, BookOpen, Eye } from "lucide-react";
+import { Check, X, BookOpen, Eye, Trash2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { formatDate } from "@/lib/utils";
-import { approveCourse, rejectCourse } from "@/lib/actions/admin";
+import { approveCourse, rejectCourse, deleteCourseAsAdmin } from "@/lib/actions/admin";
 import { useAppStore } from "@/store/appStore";
 
 type Instructor = { id: string; fullName: string; email: string; avatarUrl: string | null };
@@ -21,7 +21,7 @@ type CourseItem = {
   status: string;
   updatedAt: Date;
   instructor: Instructor;
-  _count: { modules: number };
+  _count: { modules: number; enrollments?: number; certificates?: number };
 };
 
 type Props = {
@@ -67,6 +67,25 @@ export function CourseReviewPanel({ pending, allCourses, adminId, tab: initialTa
         router.refresh();
       } else {
         showToast(res.error ?? "Failed to reject course", "error");
+      }
+    });
+  }
+
+  function handleDelete(course: CourseItem) {
+    const hasStudentHistory = (course._count.enrollments ?? 0) > 0 || (course._count.certificates ?? 0) > 0;
+    const willArchive = hasStudentHistory || course.status === "PUBLISHED";
+    const message = willArchive
+      ? "This course has enrolled students, issued certificates, or is published, so it will be archived instead of deleted, to preserve their records. Continue?"
+      : "Delete this course permanently? This cannot be undone.";
+    if (!confirm(message)) return;
+
+    startTransition(async () => {
+      const res = await deleteCourseAsAdmin(adminId, course.id);
+      if (res.success) {
+        showToast(res.data?.archived ? "Course archived" : "Course deleted", "success");
+        router.refresh();
+      } else {
+        showToast(res.error ?? "Delete failed", "error");
       }
     });
   }
@@ -172,6 +191,16 @@ export function CourseReviewPanel({ pending, allCourses, adminId, tab: initialTa
                       </Button>
                     </>
                   )}
+
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                    onClick={() => handleDelete(course)}
+                    disabled={isPending}
+                  >
+                    <Trash2 className="h-3.5 w-3.5 mr-1" />Delete
+                  </Button>
                 </div>
               </div>
             </Card>

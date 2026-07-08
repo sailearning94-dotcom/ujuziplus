@@ -12,6 +12,7 @@ import {
   createSolutionDraft,
   updateSolutionDraft,
   submitSolutionForReview,
+  deleteSolutionDraft,
   type SolutionDraftInput,
   type LabStepData,
 } from "@/lib/actions/solutions";
@@ -227,6 +228,18 @@ export function SolutionEditorForm({
     });
   };
 
+  const handleDelete = () => {
+    if (!solutionId) return;
+    if (!confirm("Delete this draft permanently? This cannot be undone.")) return;
+    startTransition(async () => {
+      const res = await deleteSolutionDraft(solutionId);
+      if (res.success) {
+        showToast("Draft deleted", "success");
+        router.push("/dashboard/lab");
+      } else showToast(!res.success ? res.error : "Failed", "error");
+    });
+  };
+
   const handlePublishDirectly = () => {
     if (!onPublish) return;
     startTransition(async () => {
@@ -258,6 +271,12 @@ export function SolutionEditorForm({
     title.trim() &&
     description.trim() &&
     labSteps.some((s) => (s.content ?? "").trim() || s.title.trim());
+
+  const isDeletable =
+    solutionId &&
+    !publishDirectly &&
+    initialStatus !== "PENDING_REVIEW" &&
+    initialStatus !== "PUBLISHED";
 
   return (
     <div className="max-w-3xl space-y-6">
@@ -528,6 +547,17 @@ export function SolutionEditorForm({
               <Send className="h-4 w-4 mr-1.5" /> Submit for review
             </Button>
           )
+        )}
+
+        {isDeletable && (
+          <Button
+            variant="ghost"
+            className="text-red-600 hover:text-red-700 hover:bg-red-50"
+            disabled={isPending}
+            onClick={handleDelete}
+          >
+            <Trash2 className="h-4 w-4 mr-1.5" /> Delete draft
+          </Button>
         )}
       </div>
     </div>

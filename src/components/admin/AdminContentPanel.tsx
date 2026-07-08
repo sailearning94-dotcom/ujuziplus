@@ -3,15 +3,16 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Trash2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { adminApproveSolution, adminRejectSolution } from "@/lib/actions/solutions";
-// lab resources managed via dedicated editor pages
+import { adminApproveSolution, adminRejectSolution, adminDeleteSolution } from "@/lib/actions/solutions";
+import { adminDeleteLabResource } from "@/lib/actions/lab-resources";
 import { adminUpsertBlogPost } from "@/lib/actions/blog";
 import { adminUpsertPricingPlan } from "@/lib/actions/pricing";
-import { adminToggleProjectPublished } from "@/lib/actions/projects";
+import { adminToggleProjectPublished, adminDeleteProject } from "@/lib/actions/projects";
 import { useAppStore } from "@/store/appStore";
 
 type Tab = "solutions" | "review" | "lab" | "blog" | "pricing" | "projects";
@@ -52,6 +53,33 @@ export function AdminContentPanel({
       const res = await adminRejectSolution(id, rejectReason);
       if (res.success) { showToast("Submission rejected", "success"); setRejectingId(null); setRejectReason(""); router.refresh(); }
       else showToast(res.error ?? "Failed", "error");
+    });
+  };
+
+  const deleteSolution = (id: string, title: string) => {
+    if (!confirm(`Delete "${title}" permanently? This cannot be undone.`)) return;
+    startTransition(async () => {
+      const res = await adminDeleteSolution(id);
+      if (res.success) { showToast("Solution deleted", "success"); router.refresh(); }
+      else showToast(res.error ?? "Delete failed", "error");
+    });
+  };
+
+  const deleteLabResource = (id: string, title: string) => {
+    if (!confirm(`Delete "${title}" permanently? This cannot be undone.`)) return;
+    startTransition(async () => {
+      const res = await adminDeleteLabResource(id);
+      if (res.success) { showToast("Lab resource deleted", "success"); router.refresh(); }
+      else showToast(res.error ?? "Delete failed", "error");
+    });
+  };
+
+  const deleteProject = (id: string, title: string) => {
+    if (!confirm(`Delete "${title}" permanently? This cannot be undone.`)) return;
+    startTransition(async () => {
+      const res = await adminDeleteProject(id);
+      if (res.success) { showToast("Project deleted", "success"); router.refresh(); }
+      else showToast(res.error ?? "Delete failed", "error");
     });
   };
 
@@ -163,6 +191,15 @@ export function AdminContentPanel({
                 <Button asChild variant="ghost" size="sm">
                   <Link href={`/solutions/${s.slug}`}>View</Link>
                 </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                  disabled={isPending}
+                  onClick={() => deleteSolution(s.id, s.title)}
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </Button>
               </div>
             </Card>
           ))}
@@ -186,6 +223,15 @@ export function AdminContentPanel({
                 </Button>
                 <Button asChild variant="ghost" size="sm">
                   <Link href={`/lab-resources/${r.slug}`}>View</Link>
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                  disabled={isPending}
+                  onClick={() => deleteLabResource(r.id, r.title)}
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
                 </Button>
               </div>
             </Card>
@@ -253,19 +299,30 @@ export function AdminContentPanel({
                 <h3 className="font-semibold">{p.title}</h3>
                 <p className="text-sm text-gray-500">by {p.creator.fullName}</p>
               </div>
-              <Button
-                size="sm"
-                variant="outline"
-                disabled={isPending}
-                onClick={() => {
-                  startTransition(async () => {
-                    await adminToggleProjectPublished(p.id, !p.isPublished);
-                    router.refresh();
-                  });
-                }}
-              >
-                {p.isPublished ? "Hide" : "Publish"}
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  disabled={isPending}
+                  onClick={() => {
+                    startTransition(async () => {
+                      await adminToggleProjectPublished(p.id, !p.isPublished);
+                      router.refresh();
+                    });
+                  }}
+                >
+                  {p.isPublished ? "Hide" : "Publish"}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                  disabled={isPending}
+                  onClick={() => deleteProject(p.id, p.title)}
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                </Button>
+              </div>
             </Card>
           ))}
         </div>

@@ -7,6 +7,7 @@ import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { CourseStatus, Role } from "@prisma/client";
 import type { ActionResult } from "./courses";
+import { archiveOrDeleteCourse } from "./courses";
 import { createNotification } from "./notifications";
 import { requireAdmin } from "@/lib/auth-server";
 import { revalidateCourseCatalog } from "@/lib/revalidate-catalog";
@@ -58,7 +59,7 @@ export async function getPendingCourses() {
     orderBy: { updatedAt: "asc" },
     include: {
       instructor: { select: { id: true, fullName: true, email: true, avatarUrl: true } },
-      _count: { select: { modules: true } },
+      _count: { select: { modules: true, enrollments: true, certificates: true } },
     },
   });
 }
@@ -248,9 +249,18 @@ export async function getAllCourses(status?: CourseStatus) {
     orderBy: { updatedAt: "desc" },
     include: {
       instructor: { select: { id: true, fullName: true, email: true, avatarUrl: true } },
-      _count: { select: { enrollments: true, modules: true } },
+      _count: { select: { enrollments: true, modules: true, certificates: true } },
     },
   });
+}
+
+export async function deleteCourseAsAdmin(
+  adminId: string,
+  courseId: string
+): Promise<ActionResult<{ archived: boolean }>> {
+  await guardAdmin(adminId);
+
+  return archiveOrDeleteCourse(courseId);
 }
 
 // ─── Payments (admin) ─────────────────────────────────────────────────────────
