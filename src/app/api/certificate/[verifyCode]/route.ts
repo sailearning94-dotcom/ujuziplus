@@ -68,32 +68,40 @@ export async function GET(
 
   let pdfBytes: Uint8Array;
 
-  // ── Try template first ────────────────────────────────────────────────────
+  try {
+    // ── Try template first ──────────────────────────────────────────────────
 
-  const templatePath = cert.course.certTemplate?.filePath;
-  if (templatePath) {
-    try {
-      const absPath = path.join(process.cwd(), "public", templatePath);
-      const templateBytes = await readFile(absPath);
-      const pdfDoc = await PDFDocument.load(templateBytes);
+    const templatePath = cert.course.certTemplate?.filePath;
+    if (templatePath) {
+      try {
+        const absPath = path.join(process.cwd(), "public", templatePath);
+        const templateBytes = await readFile(absPath);
+        const pdfDoc = await PDFDocument.load(templateBytes);
 
-      const form = pdfDoc.getForm();
-      for (const [name, value] of Object.entries(fields)) {
-        try {
-          const field = form.getTextField(name);
-          field.setText(value);
-          field.enableReadOnly();
-        } catch {
-          // field not present in this template — skip
+        const form = pdfDoc.getForm();
+        for (const [name, value] of Object.entries(fields)) {
+          try {
+            const field = form.getTextField(name);
+            field.setText(value);
+            field.enableReadOnly();
+          } catch {
+            // field not present in this template — skip
+          }
         }
+        form.flatten();
+        pdfBytes = await pdfDoc.save();
+      } catch {
+        pdfBytes = await generateDefault(fields, params.verifyCode);
       }
-      form.flatten();
-      pdfBytes = await pdfDoc.save();
-    } catch {
+    } else {
       pdfBytes = await generateDefault(fields, params.verifyCode);
     }
-  } else {
-    pdfBytes = await generateDefault(fields, params.verifyCode);
+  } catch (err) {
+    console.error("Certificate PDF generation failed:", err);
+    return new NextResponse("Could not generate certificate PDF. Please try again or contact support.", {
+      status: 500,
+      headers: { "Content-Type": "text/plain" },
+    });
   }
 
   return new NextResponse(Buffer.from(pdfBytes), {
@@ -251,12 +259,21 @@ async function generateDefault(
     size: 7.5, font: helvetica, color: hex("#aaaaaa"),
   });
 
-  // Stamp circle (decorative)
-  page.drawCircle({ x: width / 2, y: m + 50, size: 24, borderColor: BRAND, borderWidth: 2 });
-  page.drawText("✓", {
-    x: width / 2 - 5,
-    y: m + 43,
-    size: 14, font: helveticaBold, color: BRAND,
+  // Stamp circle (decorative) with a drawn checkmark — the ✓ glyph (U+2713)
+  // isn't in the standard Helvetica font's WinAnsi encoding, so drawText()
+  // with that character throws; draw two line segments instead.
+  const stampX = width / 2;
+  const stampY = m + 50;
+  page.drawCircle({ x: stampX, y: stampY, size: 24, borderColor: BRAND, borderWidth: 2 });
+  page.drawLine({
+    start: { x: stampX - 8, y: stampY },
+    end: { x: stampX - 2, y: stampY - 6 },
+    thickness: 2.5, color: BRAND,
+  });
+  page.drawLine({
+    start: { x: stampX - 2, y: stampY - 6 },
+    end: { x: stampX + 9, y: stampY + 8 },
+    thickness: 2.5, color: BRAND,
   });
 
   return pdfDoc.save();
