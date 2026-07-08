@@ -62,11 +62,7 @@ export function MentorCard({
             src={mentor.avatarUrl}
             alt={mentor.displayName}
             size={variant === "spotlight" ? "xl" : "lg"}
-            ring
-            className={cn(
-              "mentor-card__avatar",
-              mentor.isAcceptingRequests && "mentor-card__avatar--available"
-            )}
+            className="mentor-card__avatar"
           />
           {mentor.isFeatured && (
             <span className="mentor-card__featured" title="Featured mentor" aria-label="Featured mentor">

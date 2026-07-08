@@ -3807,8 +3807,8 @@
     @apply relative mb-4;
   }
 
-  .mentor-card__avatar--available {
-    @apply ring-2 ring-brand ring-offset-2 ring-offset-white;
+  .mentor-card__avatar > div {
+    @apply !rounded-2xl;
   }
 
   /* ── Mentor profile hero ── */
