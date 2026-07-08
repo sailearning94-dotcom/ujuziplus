@@ -14,29 +14,26 @@ const DISCIPLINES = [
 ] as const;
 
 export function StemDisciplineTicker() {
+  // useReducedMotion() returns null on the server and the real OS
+  // preference on the client's first render, so branching JSX structure on
+  // it directly causes a hydration mismatch. Instead always render the
+  // same AnimatePresence/motion.span structure, and only start suppressing
+  // animation (and the rotation interval) once mounted.
   const reduceMotion = useReducedMotion();
+  const [mounted, setMounted] = useState(false);
   const [index, setIndex] = useState(0);
 
+  useEffect(() => setMounted(true), []);
+
   useEffect(() => {
-    if (reduceMotion) return;
+    if (!mounted || reduceMotion) return;
     const id = setInterval(() => setIndex((i) => (i + 1) % DISCIPLINES.length), 3200);
     return () => clearInterval(id);
-  }, [reduceMotion]);
+  }, [mounted, reduceMotion]);
 
+  const animationsDisabled = mounted && reduceMotion;
   const current = DISCIPLINES[index];
   const Icon = current.icon;
-
-  if (reduceMotion) {
-    return (
-      <div className="stem-ticker" aria-live="polite">
-        <span className="stem-ticker__label">Explore</span>
-        <span className="stem-ticker__chip">
-          <Icon className="h-3.5 w-3.5" aria-hidden />
-          {current.label}
-        </span>
-      </div>
-    );
-  }
 
   return (
     <div className="stem-ticker" aria-live="polite">
@@ -45,9 +42,9 @@ export function StemDisciplineTicker() {
         <motion.span
           key={current.label}
           className="stem-ticker__chip"
-          initial={{ opacity: 0, y: 8, filter: "blur(4px)" }}
+          initial={animationsDisabled ? false : { opacity: 0, y: 8, filter: "blur(4px)" }}
           animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          exit={{ opacity: 0, y: -8, filter: "blur(4px)" }}
+          exit={animationsDisabled ? undefined : { opacity: 0, y: -8, filter: "blur(4px)" }}
           transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
         >
           <Icon className="h-3.5 w-3.5" aria-hidden />

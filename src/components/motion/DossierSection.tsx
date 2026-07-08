@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { easeOut } from "@/lib/motion";
@@ -42,18 +43,17 @@ export function DossierSection({
   delay = 0,
   amount = 0.15,
 }: DossierSectionProps) {
+  // useReducedMotion() returns null on the server and the real OS
+  // preference on the client's first render, so branching JSX structure on
+  // it directly causes a hydration mismatch. Instead always render the
+  // same motion.div, and only start suppressing animation once mounted.
   const reduceMotion = useReducedMotion();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const animationsDisabled = mounted && reduceMotion;
 
   const alignClass =
     align === "left" ? "dossier-section--left" : align === "right" ? "dossier-section--right" : "dossier-section--center";
-
-  if (reduceMotion) {
-    return (
-      <div className={cn("dossier-section", alignClass, className)}>
-        <div className="dossier-section__inner">{children}</div>
-      </div>
-    );
-  }
 
   const variants = slideVariants[align];
 
@@ -61,8 +61,9 @@ export function DossierSection({
     <div className={cn("dossier-section", alignClass, className)}>
       <motion.div
         className="dossier-section__inner"
-        initial="hidden"
-        whileInView="visible"
+        initial={animationsDisabled ? false : "hidden"}
+        whileInView={animationsDisabled ? undefined : "visible"}
+        animate={animationsDisabled ? "visible" : undefined}
         viewport={{ once: true, amount, margin: "0px 0px -60px 0px" }}
         variants={{
           hidden: variants.hidden,
