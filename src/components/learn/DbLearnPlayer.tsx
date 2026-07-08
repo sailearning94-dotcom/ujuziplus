@@ -118,7 +118,6 @@ function LessonContent({
     case "ARTICLE":
       return lesson.articleBody ? (
         <ArticleLessonBody
-          title={lesson.title}
           body={lesson.articleBody}
           onExplored={explore}
         />

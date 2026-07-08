@@ -5,6 +5,13 @@ export const PLATFORM = {
   url: "https://ujuziplus.co.tz",
 } as const;
 
+/**
+ * Article lessons in "PDF mode" store `articleBody` as `${PDF_PREFIX}<url>`
+ * instead of written content — used by both the instructor's lesson editor
+ * (CourseBuilder) and the learner-facing lesson viewer (ArticleLessonBody).
+ */
+export const PDF_PREFIX = "pdf::";
+
 /** Main lab navigation (sidebar) */
 export const NAV_WAZILAB = [
   { href: "/", label: "Home", icon: "Home" as const },

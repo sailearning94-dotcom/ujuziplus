@@ -35,6 +35,7 @@ import {
 } from "@/lib/actions/courses";
 import { uploadMediaFile } from "@/lib/upload-client";
 import { cn } from "@/lib/utils";
+import { PDF_PREFIX } from "@/lib/constants";
 
 export type PublishedKitOption = { id: string; slug: string; title: string };
 
@@ -107,8 +108,6 @@ const LESSON_TYPE_LABEL: Record<string, string> = {
   ARTICLE: "Article", AUDIO: "Audio (legacy)", QUIZ: "Quiz", ASSIGNMENT: "Assignment", VIDEO: "Video (legacy)",
 };
 
-// articleBody prefix that signals a PDF was uploaded instead of written
-const PDF_PREFIX = "pdf::";
 
 const CATEGORIES = [
   "Robotics", "Electronics", "IoT & Sensors", "Programming", "Artificial Intelligence",
