@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "node scripts/resolve-migrations.js && prisma migrate deploy && prisma db seed && bash scripts/setup-uploads-symlink.sh && next start",
+    "start": "node scripts/resolve-migrations.js && prisma migrate deploy && prisma db seed && sh scripts/setup-uploads-symlink.sh || true && next start",
     "lint": "next lint",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",

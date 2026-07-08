@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Setup symlink for Railway volume to make uploaded files accessible via Next.js public folder
 # This script should be run during the build process or in a Railway startup script
 
@@ -10,12 +10,12 @@ if [ -n "$RAILWAY_VOLUME_MOUNT_PATH" ]; then
     # Remove existing symlink or directory if it exists
     if [ -L "public/uploads" ]; then
       echo "Removing existing symlink..."
-      rm public/uploads
+      rm -f public/uploads
     elif [ -d "public/uploads" ]; then
       # If it's a directory with content, move it to the volume first
-      if [ "$(ls -A public/uploads)" ]; then
+      if [ -n "$(ls -A public/uploads 2>/dev/null)" ]; then
         echo "Moving existing uploads to volume..."
-        cp -r public/uploads/* "$RAILWAY_VOLUME_MOUNT_PATH/"
+        cp -r public/uploads/* "$RAILWAY_VOLUME_MOUNT_PATH/" 2>/dev/null || true
       fi
       echo "Removing existing directory..."
       rm -rf public/uploads
