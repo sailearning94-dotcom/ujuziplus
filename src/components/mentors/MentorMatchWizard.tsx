@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import { ChevronDown, Sparkles } from "lucide-react";
+import { ArrowRight, Compass } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -38,20 +38,23 @@ export function MentorMatchWizard({ mentors }: { mentors: SerializedMentor[] }) 
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="flex w-full items-center justify-between gap-3 rounded-2xl border border-brand/20 bg-gradient-to-r from-brand-light/40 to-orange-50/40 px-5 py-4 text-left transition-colors hover:border-brand/40"
+        className="group flex w-full items-center gap-4 rounded-2xl border border-gray-200 bg-white px-5 py-4 text-left shadow-sm transition-all hover:border-brand/40 hover:shadow-md"
       >
-        <span className="flex items-center gap-3">
-          <Sparkles className="h-5 w-5 shrink-0 text-brand" aria-hidden />
-          <span>
-            <span className="block font-display text-sm font-bold text-gray-900">
-              Not sure who to pick?
-            </span>
-            <span className="block text-xs text-gray-500">
-              Answer 2 quick questions and we&apos;ll suggest mentors for your goals.
-            </span>
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-light text-brand">
+          <Compass className="h-5 w-5" aria-hidden />
+        </span>
+        <span className="min-w-0 flex-1">
+          <span className="block font-display text-sm font-bold text-gray-900">
+            Match me with a mentor
+          </span>
+          <span className="block text-xs text-gray-500">
+            Pick your focus area and tell us what you&apos;re building — we&apos;ll shortlist mentors who fit.
           </span>
         </span>
-        <ChevronDown className="h-4 w-4 shrink-0 text-gray-400" aria-hidden />
+        <span className="flex shrink-0 items-center gap-1 text-sm font-semibold text-brand">
+          Start
+          <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
+        </span>
       </button>
     );
   }
