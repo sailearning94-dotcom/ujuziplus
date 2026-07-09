@@ -38,16 +38,16 @@ export function MentorMatchWizard({ mentors }: { mentors: SerializedMentor[] }) 
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="group flex w-full items-center gap-4 rounded-2xl border border-gray-200 bg-white px-5 py-4 text-left shadow-sm transition-all hover:border-brand/40 hover:shadow-md"
+        className="group inline-flex max-w-full items-center gap-4 rounded-2xl border border-gray-200 bg-white px-5 py-4 text-left shadow-sm transition-all hover:border-brand/40 hover:shadow-md"
       >
         <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-light text-brand">
           <Compass className="h-5 w-5" aria-hidden />
         </span>
-        <span className="min-w-0 flex-1">
+        <span className="min-w-0">
           <span className="block font-display text-sm font-bold text-gray-900">
             Match me with a mentor
           </span>
-          <span className="block text-xs text-gray-500">
+          <span className="block max-w-sm text-xs text-gray-500">
             Pick your focus area and tell us what you&apos;re building — we&apos;ll shortlist mentors who fit.
           </span>
         </span>
