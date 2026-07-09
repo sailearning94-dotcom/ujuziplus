@@ -31,10 +31,19 @@ export default async function MentorsPage() {
         eyebrow={`${mentors.length} mentors · ${cohorts.length} open cohorts · Free guidance`}
       />
 
-      {featured && (
+      {featured ? (
         <Reveal className="mt-8" delay={0.05}>
-          <HomeMentorSpotlight mentor={featured} />
+          <div className="flex flex-col items-stretch gap-6 lg:flex-row lg:items-start">
+            <HomeMentorSpotlight mentor={featured} />
+            {mentors.length > 0 && <MentorMatchWizard mentors={mentors} />}
+          </div>
         </Reveal>
+      ) : (
+        mentors.length > 0 && (
+          <Reveal className="mt-8" delay={0.05}>
+            <MentorMatchWizard mentors={mentors} />
+          </Reveal>
+        )
       )}
 
       {mentors.length === 0 ? (
@@ -45,15 +54,9 @@ export default async function MentorsPage() {
           description="Check back soon — new practitioners are added regularly."
         />
       ) : (
-        <>
-          <Reveal className="mt-8" delay={0.04}>
-            <MentorsList mentors={mentors} />
-          </Reveal>
-
-          <Reveal className="mt-8" delay={0.06}>
-            <MentorMatchWizard mentors={mentors} />
-          </Reveal>
-        </>
+        <Reveal className="mt-8" delay={0.04}>
+          <MentorsList mentors={mentors} />
+        </Reveal>
       )}
 
       {/* Open cohorts section */}

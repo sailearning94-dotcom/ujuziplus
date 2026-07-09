@@ -3811,7 +3811,7 @@
   }
 
   .mentor-spotlight-v3 {
-    @apply relative max-w-3xl overflow-hidden rounded-[1.75rem] px-5 py-4 sm:px-8 sm:py-5;
+    @apply relative min-w-0 max-w-3xl flex-1 overflow-hidden rounded-[1.75rem] px-5 py-4 sm:px-8 sm:py-5;
     background: linear-gradient(140deg, #060636 0%, #00004d 45%, #0b0b63 100%);
     border: 1px solid rgb(255 255 255 / 0.08);
     box-shadow: 0 24px 60px -20px rgb(0 0 51 / 0.55);
@@ -3965,7 +3965,7 @@
   }
 
   .mentor-match-teaser {
-    @apply relative inline-flex w-full max-w-xl flex-col items-stretch gap-4 overflow-hidden rounded-3xl border border-brand/15 bg-gradient-to-br from-white via-brand-light/10 to-orange-50/40 p-5 text-left shadow-soft transition-all hover:border-brand/30 hover:shadow-md;
+    @apply relative inline-flex w-full min-w-0 max-w-xl flex-1 flex-col items-stretch gap-4 overflow-hidden rounded-3xl border border-brand/15 bg-gradient-to-br from-white via-brand-light/10 to-orange-50/40 p-5 text-left shadow-soft transition-all hover:border-brand/30 hover:shadow-md;
   }
 
   .mentor-match-teaser__row {
