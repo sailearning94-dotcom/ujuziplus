@@ -51,7 +51,7 @@ export function HomeMentorSpotlight({ mentor }: { mentor: SerializedMentor }) {
             <Avatar
               src={mentor.avatarUrl}
               alt={mentor.displayName}
-              size="lg"
+              size="md"
               ring
               status={mentor.isAcceptingRequests ? "online" : undefined}
             />
@@ -111,7 +111,7 @@ export function HomeMentorSpotlight({ mentor }: { mentor: SerializedMentor }) {
             <div className="mentor-spotlight-v2__stats">
               {stats.map((s) => (
                 <div key={s.label} className="mentor-spotlight-v2__stat">
-                  <s.icon className={`h-5 w-5 ${s.color}`} aria-hidden />
+                  <s.icon className={`h-4 w-4 ${s.color}`} aria-hidden />
                   <span className="mentor-spotlight-v2__stat-value">{s.value}</span>
                   <span className="mentor-spotlight-v2__stat-label">{s.label}</span>
                 </div>
@@ -131,7 +131,7 @@ export function HomeMentorSpotlight({ mentor }: { mentor: SerializedMentor }) {
             </ul>
           </div>
 
-          <Button asChild size="lg" className="w-full">
+          <Button asChild size="md" className="w-full">
             <Link href={`/mentors/${mentor.slug}`}>
               View profile
               <ArrowRight className="h-4 w-4" aria-hidden />
