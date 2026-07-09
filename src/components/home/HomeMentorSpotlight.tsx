@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, BadgeCheck, Sparkles } from "lucide-react";
+import { ArrowRight, BadgeCheck } from "lucide-react";
 import { Avatar } from "@/components/ui/avatar";
 import type { SerializedMentor } from "@/lib/actions/mentors";
 
@@ -12,7 +12,6 @@ export function HomeMentorSpotlight({ mentor }: { mentor: SerializedMentor }) {
   return (
     <section className="mentor-spotlight-v3" aria-label="Featured mentor">
       <span className="mentor-spotlight-v3__eyebrow">
-        <Sparkles className="h-3.5 w-3.5" aria-hidden />
         Mentor spotlight
       </span>
 
