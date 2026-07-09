@@ -62,7 +62,7 @@ export function HomeMentorSpotlight({ mentor }: { mentor: SerializedMentor }) {
           )}
           <Button asChild size="lg">
             <Link href={`/mentors/${mentor.slug}`}>
-              View learning path
+              View profile
               <ArrowRight className="h-4 w-4" aria-hidden />
             </Link>
           </Button>

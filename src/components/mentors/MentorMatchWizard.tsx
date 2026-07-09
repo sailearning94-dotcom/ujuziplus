@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
+import { ChevronDown, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
@@ -11,6 +12,7 @@ import { matchMentors, type SerializedMentor } from "@/lib/actions/mentors";
 import { cn } from "@/lib/utils";
 
 export function MentorMatchWizard({ mentors }: { mentors: SerializedMentor[] }) {
+  const [open, setOpen] = useState(false);
   const [step, setStep] = useState(0);
   const [selectedTracks, setSelectedTracks] = useState<string[]>([]);
   const [goal, setGoal] = useState("");
@@ -31,8 +33,39 @@ export function MentorMatchWizard({ mentors }: { mentors: SerializedMentor[] }) 
     });
   };
 
+  if (!open) {
+    return (
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="flex w-full items-center justify-between gap-3 rounded-2xl border border-brand/20 bg-gradient-to-r from-brand-light/40 to-orange-50/40 px-5 py-4 text-left transition-colors hover:border-brand/40"
+      >
+        <span className="flex items-center gap-3">
+          <Sparkles className="h-5 w-5 shrink-0 text-brand" aria-hidden />
+          <span>
+            <span className="block font-display text-sm font-bold text-gray-900">
+              Not sure who to pick?
+            </span>
+            <span className="block text-xs text-gray-500">
+              Answer 2 quick questions and we&apos;ll suggest mentors for your goals.
+            </span>
+          </span>
+        </span>
+        <ChevronDown className="h-4 w-4 shrink-0 text-gray-400" aria-hidden />
+      </button>
+    );
+  }
+
   return (
-    <Card className="mentor-match-wizard overflow-hidden">
+    <Card className="mentor-match-wizard relative overflow-hidden">
+      <button
+        type="button"
+        onClick={() => { setOpen(false); setStep(0); }}
+        aria-label="Close mentor match"
+        className="absolute right-4 top-4 z-10 text-sm font-medium text-white/70 transition-colors hover:text-white"
+      >
+        Close ✕
+      </button>
       <div className="mentor-match-wizard__header">
         <p className="text-xs font-semibold uppercase tracking-wider text-brand">Get matched</p>
         <h2 className="font-display text-xl font-bold text-white">

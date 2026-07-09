@@ -5,7 +5,7 @@ import { MentorsList } from "@/components/mentors/MentorsList";
 import { MentorMatchWizard } from "@/components/mentors/MentorMatchWizard";
 import { HomeMentorSpotlight } from "@/components/home/HomeMentorSpotlight";
 import { MentorCohortCard } from "@/components/mentors/MentorCohortCard";
-import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/shared/EmptyState";
 import { joinCohort } from "@/lib/actions/mentors";
 import { Users } from "lucide-react";
 import Link from "next/link";
@@ -19,7 +19,7 @@ export default async function MentorsPage() {
     getAuthSession(),
   ]);
 
-  const featured = mentors.find((m) => m.isFeatured) ?? mentors[0] ?? null;
+  const featured = mentors.find((m) => m.isFeatured) ?? null;
   const isAuthenticated = !!session?.user;
 
   return (
@@ -37,18 +37,23 @@ export default async function MentorsPage() {
         </Reveal>
       )}
 
-      <Reveal className="mt-10" delay={0.08}>
-        <MentorMatchWizard mentors={mentors} />
-      </Reveal>
-
       {mentors.length === 0 ? (
-        <Card className="mt-10 py-16 text-center text-sm text-gray-400">
-          Mentors are being onboarded. Check back soon.
-        </Card>
+        <EmptyState
+          className="mt-10"
+          icon={<Users className="h-8 w-8" />}
+          title="Mentors are being onboarded"
+          description="Check back soon — new practitioners are added regularly."
+        />
       ) : (
-        <Reveal className="mt-10" delay={0.04}>
-          <MentorsList mentors={mentors} />
-        </Reveal>
+        <>
+          <Reveal className="mt-8" delay={0.04}>
+            <MentorsList mentors={mentors} />
+          </Reveal>
+
+          <Reveal className="mt-8" delay={0.06}>
+            <MentorMatchWizard mentors={mentors} />
+          </Reveal>
+        </>
       )}
 
       {/* Open cohorts section */}

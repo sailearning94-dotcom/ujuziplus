@@ -1,8 +1,10 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { Search } from "lucide-react";
 import { MentorCard } from "./MentorCard";
 import { MotionGrid } from "@/components/motion/RevealStagger";
+import { EmptyState } from "@/components/shared/EmptyState";
 import { MENTOR_TRACKS } from "@/lib/mentors/tracks";
 import type { SerializedMentor } from "@/lib/actions/mentors";
 import { cn } from "@/lib/utils";
@@ -62,64 +64,76 @@ export function MentorsList({ mentors }: { mentors: SerializedMentor[] }) {
     return counts;
   }, [mentors]);
 
+  const hasActiveFilters = !!typeFilter || !!track || !!query.trim() || showAvailableOnly;
+
+  const clearFilters = () => {
+    setTypeFilter("");
+    setTrack(null);
+    setQuery("");
+    setShowAvailableOnly(false);
+  };
+
   return (
     <div className="mentors-catalog">
-      {/* Mentor type tabs */}
-      <div className="mb-6 flex flex-wrap gap-2" role="tablist" aria-label="Filter by mentor type">
-        {TYPE_FILTERS.map((f) => {
-          const count = f.value === "" ? mentors.length : (typeCounts[f.value] ?? 0);
-          if (f.value !== "" && count === 0) return null;
-          return (
-            <button
-              key={f.value}
-              type="button"
-              role="tab"
-              aria-selected={typeFilter === f.value}
-              onClick={() => setTypeFilter(f.value)}
-              className={cn(
-                "flex items-center gap-1.5 rounded-full border px-4 py-1.5 text-sm font-medium transition",
-                typeFilter === f.value
-                  ? "border-brand bg-brand text-white"
-                  : "border-gray-200 bg-white text-gray-600 hover:border-brand/50 hover:text-brand"
-              )}
-            >
-              {f.label}
-              <span className={cn(
-                "rounded-full px-1.5 py-0.5 text-[10px] font-bold",
-                typeFilter === f.value ? "bg-white/20 text-white" : "bg-gray-100 text-gray-500"
-              )}>
-                {count}
-              </span>
-            </button>
-          );
-        })}
-      </div>
-
-      <div className="mentors-catalog__filters">
-        <input
-          type="search"
-          placeholder="Search by name, skill, company…"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          className="mentors-catalog__search"
-          aria-label="Search mentors"
-        />
-
-        <div className="flex flex-wrap items-center gap-3">
-          {/* Available only toggle */}
-          <label className="flex cursor-pointer items-center gap-2 text-sm text-gray-600 select-none">
-            <input
-              type="checkbox"
-              checked={showAvailableOnly}
-              onChange={(e) => setShowAvailableOnly(e.target.checked)}
-              className="rounded border-gray-300 text-brand focus:ring-brand"
-            />
-            Accepting requests only
-          </label>
+      {/* Search + type tabs, one row */}
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="relative w-full sm:max-w-xs">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+          <input
+            type="search"
+            placeholder="Search by name, skill, company…"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="w-full rounded-lg border border-gray-200 bg-white py-2 pl-9 pr-3 text-sm focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+            aria-label="Search mentors"
+          />
         </div>
 
-        {/* Track pills */}
-        <div className="mentors-filter-pills" role="tablist" aria-label="Filter by track">
+        <div className="flex flex-wrap gap-2" role="tablist" aria-label="Filter by mentor type">
+          {TYPE_FILTERS.map((f) => {
+            const count = f.value === "" ? mentors.length : (typeCounts[f.value] ?? 0);
+            if (f.value !== "" && count === 0) return null;
+            return (
+              <button
+                key={f.value}
+                type="button"
+                role="tab"
+                aria-selected={typeFilter === f.value}
+                onClick={() => setTypeFilter(f.value)}
+                className={cn(
+                  "flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-sm font-medium transition",
+                  typeFilter === f.value
+                    ? "border-brand bg-brand text-white"
+                    : "border-gray-200 bg-white text-gray-600 hover:border-brand/50 hover:text-brand"
+                )}
+              >
+                {f.label}
+                <span className={cn(
+                  "rounded-full px-1.5 py-0.5 text-[10px] font-bold",
+                  typeFilter === f.value ? "bg-white/20 text-white" : "bg-gray-100 text-gray-500"
+                )}>
+                  {count}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Track + availability, second row */}
+      <div className="mt-3 flex flex-wrap items-center gap-2">
+        <button
+          type="button"
+          onClick={() => setShowAvailableOnly((v) => !v)}
+          className={cn(
+            "mentors-filter-pill shrink-0",
+            showAvailableOnly && "mentors-filter-pill--active"
+          )}
+        >
+          Accepting requests
+        </button>
+        <span className="h-4 w-px shrink-0 bg-gray-200" aria-hidden />
+        <div className="flex flex-wrap gap-1.5" role="tablist" aria-label="Filter by track">
           <button
             type="button"
             role="tab"
@@ -145,19 +159,17 @@ export function MentorsList({ mentors }: { mentors: SerializedMentor[] }) {
       </div>
 
       {filtered.length === 0 ? (
-        <div className="py-20 text-center">
-          <p className="text-sm text-gray-400">No mentors match your filters.</p>
-          <button
-            type="button"
-            className="mt-3 text-sm text-brand hover:underline"
-            onClick={() => { setTypeFilter(""); setTrack(null); setQuery(""); setShowAvailableOnly(false); }}
-          >
-            Clear all filters
-          </button>
-        </div>
+        <EmptyState
+          className="mt-8"
+          icon={<Search className="h-8 w-8" />}
+          title="No mentors match your filters"
+          description="Try a different search term or clear your filters to see everyone."
+          actionLabel={hasActiveFilters ? "Clear all filters" : undefined}
+          onAction={hasActiveFilters ? clearFilters : undefined}
+        />
       ) : (
         <>
-          <p className="mb-4 text-sm text-gray-500">
+          <p className="mb-4 mt-6 text-sm text-gray-500">
             Showing {filtered.length} of {mentors.length} mentors
           </p>
           <MotionGrid className="mentors-grid">

@@ -3747,18 +3747,6 @@
   .stagger-4 { animation-delay: 320ms; opacity: 0; }
 
   /* ─── Mentors ───────────────────────────────────────────────────────────── */
-  .mentors-catalog__filters {
-    @apply mb-8 space-y-4;
-  }
-
-  .mentors-catalog__search {
-    @apply w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm shadow-sm focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20;
-  }
-
-  .mentors-filter-pills {
-    @apply flex flex-wrap gap-2;
-  }
-
   .mentors-filter-pill {
     @apply rounded-full border border-gray-200 bg-white px-4 py-1.5 text-sm font-medium text-gray-600 transition-all hover:border-brand/40 hover:text-brand;
   }
@@ -3769,46 +3757,6 @@
 
   .mentors-grid {
     @apply grid gap-6 sm:grid-cols-2 lg:grid-cols-3;
-  }
-
-  .mentor-card {
-    @apply relative overflow-hidden rounded-2xl border border-gray-100 bg-white transition-all duration-300;
-  }
-
-  .mentor-card:hover {
-    @apply -translate-y-1 border-brand/30 shadow-xl shadow-brand/10;
-  }
-
-  .mentor-card--marquee {
-    @apply w-[280px] shrink-0;
-  }
-
-  .mentor-card--grid {
-    @apply h-full;
-  }
-
-  .mentor-card__glow {
-    @apply pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full bg-gradient-to-br from-brand/20 to-orange-200/30 opacity-0 transition-opacity duration-300;
-  }
-
-  .mentor-card:hover .mentor-card__glow {
-    @apply opacity-100;
-  }
-
-  .mentor-card__inner {
-    @apply relative flex flex-col items-center p-6 text-center;
-  }
-
-  .mentor-card--spotlight .mentor-card__inner {
-    @apply sm:flex-row sm:text-left sm:items-start gap-4;
-  }
-
-  .mentor-card__avatar-wrap {
-    @apply relative mb-4;
-  }
-
-  .mentor-card__avatar > div {
-    @apply !rounded-2xl;
   }
 
   /* ── Mentor profile hero ── */
@@ -3860,38 +3808,6 @@
   .mentor-profile-hero__status::before {
     content: "";
     @apply h-1.5 w-1.5 rounded-full bg-emerald-400;
-  }
-
-  .mentor-card__featured {
-    @apply absolute -right-0.5 -top-0.5 flex h-5 w-5 items-center justify-center rounded-full border-2 border-white bg-brand text-white shadow-sm;
-  }
-
-  .mentor-card__name {
-    @apply font-display text-lg font-bold text-gray-900 group-hover:text-brand transition-colors;
-  }
-
-  .mentor-card__title {
-    @apply mt-1 text-sm text-gray-500;
-  }
-
-  .mentor-card__hook {
-    @apply mt-2 text-sm font-medium text-gray-700 line-clamp-2;
-  }
-
-  .mentor-card__tags {
-    @apply mt-3 flex flex-wrap justify-center gap-1.5;
-  }
-
-  .mentor-card__meta {
-    @apply mt-3 flex flex-col gap-1 items-center;
-  }
-
-  .mentor-card__cta {
-    @apply mt-4 text-sm font-semibold text-brand opacity-0 transition-opacity group-hover:opacity-100;
-  }
-
-  .mentor-card:hover .mentor-card__cta {
-    @apply opacity-100;
   }
 
   .mentor-spotlight {
