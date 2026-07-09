@@ -32,7 +32,7 @@ export function MentorCard({
   return (
     <MediaCard
       href={`/mentors/${mentor.slug}`}
-      aspect="square"
+      aspect="video"
       className={variant === "marquee" ? "w-[280px] shrink-0" : undefined}
       title={mentor.displayName}
       subtitle={mentor.hook ?? ([mentor.title, mentor.company].filter(Boolean).join(" · ") || undefined)}
@@ -52,6 +52,7 @@ export function MentorCard({
             src={mentor.avatarUrl}
             alt={mentor.displayName}
             fill
+            className="object-top"
             sizes="(max-width: 768px) 50vw, 280px"
           />
         ) : (
