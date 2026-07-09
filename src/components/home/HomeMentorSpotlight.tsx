@@ -23,7 +23,7 @@ export function HomeMentorSpotlight({ mentor }: { mentor: SerializedMentor }) {
               <Avatar
                 src={mentor.avatarUrl}
                 alt={mentor.displayName}
-                size="lg"
+                size="md"
                 status={mentor.isAcceptingRequests ? "online" : undefined}
               />
             </span>

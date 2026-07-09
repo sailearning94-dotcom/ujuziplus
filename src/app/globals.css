@@ -3811,7 +3811,7 @@
   }
 
   .mentor-spotlight-v3 {
-    @apply relative overflow-hidden rounded-[1.75rem] px-5 py-6 sm:px-8 sm:py-8;
+    @apply relative overflow-hidden rounded-[1.75rem] px-5 py-4 sm:px-8 sm:py-5;
     background: linear-gradient(140deg, #060636 0%, #00004d 45%, #0b0b63 100%);
     border: 1px solid rgb(255 255 255 / 0.08);
     box-shadow: 0 24px 60px -20px rgb(0 0 51 / 0.55);
@@ -3839,31 +3839,31 @@
   }
 
   .mentor-spotlight-v3__eyebrow {
-    @apply relative z-10 mb-4 inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-widest text-amber-300;
+    @apply relative z-10 mb-2.5 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-widest text-amber-300;
     background: rgb(243 146 35 / 0.14);
     border: 1px solid rgb(243 146 35 / 0.3);
     backdrop-filter: blur(8px);
   }
 
   .mentor-spotlight-v3__row {
-    @apply relative z-10 flex flex-col items-start gap-6 lg:flex-row lg:items-center lg:justify-between lg:gap-8;
+    @apply relative z-10 flex flex-col items-start gap-3 lg:flex-row lg:items-center lg:justify-between lg:gap-6;
   }
 
   .mentor-spotlight-v3__main {
-    @apply flex flex-col gap-2;
+    @apply flex flex-col gap-1;
   }
 
   .mentor-spotlight-v3__identity {
-    @apply mb-1 flex items-center gap-3.5;
+    @apply mb-0.5 flex items-center gap-2.5;
   }
 
   .mentor-spotlight-v3__avatar-ring {
-    @apply inline-flex shrink-0 rounded-full bg-gradient-brand p-[3px];
-    box-shadow: 0 0 24px rgb(243 146 35 / 0.35);
+    @apply inline-flex shrink-0 rounded-full bg-gradient-brand p-[2px];
+    box-shadow: 0 0 18px rgb(243 146 35 / 0.35);
   }
 
   .mentor-spotlight-v3__available {
-    @apply mb-1 inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold text-emerald-300;
+    @apply mb-0.5 inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-[11px] font-semibold text-emerald-300;
     background: rgb(52 211 153 / 0.12);
     border: 1px solid rgb(52 211 153 / 0.25);
   }
@@ -3877,27 +3877,27 @@
   }
 
   .mentor-spotlight-v3__name {
-    @apply flex items-center gap-2 font-display text-xl font-bold text-white sm:text-2xl;
+    @apply flex items-center gap-1.5 font-display text-lg font-bold text-white sm:text-xl;
   }
 
   .mentor-spotlight-v3__verified {
-    @apply h-5 w-5 shrink-0 text-amber-400;
+    @apply h-4 w-4 shrink-0 text-amber-400;
   }
 
   .mentor-spotlight-v3__role {
-    @apply text-sm text-white/60;
+    @apply text-xs text-white/60;
   }
 
   .mentor-spotlight-v3__quote {
-    @apply relative pl-6;
+    @apply relative pl-5;
   }
 
   .mentor-spotlight-v3__quote::before {
     content: "\201C";
     position: absolute;
-    top: -0.75rem;
+    top: -0.5rem;
     left: -0.1rem;
-    font-size: 2.75rem;
+    font-size: 2rem;
     line-height: 1;
     font-family: Georgia, serif;
     color: rgb(243 146 35 / 0.6);
@@ -3905,22 +3905,22 @@
   }
 
   .mentor-spotlight-v3__quote p {
-    @apply text-base italic leading-relaxed text-white/90 sm:text-lg;
+    @apply text-sm italic leading-snug text-white/90 sm:text-base;
     text-wrap: pretty;
   }
 
   .mentor-spotlight-v3__tags {
-    @apply flex flex-wrap gap-2;
+    @apply flex flex-wrap gap-1.5;
   }
 
   .mentor-spotlight-v3__tag {
-    @apply rounded-full px-3 py-1 text-xs font-medium text-white/85;
+    @apply rounded-full px-2.5 py-0.5 text-xs font-medium text-white/85;
     background: rgb(255 255 255 / 0.06);
     border: 1px solid rgb(255 255 255 / 0.14);
   }
 
   .mentor-spotlight-v3__cta {
-    @apply flex shrink-0 items-center justify-center gap-2 rounded-2xl bg-gradient-brand px-6 py-3.5 text-sm font-bold text-white;
+    @apply flex shrink-0 items-center justify-center gap-2 rounded-2xl bg-gradient-brand px-5 py-2.5 text-sm font-bold text-white;
     box-shadow: 0 10px 28px -6px rgb(243 146 35 / 0.55);
     transition: transform 200ms ease, box-shadow 200ms ease, filter 200ms ease;
   }
