@@ -3811,7 +3811,7 @@
   }
 
   .mentor-spotlight-v3 {
-    @apply relative overflow-hidden rounded-[1.75rem] px-5 py-4 sm:px-8 sm:py-5;
+    @apply relative max-w-3xl overflow-hidden rounded-[1.75rem] px-5 py-4 sm:px-8 sm:py-5;
     background: linear-gradient(140deg, #060636 0%, #00004d 45%, #0b0b63 100%);
     border: 1px solid rgb(255 255 255 / 0.08);
     box-shadow: 0 24px 60px -20px rgb(0 0 51 / 0.55);
