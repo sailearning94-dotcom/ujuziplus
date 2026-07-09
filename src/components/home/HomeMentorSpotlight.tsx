@@ -34,11 +34,6 @@ export function HomeMentorSpotlight({ mentor }: { mentor: SerializedMentor }) {
                   Accepting requests
                 </span>
               )}
-              {mentor.studentsHelped > 0 && (
-                <p className="mentor-spotlight-v3__social-sub">
-                  {mentor.studentsHelped}+ learners helped
-                </p>
-              )}
             </div>
           </div>
 

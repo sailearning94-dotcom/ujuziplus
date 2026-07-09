@@ -97,10 +97,10 @@ export function MentorCard({
               {mentor.averageRating.toFixed(1)}
               <span className="text-gray-400 font-normal">({mentor.ratingCount})</span>
             </span>
-          ) : mentor.studentsHelped > 0 ? (
+          ) : mentor.isFeatured ? (
             <span className="flex items-center gap-1 text-xs font-medium text-gray-500">
-              {mentor.isFeatured && <BadgeCheck className="h-3.5 w-3.5 text-brand" />}
-              Helped {mentor.studentsHelped}+ learners
+              <BadgeCheck className="h-3.5 w-3.5 text-brand" />
+              Featured mentor
             </span>
           ) : (
             <span />

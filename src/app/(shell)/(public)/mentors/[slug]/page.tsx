@@ -256,12 +256,6 @@ export default async function MentorProfilePage({ params }: Props) {
                     </dd>
                   </div>
                 )}
-                {mentor.studentsHelped > 0 && (
-                  <div className="flex justify-between">
-                    <dt>Learners helped</dt>
-                    <dd className="font-medium text-brand">{mentor.studentsHelped}+</dd>
-                  </div>
-                )}
                 {mentor.languages.length > 0 && (
                   <div className="flex justify-between">
                     <dt>Languages</dt>
