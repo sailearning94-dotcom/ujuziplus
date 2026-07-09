@@ -3953,7 +3953,11 @@
   }
 
   .mentor-match-teaser {
-    @apply relative flex w-full flex-col items-start gap-5 overflow-hidden rounded-3xl border border-brand/15 bg-gradient-to-br from-white via-brand-light/10 to-orange-50/40 p-5 text-left shadow-soft transition-all hover:border-brand/30 hover:shadow-md sm:flex-row sm:items-center sm:p-6;
+    @apply relative inline-flex w-full max-w-xl flex-col items-stretch gap-4 overflow-hidden rounded-3xl border border-brand/15 bg-gradient-to-br from-white via-brand-light/10 to-orange-50/40 p-5 text-left shadow-soft transition-all hover:border-brand/30 hover:shadow-md;
+  }
+
+  .mentor-match-teaser__row {
+    @apply flex items-start gap-4;
   }
 
   .mentor-match-teaser__icon {
@@ -4017,11 +4021,11 @@
   }
 
   .mentor-match-teaser__cta-wrap {
-    @apply w-full shrink-0 sm:w-auto;
+    @apply shrink-0;
   }
 
   .mentor-match-teaser__cta {
-    @apply inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-brand to-brand-dark px-6 py-3.5 text-sm font-bold text-white shadow-md shadow-brand/25 transition-all group-hover:shadow-lg group-hover:shadow-brand/30 sm:w-auto;
+    @apply flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-brand to-brand-dark px-6 py-3 text-sm font-bold text-white shadow-md shadow-brand/25 transition-all group-hover:shadow-lg group-hover:shadow-brand/30;
   }
 
   .mentor-match-wizard__header {

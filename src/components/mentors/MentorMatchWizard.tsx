@@ -49,43 +49,45 @@ export function MentorMatchWizard({ mentors }: { mentors: SerializedMentor[] }) 
         onClick={() => setOpen(true)}
         className="mentor-match-teaser group"
       >
-        <span className="mentor-match-teaser__icon">
-          <Compass className="h-7 w-7" aria-hidden />
-          <Sparkle className="mentor-match-teaser__sparkle mentor-match-teaser__sparkle--1" aria-hidden />
-          <Sparkle className="mentor-match-teaser__sparkle mentor-match-teaser__sparkle--2" aria-hidden />
-        </span>
-
-        <span className="mentor-match-teaser__body">
-          <span className="mentor-match-teaser__title">Match me with a mentor</span>
-          <span className="mentor-match-teaser__desc">
-            Pick your focus area and tell us what you&apos;re building — we&apos;ll shortlist mentors who fit.
+        <span className="mentor-match-teaser__row">
+          <span className="mentor-match-teaser__icon">
+            <Compass className="h-7 w-7" aria-hidden />
+            <Sparkle className="mentor-match-teaser__sparkle mentor-match-teaser__sparkle--1" aria-hidden />
+            <Sparkle className="mentor-match-teaser__sparkle mentor-match-teaser__sparkle--2" aria-hidden />
           </span>
 
-          {previewMentors.length > 0 && (
-            <span className="mentor-match-teaser__social">
-              <span className="mentor-match-teaser__avatars">
-                {previewMentors.map((m) => (
-                  <Avatar key={m.id} src={m.avatarUrl} alt={m.displayName} size="sm" ring />
-                ))}
-              </span>
-              {mentors.length > previewMentors.length && (
-                <span className="mentor-match-teaser__count">+{mentors.length - previewMentors.length}</span>
-              )}
-              <span className="mentor-match-teaser__social-text">
-                {mentors.length} mentor{mentors.length !== 1 ? "s" : ""} ready to guide you
-              </span>
+          <span className="mentor-match-teaser__body">
+            <span className="mentor-match-teaser__title">Match me with a mentor</span>
+            <span className="mentor-match-teaser__desc">
+              Pick your focus area and tell us what you&apos;re building — we&apos;ll shortlist mentors who fit.
             </span>
-          )}
 
-          <span className="mentor-match-teaser__features">
-            {FEATURES.map((f) => (
-              <span key={f.label} className="mentor-match-teaser__feature">
-                <span className={cn("mentor-match-teaser__feature-icon", f.color)}>
-                  <f.icon className="h-3.5 w-3.5" aria-hidden />
+            {previewMentors.length > 0 && (
+              <span className="mentor-match-teaser__social">
+                <span className="mentor-match-teaser__avatars">
+                  {previewMentors.map((m) => (
+                    <Avatar key={m.id} src={m.avatarUrl} alt={m.displayName} size="sm" ring />
+                  ))}
                 </span>
-                {f.label}
+                {mentors.length > previewMentors.length && (
+                  <span className="mentor-match-teaser__count">+{mentors.length - previewMentors.length}</span>
+                )}
+                <span className="mentor-match-teaser__social-text">
+                  {mentors.length} mentor{mentors.length !== 1 ? "s" : ""} ready to guide you
+                </span>
               </span>
-            ))}
+            )}
+
+            <span className="mentor-match-teaser__features">
+              {FEATURES.map((f) => (
+                <span key={f.label} className="mentor-match-teaser__feature">
+                  <span className={cn("mentor-match-teaser__feature-icon", f.color)}>
+                    <f.icon className="h-3.5 w-3.5" aria-hidden />
+                  </span>
+                  {f.label}
+                </span>
+              ))}
+            </span>
           </span>
         </span>
 
