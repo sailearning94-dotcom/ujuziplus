@@ -2,14 +2,21 @@
 
 import { useState, useTransition } from "react";
 import Link from "next/link";
-import { ArrowRight, Compass } from "lucide-react";
+import { ArrowRight, Compass, ShieldCheck, Target, Zap, Sparkle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
+import { Avatar } from "@/components/ui/avatar";
 import { MentorCard } from "./MentorCard";
 import { MENTOR_TRACKS } from "@/lib/mentors/tracks";
 import { matchMentors, type SerializedMentor } from "@/lib/actions/mentors";
 import { cn } from "@/lib/utils";
+
+const FEATURES = [
+  { icon: ShieldCheck, label: "Vetted mentors", color: "bg-violet-100 text-violet-600" },
+  { icon: Target, label: "Personalized matches", color: "bg-emerald-100 text-emerald-600" },
+  { icon: Zap, label: "Faster progress", color: "bg-blue-100 text-blue-600" },
+];
 
 export function MentorMatchWizard({ mentors }: { mentors: SerializedMentor[] }) {
   const [open, setOpen] = useState(false);
@@ -34,26 +41,59 @@ export function MentorMatchWizard({ mentors }: { mentors: SerializedMentor[] }) 
   };
 
   if (!open) {
+    const previewMentors = mentors.slice(0, 3);
+
     return (
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="group inline-flex max-w-full items-center gap-4 rounded-2xl border border-gray-200 bg-white px-5 py-4 text-left shadow-sm transition-all hover:border-brand/40 hover:shadow-md"
+        className="mentor-match-teaser group"
       >
-        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-brand-light text-brand">
-          <Compass className="h-5 w-5" aria-hidden />
+        <span className="mentor-match-teaser__icon">
+          <Compass className="h-7 w-7" aria-hidden />
+          <Sparkle className="mentor-match-teaser__sparkle mentor-match-teaser__sparkle--1" aria-hidden />
+          <Sparkle className="mentor-match-teaser__sparkle mentor-match-teaser__sparkle--2" aria-hidden />
         </span>
-        <span className="min-w-0">
-          <span className="block font-display text-sm font-bold text-gray-900">
-            Match me with a mentor
-          </span>
-          <span className="block max-w-sm text-xs text-gray-500">
+
+        <span className="mentor-match-teaser__body">
+          <span className="mentor-match-teaser__title">Match me with a mentor</span>
+          <span className="mentor-match-teaser__desc">
             Pick your focus area and tell us what you&apos;re building — we&apos;ll shortlist mentors who fit.
           </span>
+
+          {previewMentors.length > 0 && (
+            <span className="mentor-match-teaser__social">
+              <span className="mentor-match-teaser__avatars">
+                {previewMentors.map((m) => (
+                  <Avatar key={m.id} src={m.avatarUrl} alt={m.displayName} size="sm" ring />
+                ))}
+              </span>
+              {mentors.length > previewMentors.length && (
+                <span className="mentor-match-teaser__count">+{mentors.length - previewMentors.length}</span>
+              )}
+              <span className="mentor-match-teaser__social-text">
+                {mentors.length} mentor{mentors.length !== 1 ? "s" : ""} ready to guide you
+              </span>
+            </span>
+          )}
+
+          <span className="mentor-match-teaser__features">
+            {FEATURES.map((f) => (
+              <span key={f.label} className="mentor-match-teaser__feature">
+                <span className={cn("mentor-match-teaser__feature-icon", f.color)}>
+                  <f.icon className="h-3.5 w-3.5" aria-hidden />
+                </span>
+                {f.label}
+              </span>
+            ))}
+          </span>
         </span>
-        <span className="flex shrink-0 items-center gap-1 text-sm font-semibold text-brand">
-          Start
-          <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
+
+        <span className="mentor-match-teaser__cta-wrap">
+          <span className="mentor-match-teaser__cta">
+            Get Matched
+            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
+          </span>
         </span>
       </button>
     );
