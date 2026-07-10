@@ -17,8 +17,8 @@
  *  - Clear / replace
  */
 
-import { useState, useRef, useId } from "react";
-import { Upload, Link2, X, FileText, Music, CheckCircle } from "lucide-react";
+import { useState, useRef, useId, useEffect } from "react";
+import { Upload, Link2, X, FileText, Music, CheckCircle, ImageOff } from "lucide-react";
 import { IMAGE_ACCEPT, uploadMediaFile, type UploadKind } from "@/lib/upload-client";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -171,6 +171,11 @@ export function MediaUploadField({
   const [progress, setProgress] = useState(0); // 0-100
   const [error, setError] = useState("");
   const [fileName, setFileName] = useState(""); // for doc/audio display
+  const [imageBroken, setImageBroken] = useState(false);
+
+  useEffect(() => {
+    setImageBroken(false);
+  }, [value]);
 
   function clear() {
     onChange("");
@@ -302,8 +307,20 @@ export function MediaUploadField({
           {hasValue && !uploading && (
             <div className="relative rounded-lg overflow-hidden border border-gray-200">
               {kind === "image" && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={value} alt="Preview" className="w-full max-h-48 object-cover" />
+                imageBroken ? (
+                  <div className="flex h-32 w-full flex-col items-center justify-center gap-1 bg-gray-50 text-center">
+                    <ImageOff className="h-5 w-5 text-gray-300" />
+                    <span className="text-xs text-gray-400">Image failed to load</span>
+                  </div>
+                ) : (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={value}
+                    alt="Preview"
+                    className="w-full max-h-48 object-cover"
+                    onError={() => setImageBroken(true)}
+                  />
+                )
               )}
               {kind === "video" && <VideoPreview url={value} />}
               {(kind === "doc" || kind === "audio") && (
@@ -378,8 +395,20 @@ export function MediaUploadField({
           {hasValue && (
             <div className="relative rounded-lg overflow-hidden border border-gray-200">
               {kind === "image" && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={value} alt="Preview" className="w-full max-h-48 object-cover" />
+                imageBroken ? (
+                  <div className="flex h-32 w-full flex-col items-center justify-center gap-1 bg-gray-50 text-center">
+                    <ImageOff className="h-5 w-5 text-gray-300" />
+                    <span className="text-xs text-gray-400">Image failed to load</span>
+                  </div>
+                ) : (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={value}
+                    alt="Preview"
+                    className="w-full max-h-48 object-cover"
+                    onError={() => setImageBroken(true)}
+                  />
+                )
               )}
               {kind === "video" && <VideoPreview url={value} />}
               <button
