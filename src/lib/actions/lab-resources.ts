@@ -82,6 +82,7 @@ export async function adminUpsertLabResource(input: {
   fileUrl?: string;
   pdfUrls?: string[];
   imageUrls?: string[];
+  tags?: string[];
   thumbnailUrl?: string | null;
   externalUrl?: string;
 }): Promise<ActionResult<{ slug: string }>> {
@@ -97,6 +98,7 @@ export async function adminUpsertLabResource(input: {
     fileUrl: input.fileUrl?.trim() || null,
     pdfUrls: input.pdfUrls ?? [],
     imageUrls: input.imageUrls ?? [],
+    tags: input.tags ?? [],
     thumbnailUrl: input.thumbnailUrl ?? null,
     externalUrl: input.externalUrl?.trim() || null,
   };

@@ -9,23 +9,20 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { adminApproveSolution, adminRejectSolution, adminDeleteSolution } from "@/lib/actions/solutions";
-import { adminDeleteLabResource } from "@/lib/actions/lab-resources";
 import { adminUpsertBlogPost } from "@/lib/actions/blog";
 import { adminUpsertPricingPlan } from "@/lib/actions/pricing";
 import { adminToggleProjectPublished, adminDeleteProject } from "@/lib/actions/projects";
 import { useAppStore } from "@/store/appStore";
 
-type Tab = "solutions" | "review" | "lab" | "blog" | "pricing" | "projects";
+type Tab = "solutions" | "review" | "blog" | "pricing" | "projects";
 
 export function AdminContentPanel({
   solutions,
-  labResources,
   blogPosts,
   pricingPlans,
   projects,
 }: {
   solutions: { id: string; slug: string; title: string; status: string; level: string; author?: { fullName: string | null; username: string | null } | null; organization?: { name: string } | null }[];
-  labResources: { id: string; slug: string; title: string; type: string }[];
   blogPosts: { id: string; slug: string; title: string; status: string; category: string }[];
   pricingPlans: { id: string; slug: string; name: string; price: number; isActive: boolean }[];
   projects: { id: string; slug: string; title: string; isPublished: boolean; creator: { fullName: string } }[];
@@ -65,15 +62,6 @@ export function AdminContentPanel({
     });
   };
 
-  const deleteLabResource = (id: string, title: string) => {
-    if (!confirm(`Delete "${title}" permanently? This cannot be undone.`)) return;
-    startTransition(async () => {
-      const res = await adminDeleteLabResource(id);
-      if (res.success) { showToast("Lab resource deleted", "success"); router.refresh(); }
-      else showToast(res.error ?? "Delete failed", "error");
-    });
-  };
-
   const deleteProject = (id: string, title: string) => {
     if (!confirm(`Delete "${title}" permanently? This cannot be undone.`)) return;
     startTransition(async () => {
@@ -86,7 +74,6 @@ export function AdminContentPanel({
   const tabs: { id: Tab; label: string; count: number; urgent?: boolean }[] = [
     { id: "review", label: "Review queue", count: pending.length, urgent: pending.length > 0 },
     { id: "solutions", label: "All solutions", count: solutions.length },
-    { id: "lab", label: "Lab resources", count: labResources.length },
     { id: "blog", label: "Blog", count: blogPosts.length },
     { id: "pricing", label: "Pricing", count: pricingPlans.length },
     { id: "projects", label: "Projects", count: projects.length },
@@ -197,39 +184,6 @@ export function AdminContentPanel({
                   className="text-red-600 hover:text-red-700 hover:bg-red-50"
                   disabled={isPending}
                   onClick={() => deleteSolution(s.id, s.title)}
-                >
-                  <Trash2 className="h-3.5 w-3.5" />
-                </Button>
-              </div>
-            </Card>
-          ))}
-        </div>
-      )}
-
-      {tab === "lab" && (
-        <div className="space-y-3">
-          <Button asChild size="sm">
-            <Link href="/admin/lab-resources/new">Create lab resource</Link>
-          </Button>
-          {labResources.map((r) => (
-            <Card key={r.id} className="p-4 flex justify-between items-center">
-              <div>
-                <span className="font-medium">{r.title}</span>
-                <p className="text-xs text-gray-500 mt-0.5">/{r.slug} · {r.type.toLowerCase()}</p>
-              </div>
-              <div className="flex gap-2">
-                <Button asChild variant="outline" size="sm">
-                  <Link href={`/admin/lab-resources/${r.slug}/edit`}>Edit</Link>
-                </Button>
-                <Button asChild variant="ghost" size="sm">
-                  <Link href={`/lab-resources/${r.slug}`}>View</Link>
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
-                  disabled={isPending}
-                  onClick={() => deleteLabResource(r.id, r.title)}
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                 </Button>

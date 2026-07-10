@@ -1086,6 +1086,7 @@ model LabResource {
   fileUrl      String?           @db.VarChar(500)
   pdfUrls      Json?
   imageUrls    Json?
+  tags         Json? // String[]
   externalUrl  String?           @db.VarChar(500)
   thumbnailUrl String?
   bookmarks    UserLabResource[]

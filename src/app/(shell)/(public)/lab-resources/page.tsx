@@ -15,6 +15,9 @@ export default async function LabResourcesPage() {
         title: r.title,
         type: r.type,
         category: r.category,
+        description: r.description,
+        thumbnailUrl: r.thumbnailUrl,
+        tags: Array.isArray(r.tags) ? (r.tags as string[]) : [],
       }))}
       savedIds={savedIds}
       userId={session?.user?.id ?? null}

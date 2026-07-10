@@ -37,6 +37,7 @@ export default async function EditLabResourcePage({ params }: { params: { slug: 
           imageUrls: Array.isArray(item.imageUrls) ? (item.imageUrls as string[]) : [],
           thumbnailUrl: item.thumbnailUrl ?? "",
           externalUrl: item.externalUrl ?? "",
+          tags: Array.isArray(item.tags) ? (item.tags as string[]) : [],
         }}
       />
     </div>

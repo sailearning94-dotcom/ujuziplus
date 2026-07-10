@@ -29,6 +29,7 @@ type Props = {
     imageUrls: string[];
     thumbnailUrl: string;
     externalUrl: string;
+    tags: string[];
   };
 };
 
@@ -45,6 +46,25 @@ function FileList({ urls, onRemove, label }: { urls: string[]; onRemove: (u: str
             <X className="h-3.5 w-3.5" />
           </button>
         </div>
+      ))}
+    </div>
+  );
+}
+
+function TagChips({ tags, onRemove }: { tags: string[]; onRemove: (t: string) => void }) {
+  if (!tags.length) return null;
+  return (
+    <div className="flex flex-wrap gap-1.5">
+      {tags.map((t) => (
+        <span
+          key={t}
+          className="flex items-center gap-1 rounded-full border border-gray-200 bg-gray-50 px-2.5 py-1 text-xs text-gray-600"
+        >
+          {t}
+          <button type="button" onClick={() => onRemove(t)} className="text-gray-400 hover:text-red-500">
+            <X className="h-3 w-3" />
+          </button>
+        </span>
       ))}
     </div>
   );
@@ -122,6 +142,14 @@ export function LabResourceEditorForm({ id, initial }: Props) {
   const [externalUrl, setExternalUrl] = useState(initial?.externalUrl ?? "");
   const [pdfUrls, setPdfUrls] = useState<string[]>(initial?.pdfUrls ?? []);
   const [imageUrls, setImageUrls] = useState<string[]>(initial?.imageUrls ?? []);
+  const [tags, setTags] = useState<string[]>(initial?.tags ?? []);
+  const [tagInput, setTagInput] = useState("");
+
+  const addTag = () => {
+    const t = tagInput.trim();
+    if (t && !tags.includes(t)) setTags((prev) => [...prev, t]);
+    setTagInput("");
+  };
 
   const handleEditorImageUpload = async (file: File) => {
     const { url } = await uploadMediaFile(file, "image");
@@ -165,6 +193,7 @@ export function LabResourceEditorForm({ id, initial }: Props) {
         fileUrl: fileUrl.trim(),
         pdfUrls,
         imageUrls,
+        tags,
         thumbnailUrl: thumbnailUrl.trim() || null,
         externalUrl: externalUrl.trim(),
       });
@@ -201,6 +230,29 @@ export function LabResourceEditorForm({ id, initial }: Props) {
           onChange={(e) => setDescription(e.target.value)}
           placeholder="One or two sentences shown on listing cards"
         />
+      </Card>
+
+      {/* Tags */}
+      <Card className="p-5 space-y-3">
+        <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-400">Tags</h2>
+        <p className="text-xs text-gray-500">
+          Free-form chips shown alongside the type and category, e.g. &ldquo;actuator&rdquo;, &ldquo;Training-Kit-Box&rdquo;.
+        </p>
+        <div className="flex gap-2">
+          <Input
+            value={tagInput}
+            onChange={(e) => setTagInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") { e.preventDefault(); addTag(); }
+            }}
+            placeholder="Type a tag and press Enter"
+            className="flex-1"
+          />
+          <Button type="button" variant="outline" onClick={addTag}>
+            <Plus className="h-3.5 w-3.5" />
+          </Button>
+        </div>
+        <TagChips tags={tags} onRemove={(t) => setTags(tags.filter((x) => x !== t))} />
       </Card>
 
       {/* Thumbnail */}

@@ -1,3 +1,5 @@
+import type { LabResourceType } from "@prisma/client";
+
 /** UjuziLab brand colors — primary orange #f39223, secondary navy #00004D */
 export const UJUZI = {
   orange: "#f39223",
@@ -72,7 +74,14 @@ export const LAB_COURSE_FILTERS = [
   "Others",
 ] as const;
 
-export const LAB_RESOURCE_FILTERS = ["Hardware", "Software", "Dataset", "API"] as const;
+export const LAB_RESOURCE_FILTERS: { value: LabResourceType; label: string }[] = [
+  { value: "COMPONENT", label: "Component" },
+  { value: "SENSOR", label: "Sensor" },
+  { value: "BOARD", label: "Board" },
+  { value: "TOOL", label: "Tool" },
+  { value: "GUIDE", label: "Guide" },
+  { value: "OTHER", label: "Other" },
+];
 
 export const WAZILAB_COURSE_FILTERS = LAB_COURSE_FILTERS;
 export const WAZILAB_LAB_FILTERS = LAB_RESOURCE_FILTERS;
