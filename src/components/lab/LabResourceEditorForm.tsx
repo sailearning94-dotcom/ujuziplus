@@ -70,22 +70,36 @@ function TagChips({ tags, onRemove }: { tags: string[]; onRemove: (t: string) =>
   );
 }
 
+function BrokenImageThumb({ url, onRemove }: { url: string; onRemove: () => void }) {
+  const [broken, setBroken] = useState(false);
+  return (
+    <div className="relative rounded-lg overflow-hidden border border-gray-100">
+      {broken ? (
+        <div className="flex h-24 w-full flex-col items-center justify-center gap-1 bg-gray-50 px-2 text-center">
+          <ImageIcon className="h-4 w-4 text-gray-300" />
+          <span className="text-[10px] text-gray-400">Image failed to load</span>
+        </div>
+      ) : (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={url} alt="" className="w-full h-24 object-cover" onError={() => setBroken(true)} />
+      )}
+      <button
+        type="button"
+        onClick={onRemove}
+        className="absolute top-1 right-1 rounded-full bg-white/90 p-0.5 text-gray-600 hover:bg-white hover:text-red-600 shadow"
+      >
+        <X className="h-3 w-3" />
+      </button>
+    </div>
+  );
+}
+
 function ImageList({ urls, onRemove }: { urls: string[]; onRemove: (u: string) => void }) {
   if (!urls.length) return null;
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">
       {urls.map((u) => (
-        <div key={u} className="relative rounded-lg overflow-hidden border border-gray-100">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={u} alt="" className="w-full h-24 object-cover" />
-          <button
-            type="button"
-            onClick={() => onRemove(u)}
-            className="absolute top-1 right-1 rounded-full bg-white/90 p-0.5 text-gray-600 hover:bg-white hover:text-red-600 shadow"
-          >
-            <X className="h-3 w-3" />
-          </button>
-        </div>
+        <BrokenImageThumb key={u} url={u} onRemove={() => onRemove(u)} />
       ))}
     </div>
   );
