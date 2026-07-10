@@ -8,6 +8,7 @@ import { requireUser, assertSelfOrAdmin, requireAdmin } from "@/lib/auth-server"
 import { createNotification } from "@/lib/actions/notifications";
 import { sendEmail, programRegistrationEmail } from "@/lib/email";
 import { formatCurrency } from "@/lib/utils";
+import { assertProgramManager } from "./program-units";
 
 const APP_URL = process.env.NEXTAUTH_URL ?? "http://localhost:3000";
 
@@ -54,7 +55,7 @@ export async function getProgramBySlug(slug: string) {
   return db.program.findUnique({
     where: { slug },
     include: {
-      _count: { select: { registrations: true } },
+      _count: { select: { registrations: true, units: true } },
       organization: { select: { id: true, name: true, slug: true, logoUrl: true } },
     },
   });
@@ -193,7 +194,7 @@ export async function getAdminPrograms() {
 }
 
 export async function getAdminProgramRegistrations(programId: string) {
-  await requireAdmin();
+  await assertProgramManager(programId);
   return db.programRegistration.findMany({
     where: { programId },
     include: {
@@ -416,7 +417,7 @@ export async function broadcastToProgramRegistrants(
   subject: string,
   message: string
 ): Promise<ActionResult<{ sent: number }>> {
-  await requireAdmin();
+  await assertProgramManager(programId);
 
   const program = await db.program.findUnique({ where: { id: programId } });
   if (!program) return { success: false, error: "Program not found." };

@@ -2,6 +2,12 @@ import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { requireOrgAdmin } from "@/lib/org-access";
 import { OrgProgramForm } from "@/components/org/OrgProgramForm";
+import { AdminProgramUnitsSection } from "@/components/admin/AdminProgramUnitsSection";
+import { AdminProgramEventsSection } from "@/components/admin/AdminProgramEventsSection";
+import { AdminProgramRegistrantsSection } from "@/components/admin/AdminProgramRegistrantsSection";
+import { getAdminProgramRegistrations } from "@/lib/actions/programs";
+import { getAdminProgramUnits, getCoursesForSelect } from "@/lib/actions/program-units";
+import { getAdminProgramEvents } from "@/lib/actions/program-events";
 
 export default async function OrgEditProgramPage({
   params,
@@ -35,12 +41,37 @@ export default async function OrgEditProgramPage({
     status: program.status,
   };
 
+  const [units, courseOptions, events, registrants] = await Promise.all([
+    getAdminProgramUnits(program.id),
+    getCoursesForSelect(),
+    getAdminProgramEvents(program.id),
+    getAdminProgramRegistrations(program.id),
+  ]);
+
   return (
-    <OrgProgramForm
-      orgId={org.id}
-      orgSlug={params.slug}
-      programId={program.id}
-      initial={initial}
-    />
+    <div className="space-y-6">
+      <OrgProgramForm
+        orgId={org.id}
+        orgSlug={params.slug}
+        programId={program.id}
+        initial={initial}
+      />
+
+      <AdminProgramUnitsSection
+        programId={program.id}
+        units={units.map((u) => ({ id: u.id, course: u.course }))}
+        courseOptions={courseOptions}
+      />
+
+      <AdminProgramEventsSection
+        programId={program.id}
+        events={events}
+      />
+
+      <AdminProgramRegistrantsSection
+        programId={program.id}
+        registrants={registrants}
+      />
+    </div>
   );
 }

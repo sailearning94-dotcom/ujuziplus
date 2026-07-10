@@ -183,6 +183,7 @@ model Course {
   certTemplate  CertificateTemplate? @relation("CourseCertTemplate")
   discussions   Discussion[]         @relation("CourseDiscussions")
   wishlistItems WishlistItem[]       @relation("CourseWishlist")
+  programUnits  ProgramUnit[]        @relation("ProgramUnits")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -762,6 +763,12 @@ enum ProgramStatus {
   ARCHIVED
 }
 
+enum ProgramEventType {
+  WORKSHOP
+  ONLINE_SESSION
+  OTHER
+}
+
 model Program {
   id             String                @id @default(cuid())
   slug           String                @unique @db.VarChar(191)
@@ -781,6 +788,8 @@ model Program {
   organization   Organization?         @relation("OrgPrograms", fields: [organizationId], references: [id])
   registrations  ProgramRegistration[]
   orderItems     OrderItem[]
+  units          ProgramUnit[]
+  events         ProgramEvent[]
   createdAt      DateTime              @default(now())
   updatedAt      DateTime              @updatedAt
 
@@ -798,6 +807,35 @@ model ProgramRegistration {
 
   @@unique([userId, programId])
   @@map("program_registrations")
+}
+
+model ProgramUnit {
+  id         String   @id @default(cuid())
+  programId  String
+  program    Program  @relation(fields: [programId], references: [id], onDelete: Cascade)
+  courseId   String
+  course     Course   @relation("ProgramUnits", fields: [courseId], references: [id], onDelete: Cascade)
+  orderIndex Int      @default(0)
+  createdAt  DateTime @default(now())
+
+  @@unique([programId, courseId])
+  @@map("program_units")
+}
+
+model ProgramEvent {
+  id         String           @id @default(cuid())
+  programId  String
+  program    Program          @relation(fields: [programId], references: [id], onDelete: Cascade)
+  title      String
+  type       ProgramEventType @default(WORKSHOP)
+  startAt    DateTime
+  endAt      DateTime?
+  location   String?
+  agenda     String?          @db.Text
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+
+  @@map("program_events")
 }
 
 enum CompetitionStatus {
