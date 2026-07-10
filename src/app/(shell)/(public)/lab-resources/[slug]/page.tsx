@@ -35,9 +35,9 @@ export default async function LabResourceDetailPage({ params }: { params: { slug
       {/* Hero */}
       {item.thumbnailUrl && (
         <div className="mx-auto mt-4 max-w-5xl px-4 sm:px-6">
-          <div className="max-h-72 w-full overflow-hidden rounded-2xl bg-gray-100">
+          <div className="max-h-96 w-full overflow-hidden rounded-2xl bg-gray-100">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={item.thumbnailUrl} alt={item.title} className="h-full w-full object-cover" />
+            <img src={item.thumbnailUrl} alt={item.title} className="mx-auto max-h-96 w-auto object-contain" />
           </div>
         </div>
       )}
