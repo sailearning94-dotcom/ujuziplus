@@ -37,33 +37,39 @@ export function HomeHeroBackground() {
 
       const REDUCED_MOTION = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       const SCRUB_EASE = REDUCED_MOTION ? 1 : 0.085;
-      const BLOOM_STRENGTH = 0.6;
-      const BLOOM_RADIUS = 0.4;
-      const BLOOM_THRESHOLD = 0.85;
-      const HUD_TINT: Record<string, number> = { HUD1: 0xffaa33, HUD2: 0xffaa33, HUD3: 0x66ffee };
+      const BLOOM_STRENGTH = 0.35;
+      const BLOOM_RADIUS = 0.35;
+      const BLOOM_THRESHOLD = 0.9;
+      const HUD_TINT: Record<string, number> = { HUD1: 0xe8720c, HUD2: 0xe8720c, HUD3: 0x0891a8 };
+
+      const BG_COLOR = 0xffffff;
 
       const renderer = new THREE.WebGLRenderer({
         canvas,
         antialias: true,
-        alpha: true,
+        alpha: false,
         powerPreference: "high-performance",
       });
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.outputColorSpace = THREE.SRGBColorSpace;
       renderer.toneMapping = THREE.ACESFilmicToneMapping;
       renderer.toneMappingExposure = 0.85;
-      renderer.setClearColor(0x000000, 0);
+      renderer.setClearColor(BG_COLOR, 1);
 
       const scene = new THREE.Scene();
+      scene.background = new THREE.Color(BG_COLOR);
 
       const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
       camera.position.set(4, 3, 6);
 
-      const ambientFill = new THREE.HemisphereLight(0xffffff, 0x2a2a2a, 0.4);
+      const ambientFill = new THREE.HemisphereLight(0xffffff, 0x8a8a8a, 0.55);
       scene.add(ambientFill);
-      const key = new THREE.DirectionalLight(0xffffff, 0.6);
+      const key = new THREE.DirectionalLight(0xffffff, 0.9);
       key.position.set(5, 10, 7);
       scene.add(key);
+      const rim = new THREE.DirectionalLight(0x1a1a3d, 0.5);
+      rim.position.set(-6, 4, -5);
+      scene.add(rim);
 
       const composer = new EffectComposer(renderer);
       composer.addPass(new RenderPass(scene, camera, undefined, undefined, 0));
@@ -212,6 +218,19 @@ export function HomeHeroBackground() {
             }
           });
 
+          // "landscape_black" is dark background debris meant to disappear against a dark
+          // page backdrop — on the white homepage background it needs to fade instead of
+          // rendering as solid black shapes.
+          (meshesByMaterialName["landscape_black"] ?? []).forEach((mesh: any) => {
+            mesh.material = new THREE.MeshBasicMaterial({
+              color: 0xcbd5e1,
+              transparent: true,
+              opacity: 0.35,
+              depthWrite: false,
+              side: THREE.DoubleSide,
+            });
+          });
+
           recoverSpecGlossData(MODEL_PATH).then((byMaterialName) => {
             if (cancelled) return;
             Object.entries(byMaterialName).forEach(([matName, data]: [string, any]) => {
@@ -228,10 +247,10 @@ export function HomeHeroBackground() {
                     color: tint,
                     alphaMap: tex,
                     transparent: true,
-                    blending: THREE.AdditiveBlending,
+                    blending: THREE.NormalBlending,
                     depthWrite: false,
                     side: THREE.DoubleSide,
-                    opacity: 0.55,
+                    opacity: 1,
                   });
                 });
                 return;

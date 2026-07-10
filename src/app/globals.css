@@ -202,6 +202,16 @@
     cursor: url("/cursor-orange.svg") 24 24, auto;
   }
 
+  /* Homepage gets a clean white canvas so the helicopter effect has full contrast */
+  .home-landing {
+    background-color: #ffffff;
+  }
+
+  .home-landing::before,
+  .home-landing::after {
+    display: none;
+  }
+
   .learner-canvas::before {
     content: "";
     position: fixed;
@@ -1021,10 +1031,10 @@
     @apply relative z-10;
     background: linear-gradient(
       to bottom,
-      #f4f7fb 0%,
-      #f4f7fb 85%,
-      rgb(244 247 251 / 0.6) 92%,
-      rgb(244 247 251 / 0) 100%
+      #ffffff 0%,
+      #ffffff 85%,
+      rgb(255 255 255 / 0.6) 92%,
+      rgb(255 255 255 / 0) 100%
     );
   }
 
