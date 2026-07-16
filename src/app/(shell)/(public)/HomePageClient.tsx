@@ -37,10 +37,6 @@ const HomeMentorSpotlight = dynamic(
   () => import("@/components/home/HomeMentorSpotlight").then((m) => ({ default: m.HomeMentorSpotlight })),
   { loading: () => <div className="h-56 animate-pulse rounded-3xl bg-gray-100" /> }
 );
-const HomeHeroBackground = dynamic(
-  () => import("@/components/home/HomeHeroBackground").then((m) => ({ default: m.HomeHeroBackground })),
-  { ssr: false }
-);
 
 type ContinueCourse = {
   title: string;
@@ -137,8 +133,6 @@ export function HomePageClient({
 
   return (
     <Box className="learner-canvas home-landing" sx={{ pb: { xs: 2, md: 2.5 }, position: "relative" }}>
-      <HomeHeroBackground />
-      <div className="home-hero-mask">
         <Box sx={{ position: "relative", zIndex: 1, pt: { xs: 2, md: 2.5 } }}>
         <Box sx={contentShellSx}>
         <div className="home-fold">
@@ -200,7 +194,6 @@ export function HomePageClient({
         </DossierSection>
       )}
       </Box>
-      </div>
 
       <DossierSection align="right">
         <Box sx={contentShellSx}>
