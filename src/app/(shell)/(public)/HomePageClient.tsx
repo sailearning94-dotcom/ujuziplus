@@ -19,6 +19,9 @@ import { HomeProgramCard } from "@/components/home/HomeProgramCard";
 import { HomeCompetitionCard } from "@/components/home/HomeCompetitionCard";
 import { HomeValueBand } from "@/components/home/HomeValueBand";
 import { HomeContinueCompact } from "@/components/home/HomeContinueCompact";
+import { HomeNewsCard } from "@/components/home/HomeNewsCard";
+import { HomeShowcaseCard } from "@/components/home/HomeShowcaseCard";
+import { HomeCourseCard } from "@/components/home/HomeCourseCard";
 import type { SerializedMentor } from "@/lib/actions/mentors";
 
 const OrgMarquee = dynamic(
@@ -95,6 +98,29 @@ type OrgItem = {
   memberCount: number;
 };
 
+type NewsItem = {
+  slug: string;
+  title: string;
+  excerpt: string | null;
+  category: string;
+};
+
+type ShowcaseItem = {
+  title: string;
+  tagline: string | null;
+  thumbnailUrl: string | null;
+  track: string | null;
+  authorName: string | null;
+};
+
+type InnovationProjectItem = {
+  slug: string;
+  title: string;
+  description: string;
+  thumbnailUrl: string | null;
+  category: string;
+};
+
 const contentShellSx = {
   maxWidth: 1280,
   mx: "auto",
@@ -112,6 +138,12 @@ export function HomePageClient({
   mentors,
   isAuthenticated,
   stats,
+  stemUpdates,
+  womenInTechStories,
+  communityNews,
+  studentShowcase,
+  featuredInnovationProjects,
+  aiRoboticsCourses,
 }: {
   continueCourse: ContinueCourse | null;
   pendingProgram: { title: string; slug: string; startDate: string; endDate: string; format: string } | null;
@@ -123,6 +155,12 @@ export function HomePageClient({
   mentors: SerializedMentor[];
   isAuthenticated: boolean;
   stats: { programCount: number; courseCount: number; kitCount: number; mentorCount?: number };
+  stemUpdates: NewsItem[];
+  womenInTechStories: NewsItem[];
+  communityNews: NewsItem[];
+  studentShowcase: ShowcaseItem[];
+  featuredInnovationProjects: InnovationProjectItem[];
+  aiRoboticsCourses: CourseItem[];
 }) {
   const spotlightCourse =
     courses.find((c) => c.thumbnailUrl) ?? courses[0] ?? null;
@@ -283,6 +321,123 @@ export function HomePageClient({
               >
                 {competitions.map((c) => (
                   <HomeCompetitionCard key={c.id} {...c} />
+                ))}
+              </HomeCatalogRail>
+            </Box>
+          </DossierSection>
+        )}
+
+        {aiRoboticsCourses.length > 0 && (
+          <DossierSection align="left">
+            <Box sx={contentShellSx}>
+              <HomeCatalogRail
+                title="AI & Robotics activities"
+                description="Hands-on courses building AI, robotics, and automation skills."
+                seeAllHref="/courses?category=AI"
+                seeAllLabel="All AI & Robotics"
+                itemWidth={280}
+                autoScroll
+              >
+                {aiRoboticsCourses.map((c) => (
+                  <HomeCourseCard key={c.id} {...c} />
+                ))}
+              </HomeCatalogRail>
+            </Box>
+          </DossierSection>
+        )}
+
+        {featuredInnovationProjects.length > 0 && (
+          <DossierSection align="right">
+            <Box sx={contentShellSx}>
+              <HomeCatalogRail
+                title="Featured innovation projects"
+                description="Real prototypes and solutions built by the community."
+                seeAllHref="/projects"
+                seeAllLabel="All projects"
+                itemWidth={280}
+                autoScroll
+              >
+                {featuredInnovationProjects.map((p) => (
+                  <HomeShowcaseCard
+                    key={p.slug}
+                    title={p.title}
+                    tagline={p.description}
+                    thumbnailUrl={p.thumbnailUrl}
+                    track={p.category}
+                  />
+                ))}
+              </HomeCatalogRail>
+            </Box>
+          </DossierSection>
+        )}
+
+        {studentShowcase.length > 0 && (
+          <DossierSection align="left">
+            <Box sx={contentShellSx}>
+              <HomeCatalogRail
+                title="Student innovation showcase"
+                description="Competition and capstone projects from learners across the platform."
+                seeAllHref="/showcase"
+                seeAllLabel="All showcase projects"
+                itemWidth={280}
+                autoScroll
+              >
+                {studentShowcase.map((p, i) => (
+                  <HomeShowcaseCard key={i} {...p} />
+                ))}
+              </HomeCatalogRail>
+            </Box>
+          </DossierSection>
+        )}
+
+        {stemUpdates.length > 0 && (
+          <DossierSection align="right">
+            <Box sx={contentShellSx}>
+              <HomeCatalogRail
+                title="Latest STEM & technology updates"
+                description="News from TechStar UjuziLab and the innovation ecosystem."
+                seeAllHref="/blog"
+                seeAllLabel="All updates"
+                itemWidth={280}
+              >
+                {stemUpdates.map((p) => (
+                  <HomeNewsCard key={p.slug} {...p} />
+                ))}
+              </HomeCatalogRail>
+            </Box>
+          </DossierSection>
+        )}
+
+        {womenInTechStories.length > 0 && (
+          <DossierSection align="left">
+            <Box sx={contentShellSx}>
+              <HomeCatalogRail
+                title="Women in technology stories"
+                description="Profiles of women mentors, founders, and innovators on the platform."
+                seeAllHref="/blog"
+                seeAllLabel="All stories"
+                itemWidth={280}
+              >
+                {womenInTechStories.map((p) => (
+                  <HomeNewsCard key={p.slug} {...p} />
+                ))}
+              </HomeCatalogRail>
+            </Box>
+          </DossierSection>
+        )}
+
+        {communityNews.length > 0 && (
+          <DossierSection align="right">
+            <Box sx={contentShellSx}>
+              <HomeCatalogRail
+                title="Community innovation news"
+                description="What organizations and community innovators are building."
+                seeAllHref="/blog"
+                seeAllLabel="All community news"
+                itemWidth={280}
+              >
+                {communityNews.map((p) => (
+                  <HomeNewsCard key={p.slug} {...p} />
                 ))}
               </HomeCatalogRail>
             </Box>

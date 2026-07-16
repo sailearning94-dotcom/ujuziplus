@@ -9,6 +9,9 @@ import {
   getHomePendingProgram,
 } from "@/lib/actions/student";
 import { getFeaturedMentors } from "@/lib/actions/mentors";
+import { getPublishedBlogPosts } from "@/lib/actions/blog";
+import { getShowcaseProjects } from "@/lib/actions/showcase";
+import { getPublishedProjects } from "@/lib/actions/projects";
 import { formatDateTz } from "@/lib/utils";
 import { HomePageClient } from "./HomePageClient";
 
@@ -18,7 +21,19 @@ export default async function HomePage() {
   const session = await getAuthSession();
   const userId = session?.user?.id;
 
-  const [programs, courses, kits, competitions, organizations, continueCourse, pendingProgram, mentors] =
+  const [
+    programs,
+    courses,
+    kits,
+    competitions,
+    organizations,
+    continueCourse,
+    pendingProgram,
+    mentors,
+    blogPosts,
+    showcaseProjects,
+    innovationProjects,
+  ] =
     await Promise.all([
       getPrograms().catch(() => []),
       getPublishedCourses().catch(() => []),
@@ -28,9 +43,21 @@ export default async function HomePage() {
       userId ? getHomeContinueCourse(userId).catch(() => null) : Promise.resolve(null),
       userId ? getHomePendingProgram(userId).catch(() => null) : Promise.resolve(null),
       getFeaturedMentors(10).catch(() => []),
+      getPublishedBlogPosts().catch(() => []),
+      getShowcaseProjects().catch(() => []),
+      getPublishedProjects().catch(() => []),
     ]);
 
   const kitItems = kits.slice(0, 12);
+
+  const stemUpdates = blogPosts.filter((p) => p.category === "STEM Update").slice(0, 6);
+  const womenInTechStories = blogPosts.filter((p) => p.category === "Women in Tech").slice(0, 6);
+  const communityNews = blogPosts.filter((p) => p.category === "Community News").slice(0, 6);
+  const studentShowcase = showcaseProjects.slice(0, 8);
+  const featuredInnovationProjects = innovationProjects.slice(0, 8);
+  const aiRoboticsCourses = courses
+    .filter((c) => c.category === "AI" || c.category === "Robotics")
+    .slice(0, 10);
 
   return (
     <HomePageClient
@@ -89,6 +116,49 @@ export default async function HomePage() {
           teamsCount: c.teamsCount,
         }))}
       mentors={mentors}
+      stemUpdates={stemUpdates.map((p) => ({
+        slug: p.slug,
+        title: p.title,
+        excerpt: p.excerpt,
+        category: p.category,
+      }))}
+      womenInTechStories={womenInTechStories.map((p) => ({
+        slug: p.slug,
+        title: p.title,
+        excerpt: p.excerpt,
+        category: p.category,
+      }))}
+      communityNews={communityNews.map((p) => ({
+        slug: p.slug,
+        title: p.title,
+        excerpt: p.excerpt,
+        category: p.category,
+      }))}
+      studentShowcase={studentShowcase.map((p) => ({
+        title: p.title,
+        tagline: p.tagline,
+        thumbnailUrl: p.thumbnailUrl,
+        track: p.track,
+        authorName: p.user?.fullName ?? null,
+      }))}
+      featuredInnovationProjects={featuredInnovationProjects.map((p) => ({
+        slug: p.slug,
+        title: p.title,
+        description: p.description,
+        thumbnailUrl: p.thumbnailUrl,
+        category: p.category,
+      }))}
+      aiRoboticsCourses={aiRoboticsCourses.map((c) => ({
+        id: c.id,
+        slug: c.slug,
+        title: c.title,
+        thumbnailUrl: c.thumbnailUrl,
+        instructorName: c.instructor.fullName,
+        durationHours: c.durationHours,
+        level: c.level,
+        category: c.category,
+        isFree: c.isFree,
+      }))}
     />
   );
 }

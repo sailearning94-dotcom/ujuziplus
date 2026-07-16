@@ -67,7 +67,7 @@ export function HomeFeaturedSpotlight({
               className="object-cover transition duration-700 group-hover:scale-[1.03]"
               sizes="(max-width: 768px) 100vw, 60vw"
               priority
-              unoptimized
+              unoptimized={(course.thumbnailUrl || PLACEHOLDER).startsWith("/content/")}
             />
             <div className="home-spotlight__hero-overlay" />
             <div className="home-spotlight__hero-content">
@@ -113,7 +113,7 @@ export function HomeFeaturedSpotlight({
                     width={48}
                     height={48}
                     className="h-full w-full object-cover"
-                    unoptimized
+                    unoptimized={kit.thumbnailUrl.startsWith("/content/")}
                   />
                 ) : (
                   <Package className="h-5 w-5" />

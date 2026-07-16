@@ -157,9 +157,16 @@ export default async function ProgramDetailPage({ params }: { params: { slug: st
       {/* Poster (optional, shown above tabs if set) */}
       {program.posterUrl && (
         <div className="mx-auto max-w-5xl px-4 pb-8 sm:px-6">
-          <div className="overflow-hidden rounded-xl border border-gray-100 shadow-sm bg-white">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={program.posterUrl} alt={`${program.title} poster`} className="w-full h-auto block" />
+          <div className="relative overflow-hidden rounded-xl border border-gray-100 shadow-sm bg-white">
+            <Image
+              src={program.posterUrl}
+              alt={`${program.title} poster`}
+              width={1200}
+              height={630}
+              sizes="(max-width: 1024px) 100vw, 1024px"
+              className="h-auto w-full"
+              unoptimized={program.posterUrl.startsWith("/content/")}
+            />
           </div>
         </div>
       )}

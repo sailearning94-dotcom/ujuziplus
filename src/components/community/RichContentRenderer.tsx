@@ -30,7 +30,6 @@ export function RichContentRenderer({ body, className = "" }: { body: string; cl
                   width={960}
                   height={540}
                   className="rich-content__image"
-                  unoptimized
                 />
               </div>
             </figure>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -152,9 +153,15 @@ export function SolutionDetailClient({
 
       {/* Cover image */}
       {solution.thumbnailUrl && (
-        <div className="w-full overflow-hidden max-h-72 bg-gray-900">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={solution.thumbnailUrl} alt={solution.title} className="w-full h-full object-cover" />
+        <div className="relative h-72 w-full overflow-hidden bg-gray-900">
+          <Image
+            src={solution.thumbnailUrl}
+            alt={solution.title}
+            fill
+            sizes="100vw"
+            className="object-cover"
+            unoptimized={solution.thumbnailUrl.startsWith("/content/")}
+          />
         </div>
       )}
 
@@ -262,14 +269,19 @@ export function SolutionDetailClient({
                                 <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Images</p>
                                 <div className="grid gap-3 sm:grid-cols-2">
                                   {step.imageUrls.map((url, imgIdx) => (
-                                    // eslint-disable-next-line @next/next/no-img-element
-                                    <img
+                                    <div
                                       key={imgIdx}
-                                      src={url}
-                                      alt={`Step ${idx + 1} image ${imgIdx + 1}`}
-                                      className="rounded-lg w-full object-cover shadow-sm border border-gray-100 cursor-zoom-in"
-                                      loading="lazy"
-                                    />
+                                      className="relative aspect-video overflow-hidden rounded-lg border border-gray-100 shadow-sm cursor-zoom-in"
+                                    >
+                                      <Image
+                                        src={url}
+                                        alt={`Step ${idx + 1} image ${imgIdx + 1}`}
+                                        fill
+                                        sizes="(max-width: 640px) 100vw, 50vw"
+                                        className="object-cover"
+                                        unoptimized={url.startsWith("/content/")}
+                                      />
+                                    </div>
                                   ))}
                                 </div>
                               </div>

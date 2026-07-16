@@ -42,7 +42,7 @@ export function HomeContinueCompact({
           fill
           className="object-cover"
           sizes="340px"
-          unoptimized
+          unoptimized={(thumbnailUrl || PLACEHOLDER).startsWith("/content/")}
         />
         <div className="home-continue-compact__media-shade" aria-hidden />
         <div className="home-continue-compact__head">

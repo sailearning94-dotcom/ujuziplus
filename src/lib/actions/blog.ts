@@ -3,25 +3,39 @@
  */
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag, unstable_cache } from "next/cache";
 import { db } from "@/lib/db";
 import type { BlogPostStatus } from "@prisma/client";
 import type { ActionResult } from "./courses";
 import { requireAdmin } from "@/lib/auth-server";
 
+const getPublishedBlogPostsCached = unstable_cache(
+  async () =>
+    db.blogPost.findMany({
+      where: { status: "PUBLISHED" },
+      orderBy: { publishedAt: "desc" },
+      include: { author: { select: { fullName: true } } },
+    }),
+  ["published-blog-posts"],
+  { revalidate: 60, tags: ["published-blog-posts"] }
+);
+
 export async function getPublishedBlogPosts() {
-  return db.blogPost.findMany({
-    where: { status: "PUBLISHED" },
-    orderBy: { publishedAt: "desc" },
-    include: { author: { select: { fullName: true } } },
-  });
+  return getPublishedBlogPostsCached();
 }
 
+const getBlogPostBySlugCached = unstable_cache(
+  async (slug: string) =>
+    db.blogPost.findFirst({
+      where: { slug, status: "PUBLISHED" },
+      include: { author: { select: { fullName: true, avatarUrl: true } } },
+    }),
+  ["blog-post-by-slug"],
+  { revalidate: 60, tags: ["published-blog-posts"] }
+);
+
 export async function getBlogPostBySlug(slug: string) {
-  return db.blogPost.findFirst({
-    where: { slug, status: "PUBLISHED" },
-    include: { author: { select: { fullName: true, avatarUrl: true } } },
-  });
+  return getBlogPostBySlugCached(slug);
 }
 
 export async function getAdminBlogPosts() {
@@ -66,5 +80,6 @@ export async function adminUpsertBlogPost(input: {
 
   revalidatePath("/admin/content");
   revalidatePath("/blog");
+  revalidateTag("published-blog-posts");
   return { success: true, data: undefined };
 }

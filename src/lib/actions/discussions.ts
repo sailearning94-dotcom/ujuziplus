@@ -46,7 +46,9 @@ export async function createDiscussion(
 
   revalidatePath(`/dashboard/community/${input.channel}`);
   revalidatePath("/dashboard/community");
+  revalidatePath("/community");
   revalidateTag("course-discussions");
+  revalidateTag("community-preview");
   if (input.courseId) {
     const course = await db.course.findUnique({
       where: { id: input.courseId },
@@ -57,6 +59,40 @@ export async function createDiscussion(
 
   return { success: true, data: { id: discussion.id } };
 }
+
+// ─── Public community preview (guest-facing, no session) ────────────────────
+
+export const getCommunityPreview = unstable_cache(
+  async () => {
+    const CHANNELS = (await import("@/lib/discussions/channels")).CHANNELS;
+    const [recent, channelCounts, total] = await Promise.all([
+      db.discussion.findMany({
+        where: { courseId: null },
+        orderBy: [{ isPinned: "desc" }, { createdAt: "desc" }],
+        take: 30,
+        include: {
+          author: { select: { fullName: true, username: true, avatarUrl: true } },
+          _count: { select: { replies: true, likes: true } },
+        },
+      }),
+      Promise.all(
+        CHANNELS.map(async (ch) => ({
+          slug: ch.slug,
+          count: await db.discussion.count({ where: { channel: ch.slug, courseId: null } }),
+        }))
+      ),
+      db.discussion.count({ where: { courseId: null } }),
+    ]);
+
+    return {
+      recent,
+      postCounts: Object.fromEntries(channelCounts.map((c) => [c.slug, c.count])),
+      total,
+    };
+  },
+  ["community-preview"],
+  { revalidate: 30, tags: ["community-preview"] }
+);
 
 // ─── List discussions in a channel ───────────────────────────────────────────
 

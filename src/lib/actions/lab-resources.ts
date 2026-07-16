@@ -3,21 +3,34 @@
  */
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag, unstable_cache } from "next/cache";
 import { db } from "@/lib/db";
 import type { LabResourceType } from "@prisma/client";
 import type { ActionResult } from "./courses";
 import { requireUser, requireAdmin, assertSelfOrAdmin } from "@/lib/auth-server";
 
+const getLabResourcesCached = unstable_cache(
+  async (type?: LabResourceType) =>
+    db.labResource.findMany({
+      where: type ? { type } : undefined,
+      orderBy: { title: "asc" },
+    }),
+  ["lab-resources"],
+  { revalidate: 60, tags: ["lab-resources"] }
+);
+
 export async function getLabResources(type?: LabResourceType) {
-  return db.labResource.findMany({
-    where: type ? { type } : undefined,
-    orderBy: { title: "asc" },
-  });
+  return getLabResourcesCached(type);
 }
 
+const getLabResourceBySlugCached = unstable_cache(
+  async (slug: string) => db.labResource.findUnique({ where: { slug } }),
+  ["lab-resource-by-slug"],
+  { revalidate: 60, tags: ["lab-resources"] }
+);
+
 export async function getLabResourceBySlug(slug: string) {
-  return db.labResource.findUnique({ where: { slug } });
+  return getLabResourceBySlugCached(slug);
 }
 
 export async function getUserLabResourceIds(userId: string) {
@@ -112,6 +125,7 @@ export async function adminUpsertLabResource(input: {
   revalidatePath("/admin/content");
   revalidatePath("/lab-resources");
   revalidatePath(`/lab-resources/${data.slug}`);
+  revalidateTag("lab-resources");
   return { success: true, data: { slug: data.slug } };
 }
 
@@ -128,5 +142,6 @@ export async function adminDeleteLabResource(id: string): Promise<ActionResult> 
   revalidatePath("/admin/content");
   revalidatePath("/lab-resources");
   revalidatePath(`/lab-resources/${resource.slug}`);
+  revalidateTag("lab-resources");
   return { success: true, data: undefined };
 }

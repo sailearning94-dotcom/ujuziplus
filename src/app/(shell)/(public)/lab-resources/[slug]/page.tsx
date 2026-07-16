@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -36,8 +37,15 @@ export default async function LabResourceDetailPage({ params }: { params: { slug
       {item.thumbnailUrl && (
         <div className="mx-auto mt-4 max-w-5xl px-4 sm:px-6">
           <div className="max-h-96 w-full overflow-hidden rounded-2xl bg-gray-100">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={item.thumbnailUrl} alt={item.title} className="mx-auto max-h-96 w-auto object-contain" />
+            <Image
+              src={item.thumbnailUrl}
+              alt={item.title}
+              width={1200}
+              height={630}
+              sizes="(max-width: 1024px) 100vw, 1024px"
+              className="mx-auto h-auto max-h-96 w-auto object-contain"
+              unoptimized={item.thumbnailUrl.startsWith("/content/")}
+            />
           </div>
         </div>
       )}
@@ -106,14 +114,16 @@ export default async function LabResourceDetailPage({ params }: { params: { slug
             <h2 className="text-base font-semibold">Images</h2>
             <div className="grid gap-3 sm:grid-cols-2">
               {imageUrls.map((url, i) => (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  key={i}
-                  src={url}
-                  alt={`${item.title} image ${i + 1}`}
-                  className="w-full rounded-xl border border-gray-100 object-cover shadow-sm"
-                  loading="lazy"
-                />
+                <div key={i} className="relative aspect-video overflow-hidden rounded-xl border border-gray-100 shadow-sm">
+                  <Image
+                    src={url}
+                    alt={`${item.title} image ${i + 1}`}
+                    fill
+                    sizes="(max-width: 640px) 100vw, 50vw"
+                    className="object-cover"
+                    unoptimized={url.startsWith("/content/")}
+                  />
+                </div>
               ))}
             </div>
           </div>

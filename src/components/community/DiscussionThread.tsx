@@ -192,7 +192,6 @@ export function DiscussionThread({
               width={1200}
               height={500}
               className="h-48 w-full object-cover sm:h-64"
-              unoptimized
               priority
             />
           </div>

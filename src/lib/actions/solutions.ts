@@ -3,7 +3,7 @@
  */
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag, unstable_cache } from "next/cache";
 import { db } from "@/lib/db";
 import type { ContentDifficulty, SolutionStatus } from "@prisma/client";
 import type { ActionResult } from "./courses";
@@ -11,16 +11,23 @@ import { requireUser, requireAdmin, requireUserFromDb, assertSelfOrAdmin } from 
 
 // ─── Public reads ─────────────────────────────────────────────────────────────
 
+const getPublishedSolutionsCached = unstable_cache(
+  async () =>
+    db.solution.findMany({
+      where: { status: "PUBLISHED" },
+      orderBy: [{ viewCount: "desc" }, { createdAt: "desc" }],
+      include: {
+        _count: { select: { joins: true } },
+        author: { select: { id: true, fullName: true, username: true, avatarUrl: true } },
+        organization: { select: { id: true, name: true, slug: true, logoUrl: true } },
+      },
+    }),
+  ["published-solutions"],
+  { revalidate: 60, tags: ["published-solutions"] }
+);
+
 export async function getPublishedSolutions() {
-  return db.solution.findMany({
-    where: { status: "PUBLISHED" },
-    orderBy: [{ viewCount: "desc" }, { createdAt: "desc" }],
-    include: {
-      _count: { select: { joins: true } },
-      author: { select: { id: true, fullName: true, username: true, avatarUrl: true } },
-      organization: { select: { id: true, name: true, slug: true, logoUrl: true } },
-    },
-  });
+  return getPublishedSolutionsCached();
 }
 
 export async function getSolutionBySlug(slug: string) {
@@ -82,6 +89,7 @@ export async function joinSolution(userId: string, solutionSlug: string): Promis
     update: {},
   });
   revalidatePath("/solutions");
+  revalidateTag("published-solutions");
   revalidatePath("/dashboard/lab");
   return { success: true, data: undefined };
 }
@@ -187,6 +195,7 @@ export async function createSolutionDraft(
   });
 
   revalidatePath("/solutions");
+  revalidateTag("published-solutions");
   revalidatePath("/dashboard/lab");
   return { success: true, data: { slug: solution.slug } };
 }
@@ -251,6 +260,7 @@ export async function submitSolutionForReview(solutionId: string): Promise<Actio
   });
 
   revalidatePath("/solutions");
+  revalidateTag("published-solutions");
   revalidatePath("/admin/content");
   return { success: true, data: undefined };
 }
@@ -298,6 +308,7 @@ export async function adminApproveSolution(solutionId: string): Promise<ActionRe
     data: { status: "PUBLISHED", rejectionReason: null },
   });
   revalidatePath("/solutions");
+  revalidateTag("published-solutions");
   revalidatePath("/admin/content");
   return { success: true, data: undefined };
 }
@@ -312,6 +323,7 @@ export async function adminRejectSolution(
     data: { status: "REJECTED", rejectionReason: reason.trim() || "Does not meet submission guidelines." },
   });
   revalidatePath("/solutions");
+  revalidateTag("published-solutions");
   revalidatePath("/admin/content");
   return { success: true, data: undefined };
 }
@@ -344,6 +356,7 @@ export async function adminPublishDirectly(
       },
     });
     revalidatePath("/solutions");
+  revalidateTag("published-solutions");
     revalidatePath("/admin/content");
     return { success: true, data: { slug: existing.slug } };
   }
@@ -370,6 +383,7 @@ export async function adminPublishDirectly(
   });
 
   revalidatePath("/solutions");
+  revalidateTag("published-solutions");
   revalidatePath("/admin/content");
   return { success: true, data: { slug: solution.slug } };
 }
@@ -411,6 +425,7 @@ export async function createOrgSolution(
   });
 
   revalidatePath("/solutions");
+  revalidateTag("published-solutions");
   revalidatePath("/admin/content");
   return { success: true, data: { slug: solution.slug } };
 }
@@ -455,6 +470,7 @@ export async function adminUpsertSolution(input: {
   }
   revalidatePath("/admin/content");
   revalidatePath("/solutions");
+  revalidateTag("published-solutions");
   return { success: true, data: undefined };
 }
 
@@ -470,6 +486,7 @@ export async function adminDeleteSolution(solutionId: string): Promise<ActionRes
 
   revalidatePath("/admin/content");
   revalidatePath("/solutions");
+  revalidateTag("published-solutions");
   revalidatePath(`/solutions/${solution.slug}`);
   return { success: true, data: undefined };
 }
@@ -489,6 +506,7 @@ export async function deleteSolutionDraft(solutionId: string): Promise<ActionRes
   await db.solution.delete({ where: { id: solutionId } });
 
   revalidatePath("/solutions");
+  revalidateTag("published-solutions");
   revalidatePath("/dashboard/lab");
   return { success: true, data: undefined };
 }

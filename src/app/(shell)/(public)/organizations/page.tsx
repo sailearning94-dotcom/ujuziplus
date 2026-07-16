@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/shared/EmptyState";
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export default async function OrganizationsPage() {
   const organizations = await getAllOrganizations();
@@ -33,7 +33,7 @@ export default async function OrganizationsPage() {
             <Card key={org.id} className="p-4">
               <div className="flex items-start gap-4">
                 {org.logoUrl ? (
-                  <Image src={org.logoUrl} alt={org.name} width={48} height={48} unoptimized className="rounded" />
+                  <Image src={org.logoUrl} alt={org.name} width={48} height={48} className="rounded" />
                 ) : (
                   <div className="h-12 w-12 rounded bg-brand/10 flex items-center justify-center text-brand font-bold">
                     {org.name.charAt(0)}

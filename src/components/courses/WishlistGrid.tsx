@@ -71,7 +71,7 @@ export function WishlistGrid({
                   alt={course.title}
                   fill
                   className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  unoptimized
+                  unoptimized={course.thumbnailUrl.startsWith("/content/")}
                 />
               ) : (
                 <div className="flex h-full items-center justify-center bg-gray-100 text-sm text-gray-400">

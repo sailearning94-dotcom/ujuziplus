@@ -42,7 +42,7 @@ export function HomeCourseCard({
               : "object-cover transition duration-500 group-hover:scale-[1.04]"
           }
           sizes="280px"
-          unoptimized
+          unoptimized={(thumbnailUrl || PLACEHOLDER).startsWith("/content/")}
         />
         <div className="home-course-card__overlay" />
         {category && <span className="home-course-card__category">{category}</span>}

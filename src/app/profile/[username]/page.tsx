@@ -43,7 +43,7 @@ export default async function PublicProfilePage({ params }: { params: { username
               width={96}
               height={96}
               className="rounded-2xl border-4 border-white shadow-md ring-2 ring-brand/20"
-              unoptimized
+              unoptimized={!user.avatarUrl}
             />
             <div className="flex-1">
               <h1 className="font-display text-2xl font-bold tracking-tight">{user.fullName}</h1>
@@ -152,7 +152,7 @@ export default async function PublicProfilePage({ params }: { params: { username
                         alt=""
                         fill
                         className="object-cover"
-                        unoptimized
+                        unoptimized={c.thumbnailUrl.startsWith("/content/")}
                       />
                     </div>
                   )}

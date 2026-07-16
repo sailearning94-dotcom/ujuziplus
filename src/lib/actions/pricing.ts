@@ -3,16 +3,23 @@
  */
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag, unstable_cache } from "next/cache";
 import { db } from "@/lib/db";
 import type { ActionResult } from "./courses";
 import { requireAdmin } from "@/lib/auth-server";
 
+const getActivePricingPlansCached = unstable_cache(
+  async () =>
+    db.pricingPlan.findMany({
+      where: { isActive: true },
+      orderBy: { sortOrder: "asc" },
+    }),
+  ["active-pricing-plans"],
+  { revalidate: 300, tags: ["active-pricing-plans"] }
+);
+
 export async function getActivePricingPlans() {
-  return db.pricingPlan.findMany({
-    where: { isActive: true },
-    orderBy: { sortOrder: "asc" },
-  });
+  return getActivePricingPlansCached();
 }
 
 export async function getAdminPricingPlans() {
@@ -56,5 +63,6 @@ export async function adminUpsertPricingPlan(input: {
 
   revalidatePath("/admin/content");
   revalidatePath("/pricing");
+  revalidateTag("active-pricing-plans");
   return { success: true, data: undefined };
 }

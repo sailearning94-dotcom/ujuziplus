@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -108,7 +109,14 @@ export function AdminShowcaseClient({
                 {/* Thumbnail */}
                 {p.thumbnailUrl && (
                   <div className="relative h-20 w-32 shrink-0 overflow-hidden rounded-xl bg-gray-100">
-                    <img src={p.thumbnailUrl} alt={p.title} className="h-full w-full object-cover" />
+                    <Image
+                      src={p.thumbnailUrl}
+                      alt={p.title}
+                      fill
+                      sizes="128px"
+                      className="object-cover"
+                      unoptimized={p.thumbnailUrl.startsWith("/content/")}
+                    />
                   </div>
                 )}
 

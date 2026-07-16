@@ -24,6 +24,7 @@ export type BannerSection =
   | "mentors"
   | "showcase"
   | "auth"
+  | "knowledge"
   | "default";
 
 export const BANNER_IMAGES: Record<BannerSection, string> = {
@@ -48,6 +49,7 @@ export const BANNER_IMAGES: Record<BannerSection, string> = {
   mentors: "/banners/mentors.jpg",
   showcase: "/banners/projects.jpg",
   auth: "/banners/auth.jpg",
+  knowledge: "/banners/blog.jpg",
   default: "/banners/home.jpg",
 };
 

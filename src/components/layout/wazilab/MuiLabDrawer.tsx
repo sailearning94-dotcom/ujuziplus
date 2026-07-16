@@ -26,6 +26,7 @@ import ScienceIcon from "@mui/icons-material/Science";
 import BusinessIcon from "@mui/icons-material/Business";
 import FolderIcon from "@mui/icons-material/Folder";
 import Inventory2Icon from "@mui/icons-material/Inventory2";
+import LocalLibraryIcon from "@mui/icons-material/LocalLibrary";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { NAV_WAZILAB, NAV_STUDENT, NAV_INSTRUCTOR, NAV_ADMIN, PLATFORM } from "@/lib/constants";
@@ -49,6 +50,7 @@ const ICONS = {
   Package: Inventory2Icon,
   Users: PeopleIcon,
   Trophy: EmojiEventsIcon,
+  Library: LocalLibraryIcon,
 } as const;
 
 function DrawerNavItem({

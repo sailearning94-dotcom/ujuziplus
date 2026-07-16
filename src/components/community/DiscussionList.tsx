@@ -68,7 +68,6 @@ export function DiscussionList({
                   width={120}
                   height={80}
                   className="h-16 w-24 rounded-lg object-cover ring-1 ring-gray-100"
-                  unoptimized
                 />
               </div>
             )}

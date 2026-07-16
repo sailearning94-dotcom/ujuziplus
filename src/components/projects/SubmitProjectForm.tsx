@@ -12,7 +12,7 @@ import { createProject } from "@/lib/actions/projects";
 import { useAppStore } from "@/store/appStore";
 import type { ProjectStatus } from "@prisma/client";
 
-const STEPS = ["Basic Info", "Links & Media", "Publish"];
+const STEPS = ["Basic Info", "Team & Impact", "Links & Media", "Publish"];
 
 export function SubmitProjectForm({ userId }: { userId: string }) {
   const router = useRouter();
@@ -23,6 +23,10 @@ export function SubmitProjectForm({ userId }: { userId: string }) {
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
   const [tags, setTags] = useState("");
+  const [objectives, setObjectives] = useState("");
+  const [teamMembers, setTeamMembers] = useState("");
+  const [documentation, setDocumentation] = useState("");
+  const [impact, setImpact] = useState("");
   const [githubUrl, setGithubUrl] = useState("");
   const [demoUrl, setDemoUrl] = useState("");
   const [thumbnailUrl, setThumbnailUrl] = useState("");
@@ -42,6 +46,14 @@ export function SubmitProjectForm({ userId }: { userId: string }) {
         githubUrl: githubUrl || undefined,
         demoUrl: demoUrl || undefined,
         thumbnailUrl: thumbnailUrl || undefined,
+        objectives: objectives || undefined,
+        documentation: documentation || undefined,
+        impact: impact || undefined,
+        teamMembers: teamMembers
+          .split(",")
+          .map((t) => t.trim())
+          .filter(Boolean)
+          .map((name) => ({ name, role: "CONTRIBUTOR" as const })),
       });
       if (res.success) {
         showToast("Project published!", "success");
@@ -88,12 +100,43 @@ export function SubmitProjectForm({ userId }: { userId: string }) {
         )}
         {step === 1 && (
           <div className="space-y-4">
+            <Textarea
+              label="Objectives (optional)"
+              placeholder="What problem is this project solving, and what does success look like?"
+              className="h-24"
+              value={objectives}
+              onChange={(e) => setObjectives(e.target.value)}
+            />
+            <Input
+              label="Team members (comma-separated, optional)"
+              placeholder="Amina Mwakyusa, James Okello"
+              value={teamMembers}
+              onChange={(e) => setTeamMembers(e.target.value)}
+            />
+            <Textarea
+              label="Documentation (optional)"
+              placeholder="Build notes, wiring details, or a link to fuller documentation"
+              className="h-24"
+              value={documentation}
+              onChange={(e) => setDocumentation(e.target.value)}
+            />
+            <Textarea
+              label="Impact assessment (optional)"
+              placeholder="Who has this helped so far, and how do you know?"
+              className="h-24"
+              value={impact}
+              onChange={(e) => setImpact(e.target.value)}
+            />
+          </div>
+        )}
+        {step === 2 && (
+          <div className="space-y-4">
             <Input label="GitHub URL" value={githubUrl} onChange={(e) => setGithubUrl(e.target.value)} />
             <Input label="Demo URL" value={demoUrl} onChange={(e) => setDemoUrl(e.target.value)} />
             <ImageUploadField label="Thumbnail" value={thumbnailUrl} onChange={setThumbnailUrl} />
           </div>
         )}
-        {step === 2 && (
+        {step === 3 && (
           <div className="space-y-4">
             <label className="block text-sm">
               <span className="font-medium">Project stage</span>

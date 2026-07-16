@@ -40,7 +40,7 @@ export function HomeCompetitionCard({
           fill
           className="object-cover transition duration-500 group-hover:scale-[1.05]"
           sizes="300px"
-          unoptimized
+          unoptimized={imageSrc.startsWith("/content/") || imageSrc.startsWith("/images/")}
         />
         <div className="home-competition-card__shade" aria-hidden />
         <Trophy className="home-competition-card__glyph" strokeWidth={1.5} />

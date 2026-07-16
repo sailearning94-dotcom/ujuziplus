@@ -34,7 +34,7 @@ export function HomeProgramCard({
           fill
           className="object-cover transition duration-500 group-hover:scale-[1.05]"
           sizes="300px"
-          unoptimized
+          unoptimized={imageSrc.startsWith("/content/") || imageSrc.startsWith("/images/")}
         />
         <div className="home-program-card__shade" aria-hidden />
         <Rocket className="home-program-card__glyph" strokeWidth={1.5} />

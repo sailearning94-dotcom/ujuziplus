@@ -39,7 +39,7 @@ export function FeaturedContinueCourse({ course }: { course: ContinueCourseItem 
               className="object-cover transition duration-700 group-hover:scale-[1.03]"
               sizes="(max-width: 1024px) 100vw, 70vw"
               priority
-              unoptimized
+              unoptimized={course.course.thumbnailUrl.startsWith("/content/")}
             />
           ) : (
             <div className="flex h-full items-center justify-center bg-navy/10">
@@ -102,7 +102,7 @@ export function ContinueLearningCard({
               fill
               className="object-cover transition duration-500 group-hover:scale-105"
               sizes="(max-width: 768px) 100vw, 33vw"
-              unoptimized
+              unoptimized={course.course.thumbnailUrl.startsWith("/content/")}
             />
           ) : (
             <div className="flex h-full items-center justify-center bg-gray-100">

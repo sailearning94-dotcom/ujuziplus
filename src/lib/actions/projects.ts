@@ -3,7 +3,7 @@
  */
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag, unstable_cache } from "next/cache";
 import { db } from "@/lib/db";
 import type { ProjectStatus } from "@prisma/client";
 import type { ActionResult } from "./courses";
@@ -31,14 +31,21 @@ async function uniqueProjectSlug(title: string, excludeId?: string) {
   return slug;
 }
 
+const getPublishedProjectsCached = unstable_cache(
+  async () =>
+    db.project.findMany({
+      where: { isPublished: true },
+      orderBy: { createdAt: "desc" },
+      include: {
+        creator: { select: { id: true, fullName: true, username: true, avatarUrl: true } },
+      },
+    }),
+  ["published-projects"],
+  { revalidate: 60, tags: ["published-projects"] }
+);
+
 export async function getPublishedProjects() {
-  return db.project.findMany({
-    where: { isPublished: true },
-    orderBy: { createdAt: "desc" },
-    include: {
-      creator: { select: { id: true, fullName: true, username: true, avatarUrl: true } },
-    },
-  });
+  return getPublishedProjectsCached();
 }
 
 export async function getProjectBySlug(slug: string) {
@@ -46,6 +53,11 @@ export async function getProjectBySlug(slug: string) {
     where: { slug, isPublished: true },
     include: {
       creator: { select: { id: true, fullName: true, username: true, avatarUrl: true } },
+      organization: { select: { slug: true, name: true, logoUrl: true, type: true } },
+      teamMembers: {
+        orderBy: { orderIndex: "asc" },
+        include: { user: { select: { username: true, fullName: true, avatarUrl: true } } },
+      },
     },
   });
 }
@@ -78,6 +90,12 @@ export async function createProject(
     githubUrl?: string;
     demoUrl?: string;
     thumbnailUrl?: string;
+    objectives?: string;
+    documentation?: string;
+    impact?: string;
+    organizationId?: string;
+    mediaGallery?: { url: string; type: "image" | "video"; caption?: string }[];
+    teamMembers?: { name: string; role?: "LEAD" | "CONTRIBUTOR" | "MENTOR"; userId?: string }[];
   }
 ): Promise<ActionResult<{ slug: string }>> {
   const { user } = await requireUser();
@@ -99,12 +117,28 @@ export async function createProject(
       githubUrl: input.githubUrl?.trim() || null,
       demoUrl: input.demoUrl?.trim() || null,
       thumbnailUrl: input.thumbnailUrl?.trim() || null,
+      objectives: input.objectives?.trim() || null,
+      documentation: input.documentation?.trim() || null,
+      impact: input.impact?.trim() || null,
+      organizationId: input.organizationId || null,
+      mediaGallery: input.mediaGallery ?? undefined,
       creatorId: userId,
       isPublished: true,
+      teamMembers: input.teamMembers?.length
+        ? {
+            create: input.teamMembers.map((m, i) => ({
+              name: m.name,
+              role: m.role ?? "CONTRIBUTOR",
+              userId: m.userId,
+              orderIndex: i,
+            })),
+          }
+        : undefined,
     },
   });
 
   revalidatePath("/projects");
+  revalidateTag("published-projects");
   revalidatePath("/dashboard/projects");
   return { success: true, data: { slug: project.slug } };
 }
@@ -129,6 +163,7 @@ export async function toggleProjectLike(
       }),
     ]);
     revalidatePath("/projects");
+  revalidateTag("published-projects");
     return { success: true, data: { liked: false } };
   }
 
@@ -140,6 +175,7 @@ export async function toggleProjectLike(
     }),
   ]);
   revalidatePath("/projects");
+  revalidateTag("published-projects");
   return { success: true, data: { liked: true } };
 }
 
@@ -159,6 +195,7 @@ export async function adminToggleProjectPublished(
   await db.project.update({ where: { id: projectId }, data: { isPublished } });
   revalidatePath("/admin/content");
   revalidatePath("/projects");
+  revalidateTag("published-projects");
   return { success: true, data: undefined };
 }
 
@@ -174,6 +211,7 @@ export async function adminDeleteProject(projectId: string): Promise<ActionResul
 
   revalidatePath("/admin/content");
   revalidatePath("/projects");
+  revalidateTag("published-projects");
   revalidatePath(`/projects/${project.slug}`);
   return { success: true, data: undefined };
 }
@@ -192,6 +230,7 @@ export async function deleteProject(userId: string, projectId: string): Promise<
   await db.project.delete({ where: { id: projectId } });
 
   revalidatePath("/projects");
+  revalidateTag("published-projects");
   revalidatePath("/dashboard/projects");
   return { success: true, data: undefined };
 }

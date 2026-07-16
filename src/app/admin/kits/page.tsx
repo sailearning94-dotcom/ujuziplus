@@ -43,7 +43,7 @@ export default async function AdminKitsPage() {
             <Card key={k.id} className="flex gap-4 p-4">
               <div className="relative h-20 w-28 shrink-0 rounded-lg overflow-hidden bg-gray-100">
                 {k.thumbnailUrl ? (
-                  <Image src={k.thumbnailUrl} alt="" fill className="object-cover" unoptimized />
+                  <Image src={k.thumbnailUrl} alt="" fill className="object-cover" />
                 ) : null}
               </div>
               <div className="flex-1 min-w-0">

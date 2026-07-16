@@ -76,6 +76,7 @@ model User {
   orgInvitesSent          OrgInvite[]                  @relation("OrgInvitesSent")
   projects                Project[]                    @relation("UserProjects")
   projectLikes            ProjectLike[]                @relation("UserProjectLikes")
+  projectMemberships      ProjectMember[]              @relation("UserProjectMemberships")
   solutionJoins           SolutionJoin[]               @relation("UserSolutionJoins")
   authoredSolutions       Solution[]                   @relation("AuthoredSolutions")
   labResourceBookmarks    UserLabResource[]            @relation("UserLabResources")
@@ -753,6 +754,8 @@ enum ProgramFormat {
   ONLINE
   IN_PERSON
   HYBRID
+  BOOTCAMP
+  HACKATHON
 }
 
 enum ProgramStatus {
@@ -797,13 +800,17 @@ model Program {
 }
 
 model ProgramRegistration {
-  id           String   @id @default(cuid())
-  userId       String
-  user         User     @relation("UserProgramRegs", fields: [userId], references: [id], onDelete: Cascade)
-  programId    String
-  program      Program  @relation(fields: [programId], references: [id], onDelete: Cascade)
-  orderId      String?
-  registeredAt DateTime @default(now())
+  id                String    @id @default(cuid())
+  userId            String
+  user              User      @relation("UserProgramRegs", fields: [userId], references: [id], onDelete: Cascade)
+  programId         String
+  program           Program   @relation(fields: [programId], references: [id], onDelete: Cascade)
+  orderId           String?
+  registeredAt      DateTime  @default(now())
+  progressPct       Int       @default(0)
+  completedAt       DateTime?
+  certificateIssued Boolean   @default(false)
+  certVerifyCode    String?   @unique @db.VarChar(191)
 
   @@unique([userId, programId])
   @@map("program_registrations")
@@ -823,18 +830,19 @@ model ProgramUnit {
 }
 
 model ProgramEvent {
-  id         String           @id @default(cuid())
-  programId  String
-  program    Program          @relation(fields: [programId], references: [id], onDelete: Cascade)
-  title      String
-  type       ProgramEventType @default(WORKSHOP)
-  startAt    DateTime
-  endAt      DateTime?
-  location   String?
-  agenda     String?          @db.Text
-  createdAt  DateTime         @default(now())
-  updatedAt  DateTime         @updatedAt
+  id        String           @id @default(cuid())
+  programId String
+  program   Program          @relation(fields: [programId], references: [id], onDelete: Cascade)
+  title     String
+  type      ProgramEventType @default(WORKSHOP)
+  startAt   DateTime
+  endAt     DateTime?
+  location  String?
+  agenda    String?          @db.Text
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
 
+  @@index([programId, startAt])
   @@map("program_events")
 }
 
@@ -882,6 +890,12 @@ enum OrgType {
   UNIVERSITY
   HUB
   SCHOOL
+  NGO
+  GOVERNMENT
+  TECH_COMPANY
+  STARTUP
+  COMMUNITY_ORG
+  WOMEN_YOUTH_GROUP
   OTHER
 }
 
@@ -912,6 +926,7 @@ model Organization {
   kitRequests  OrgKitRequest[]
   programs     Program[]            @relation("OrgPrograms")
   solutions    Solution[]           @relation("OrgSolutions")
+  projects     Project[]            @relation("OrgProjects")
   createdAt    DateTime             @default(now())
   updatedAt    DateTime             @updatedAt
 
@@ -1010,26 +1025,53 @@ enum ProjectStatus {
 }
 
 model Project {
-  id           String        @id @default(cuid())
-  slug         String        @unique @db.VarChar(191)
-  title        String
-  description  String        @db.Text
-  thumbnailUrl String?
-  category     String        @db.VarChar(100)
-  tags         Json?
-  status       ProjectStatus @default(PROTOTYPE)
-  githubUrl    String?       @db.VarChar(500)
-  demoUrl      String?       @db.VarChar(500)
-  creatorId    String
-  creator      User          @relation("UserProjects", fields: [creatorId], references: [id])
-  likesCount   Int           @default(0)
-  isPublished  Boolean       @default(true)
-  likes        ProjectLike[]
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
+  id             String          @id @default(cuid())
+  slug           String          @unique @db.VarChar(191)
+  title          String
+  description    String          @db.Text
+  objectives     String?         @db.Text
+  documentation  String?         @db.Text
+  impact         String?         @db.Text
+  thumbnailUrl   String?
+  mediaGallery   Json? // [{ url, type: "image"|"video", caption }]
+  category       String          @db.VarChar(100)
+  tags           Json?
+  status         ProjectStatus   @default(PROTOTYPE)
+  githubUrl      String?         @db.VarChar(500)
+  demoUrl        String?         @db.VarChar(500)
+  creatorId      String
+  creator        User            @relation("UserProjects", fields: [creatorId], references: [id])
+  organizationId String?
+  organization   Organization?   @relation("OrgProjects", fields: [organizationId], references: [id], onDelete: SetNull)
+  teamMembers    ProjectMember[]
+  likesCount     Int             @default(0)
+  isPublished    Boolean         @default(true)
+  likes          ProjectLike[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
 
   @@index([creatorId])
+  @@index([organizationId])
   @@map("projects")
+}
+
+enum ProjectMemberRole {
+  LEAD
+  CONTRIBUTOR
+  MENTOR
+}
+
+model ProjectMember {
+  id         String            @id @default(cuid())
+  projectId  String
+  project    Project           @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  userId     String?
+  user       User?             @relation("UserProjectMemberships", fields: [userId], references: [id], onDelete: SetNull)
+  name       String
+  role       ProjectMemberRole @default(CONTRIBUTOR)
+  orderIndex Int               @default(0)
+
+  @@map("project_members")
 }
 
 model ProjectLike {
@@ -1060,12 +1102,21 @@ enum SolutionStatus {
   ARCHIVED
 }
 
+enum SolutionCategory {
+  SMART_AGRICULTURE
+  SMART_EDUCATION
+  SMART_ENVIRONMENT
+  SMART_HEALTH
+  STARTUP_GARAGE
+}
+
 model Solution {
   id              String            @id @default(cuid())
   slug            String            @unique @db.VarChar(191)
   title           String
   subtitle        String?
   description     String            @db.Text
+  category        SolutionCategory  @default(SMART_AGRICULTURE)
   level           ContentDifficulty @default(BEGINNER)
   hours           Int               @default(1)
   thumbnailUrl    String?
@@ -1144,6 +1195,39 @@ model UserLabResource {
 
   @@unique([userId, labResourceId])
   @@map("user_lab_resources")
+}
+
+// ─── Open Knowledge Resources ────────────────────────────────────────────────
+
+enum OpenKnowledgeCategory {
+  CODING_TUTORIALS
+  AI_IOT_RESOURCES
+  STEM_TEACHING_MATERIALS
+  OPEN_SOURCE_PROJECTS
+  INNOVATION_TOOLKITS
+  ENTREPRENEURSHIP_GUIDES
+  RESEARCH_PUBLICATIONS
+  DIGITAL_LEARNING_MANUALS
+}
+
+model OpenKnowledgeResource {
+  id           String                @id @default(cuid())
+  slug         String                @unique @db.VarChar(191)
+  title        String
+  description  String?               @db.Text
+  category     OpenKnowledgeCategory @default(CODING_TUTORIALS)
+  authorName   String?               @db.VarChar(191)
+  fileUrl      String?               @db.VarChar(500)
+  externalUrl  String?               @db.VarChar(500)
+  thumbnailUrl String?
+  tags         Json? // String[]
+  isFeatured   Boolean               @default(false)
+  viewCount    Int                   @default(0)
+  createdAt    DateTime              @default(now())
+  updatedAt    DateTime              @updatedAt
+
+  @@index([category])
+  @@map("open_knowledge_resources")
 }
 
 // ─── Blog ────────────────────────────────────────────────────────────────────

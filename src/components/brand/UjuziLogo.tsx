@@ -55,7 +55,6 @@ export function UjuziLogo({
           : { width, height, maxWidth: "100%", maxHeight: "100%" }
       }
       priority
-      unoptimized
     />
   );
 

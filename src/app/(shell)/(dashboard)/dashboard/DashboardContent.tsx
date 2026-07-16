@@ -12,12 +12,17 @@ import {
 import {
   DashboardAchievementsPanel,
   DashboardDiscussionsPanel,
+  DashboardNotificationsPanel,
+  DashboardProjectsPanel,
   DashboardQuickActions,
+  DashboardTeamPanel,
 } from "@/components/dashboard/DashboardPanels";
 import { LearningStreak } from "@/components/dashboard/LearningStreak";
+import { getNotifications, getUnreadCount } from "@/lib/actions/notifications";
+import { getLearnerCohorts } from "@/lib/actions/mentors";
 
 export async function DashboardContent({ userId }: { userId: string }) {
-  const [data, recentDiscussions] = await Promise.all([
+  const [data, recentDiscussions, userProjects, notifications, unreadCount, cohorts] = await Promise.all([
     getStudentDashboard(userId),
     db.discussion.findMany({
       where: { authorId: userId },
@@ -31,6 +36,15 @@ export async function DashboardContent({ userId }: { userId: string }) {
         _count: { select: { replies: true } },
       },
     }),
+    db.project.findMany({
+      where: { creatorId: userId },
+      orderBy: { updatedAt: "desc" },
+      take: 3,
+      select: { id: true, slug: true, title: true, status: true, likesCount: true },
+    }),
+    getNotifications(userId, 3),
+    getUnreadCount(userId),
+    getLearnerCohorts(userId).catch(() => []),
   ]);
 
   const { inProgress, stats, certificates, streak } = data;
@@ -135,10 +149,13 @@ export async function DashboardContent({ userId }: { userId: string }) {
         <aside className="learner-dashboard__aside">
           <LearningStreak streakDays={streak.streakDays} activeLast7={streak.activeLast7} />
           <DashboardQuickActions />
+          <DashboardNotificationsPanel unreadCount={unreadCount} recent={notifications} />
           <DashboardAchievementsPanel
             certificates={certificates}
             completedCourses={stats.completedCourses}
           />
+          <DashboardProjectsPanel projects={userProjects} />
+          <DashboardTeamPanel cohorts={cohorts} />
           <DashboardDiscussionsPanel discussions={recentDiscussions} />
         </aside>
       </div>

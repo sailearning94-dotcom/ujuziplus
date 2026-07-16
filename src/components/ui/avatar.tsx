@@ -51,7 +51,14 @@ export function Avatar({
         )}
       >
         {src ? (
-          <Image src={src} alt={alt} width={px} height={px} className="h-full w-full object-cover" unoptimized />
+          <Image
+            src={src}
+            alt={alt}
+            width={px}
+            height={px}
+            className="h-full w-full object-cover"
+            unoptimized={src.endsWith(".svg") || src.includes("dicebear.com")}
+          />
         ) : (
           <span className="flex h-full w-full items-center justify-center">{initials}</span>
         )}

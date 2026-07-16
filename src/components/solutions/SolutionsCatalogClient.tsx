@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo, useTransition } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { LearnerPageHero } from "@/components/shared/LearnerPageHero";
 import { EmptyState } from "@/components/shared/EmptyState";
@@ -168,11 +169,13 @@ export function SolutionsCatalogClient({
                 <Link href={`/solutions/${s.slug}`}>
                   <div className="relative w-full overflow-hidden bg-navy/5" style={{ aspectRatio: "16/8" }}>
                     {s.thumbnailUrl ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
+                      <Image
                         src={s.thumbnailUrl}
                         alt={s.title}
-                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                        unoptimized={s.thumbnailUrl.startsWith("/content/")}
                       />
                     ) : (
                       /* Gradient placeholder */
@@ -236,8 +239,14 @@ export function SolutionsCatalogClient({
                     ) : s.author ? (
                       <>
                         {s.author.avatarUrl ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img src={s.author.avatarUrl} alt="" className="h-4 w-4 rounded-full object-cover shrink-0" />
+                          <Image
+                            src={s.author.avatarUrl}
+                            alt=""
+                            width={16}
+                            height={16}
+                            className="rounded-full object-cover shrink-0"
+                            unoptimized={s.author.avatarUrl.includes("dicebear.com")}
+                          />
                         ) : (
                           <span className="h-4 w-4 rounded-full bg-brand/20 text-[9px] font-bold text-brand flex items-center justify-center shrink-0">
                             {(s.author.fullName ?? "?")[0]}

@@ -35,7 +35,7 @@ export default async function DashboardOrganizationsPage() {
             {memberships.map((m) => (
               <Card key={m.id} className="flex items-center gap-4 p-4">
                 {m.org.logoUrl ? (
-                  <Image src={m.org.logoUrl} alt="" width={48} height={48} unoptimized />
+                  <Image src={m.org.logoUrl} alt="" width={48} height={48} />
                 ) : (
                   <div className="h-12 w-12 rounded-lg bg-brand/10 flex items-center justify-center text-brand font-bold">
                     {m.org.name.charAt(0)}

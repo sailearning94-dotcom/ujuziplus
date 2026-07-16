@@ -40,7 +40,7 @@ function DiscoveryCard({ item }: { item: DiscoveryItem }) {
             fill
             className="object-cover transition duration-700 group-hover:scale-[1.06]"
             sizes="280px"
-            unoptimized
+            unoptimized={item.imageUrl.startsWith("/content/")}
           />
         ) : (
           <div className="discovery-card__media-fallback">
@@ -164,7 +164,7 @@ export function OrgMarqueeItem({
             width={48}
             height={48}
             className="h-11 w-11 rounded-xl object-cover sm:h-12 sm:w-12"
-            unoptimized
+            unoptimized={logoUrl.startsWith("/content/")}
           />
         ) : (
           <span className="org-chip__monogram">{monogram}</span>

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Plus, FlaskConical } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -38,10 +39,16 @@ export default async function AdminLabResourcesPage() {
             const tags = Array.isArray(r.tags) ? (r.tags as string[]) : [];
             return (
               <Card key={r.id} className="flex items-center gap-4 p-4">
-                <div className="h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-gray-100">
+                <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg bg-gray-100">
                   {r.thumbnailUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={r.thumbnailUrl} alt="" className="h-full w-full object-cover" />
+                    <Image
+                      src={r.thumbnailUrl}
+                      alt=""
+                      fill
+                      sizes="64px"
+                      className="object-cover"
+                      unoptimized={r.thumbnailUrl.startsWith("/content/")}
+                    />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center">
                       <FlaskConical className="h-6 w-6 text-gray-300" />

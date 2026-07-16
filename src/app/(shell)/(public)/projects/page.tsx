@@ -7,7 +7,7 @@ import { LearnerPageHero, HeroActions } from "@/components/shared/LearnerPageHer
 import { FolderKanban } from "lucide-react";
 import { getPublishedProjects } from "@/lib/actions/projects";
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 60;
 
 export default async function ProjectsPage() {
   const projects = await getPublishedProjects();

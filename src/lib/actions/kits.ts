@@ -64,13 +64,21 @@ const getPublishedKitsCached = unstable_cache(
   { revalidate: 60, tags: ["published-kits"] }
 );
 
+const getPublishedKitCategoriesCached = unstable_cache(
+  async () => {
+    const rows = await db.kit.findMany({
+      where: { status: "PUBLISHED", category: { not: null } },
+      select: { category: true },
+      distinct: ["category"],
+    });
+    return rows.map((r) => r.category!).filter(Boolean);
+  },
+  ["published-kit-categories"],
+  { revalidate: 60, tags: ["published-kits"] }
+);
+
 export async function getPublishedKitCategories() {
-  const rows = await db.kit.findMany({
-    where: { status: "PUBLISHED", category: { not: null } },
-    select: { category: true },
-    distinct: ["category"],
-  });
-  return rows.map((r) => r.category!).filter(Boolean);
+  return getPublishedKitCategoriesCached();
 }
 
 export async function getKitById(kitId: string) {

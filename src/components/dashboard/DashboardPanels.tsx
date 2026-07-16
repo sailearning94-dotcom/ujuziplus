@@ -1,11 +1,14 @@
 import Link from "next/link";
 import {
   Award,
+  Bell,
   BookOpen,
   FlaskConical,
+  FolderKanban,
   MessageSquare,
   Sparkles,
   Trophy,
+  Users2,
 } from "lucide-react";
 import { Reveal } from "@/components/motion/Reveal";
 
@@ -137,6 +140,138 @@ export function DashboardAchievementsPanel({
             All certificates →
           </Link>
         )}
+      </div>
+    </Reveal>
+  );
+}
+
+export function DashboardNotificationsPanel({
+  unreadCount,
+  recent,
+}: {
+  unreadCount: number;
+  recent: { id: string; title: string; message: string; createdAt: Date }[];
+}) {
+  return (
+    <Reveal delay={0.16}>
+      <div className="learner-dashboard-panel">
+        <h3 className="learner-dashboard-panel__title">
+          <Bell className="h-4 w-4 text-brand" />
+          Notifications
+          {unreadCount > 0 && (
+            <span className="ml-auto rounded-full bg-brand px-2 py-0.5 text-xs font-bold text-white">
+              {unreadCount}
+            </span>
+          )}
+        </h3>
+
+        {recent.length === 0 ? (
+          <p className="learner-dashboard-panel__empty">You&apos;re all caught up.</p>
+        ) : (
+          <ul className="learner-discussion-list">
+            {recent.map((n) => (
+              <li key={n.id}>
+                <Link href="/dashboard/notifications" className="learner-discussion-item">
+                  <span className="learner-discussion-item__title">{n.title}</span>
+                  <span className="learner-discussion-item__meta line-clamp-1">{n.message}</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <Link href="/dashboard/notifications" className="learner-dashboard-panel__footer-link">
+          All notifications →
+        </Link>
+      </div>
+    </Reveal>
+  );
+}
+
+export function DashboardProjectsPanel({
+  projects,
+}: {
+  projects: { id: string; slug: string; title: string; status: string; likesCount: number }[];
+}) {
+  return (
+    <Reveal delay={0.12}>
+      <div className="learner-dashboard-panel">
+        <h3 className="learner-dashboard-panel__title">
+          <FolderKanban className="h-4 w-4 text-navy" />
+          Your innovation projects
+        </h3>
+
+        {projects.length === 0 ? (
+          <p className="learner-dashboard-panel__empty">
+            Publish your first project to start your innovation portfolio —{" "}
+            <Link href="/dashboard/projects/new" className="font-semibold text-brand hover:underline">
+              submit a project
+            </Link>
+          </p>
+        ) : (
+          <ul className="learner-cert-list">
+            {projects.slice(0, 3).map((p) => (
+              <li key={p.id}>
+                <Link href={`/projects/${p.slug}`} className="learner-cert-item">
+                  <span className="learner-cert-item__dot" aria-hidden />
+                  <span className="min-w-0 flex-1">
+                    <span className="learner-cert-item__title">{p.title}</span>
+                    <span className="learner-cert-item__date capitalize">
+                      {p.status.toLowerCase()} · {p.likesCount} likes
+                    </span>
+                  </span>
+                  <span className="learner-cert-item__link">View</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <Link href="/dashboard/projects" className="learner-dashboard-panel__footer-link">
+          All your projects →
+        </Link>
+      </div>
+    </Reveal>
+  );
+}
+
+export function DashboardTeamPanel({
+  cohorts,
+}: {
+  cohorts: { id: string; title: string; track: string | null; memberCount: number }[];
+}) {
+  return (
+    <Reveal delay={0.13}>
+      <div className="learner-dashboard-panel">
+        <h3 className="learner-dashboard-panel__title">
+          <Users2 className="h-4 w-4 text-blue-500" />
+          Team collaboration
+        </h3>
+
+        {cohorts.length === 0 ? (
+          <p className="learner-dashboard-panel__empty">
+            Join a mentor cohort to collaborate with a team —{" "}
+            <Link href="/dashboard/mentors" className="font-semibold text-brand hover:underline">
+              find a cohort
+            </Link>
+          </p>
+        ) : (
+          <ul className="learner-discussion-list">
+            {cohorts.slice(0, 3).map((c) => (
+              <li key={c.id}>
+                <Link href="/dashboard/mentors" className="learner-discussion-item">
+                  {c.track && <span className="learner-discussion-item__channel">{c.track}</span>}
+                  <span className="learner-discussion-item__title">{c.title}</span>
+                  <span className="learner-discussion-item__meta">{c.memberCount} members</span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+
+        <Link href="/dashboard/mentors" className="learner-dashboard-panel__footer-link">
+          All cohorts →
+        </Link>
       </div>
     </Reveal>
   );

@@ -16,6 +16,8 @@ export default async function ProjectDetailPage({ params }: { params: { slug: st
   if (!project) notFound();
 
   const tags = (project.tags as string[] | null) ?? [];
+  const mediaGallery =
+    (project.mediaGallery as { url: string; type: "image" | "video"; caption?: string }[] | null) ?? [];
   const liked = session?.user?.id
     ? await hasUserLikedProject(session.user.id, project.id)
     : false;
@@ -73,7 +75,7 @@ export default async function ProjectDetailPage({ params }: { params: { slug: st
             width={44}
             height={44}
             className="rounded-full ring-2 ring-brand/20"
-            unoptimized
+            unoptimized={!project.creator.avatarUrl}
           />
           <Link href={`/profile/${project.creator.username}`} className="font-semibold hover:text-brand">
             {project.creator.fullName}
@@ -105,6 +107,113 @@ export default async function ProjectDetailPage({ params }: { params: { slug: st
             </Button>
           )}
         </div>
+
+        {project.organization && (
+          <div className="mt-6 flex items-center gap-3 rounded-lg border border-gray-100 bg-gray-50 p-3">
+            {project.organization.logoUrl ? (
+              <Image
+                src={project.organization.logoUrl}
+                alt={project.organization.name}
+                width={36}
+                height={36}
+                className="rounded-lg bg-white"
+              />
+            ) : (
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand/10 text-sm font-bold text-brand">
+                {project.organization.name.charAt(0)}
+              </div>
+            )}
+            <div className="text-sm">
+              <p className="text-gray-500">Built in partnership with</p>
+              <Link
+                href={`/organizations/${project.organization.slug}`}
+                className="font-semibold text-brand hover:underline"
+              >
+                {project.organization.name}
+              </Link>
+            </div>
+          </div>
+        )}
+
+        {project.objectives && (
+          <div className="mt-8">
+            <h2 className="section-accent-title text-base">Objectives</h2>
+            <p className="mt-2 whitespace-pre-wrap text-gray-600 leading-relaxed">{project.objectives}</p>
+          </div>
+        )}
+
+        {project.teamMembers.length > 0 && (
+          <div className="mt-8">
+            <h2 className="section-accent-title text-base">Team</h2>
+            <div className="mt-3 flex flex-wrap gap-3">
+              {project.teamMembers.map((m) => (
+                <div key={m.id} className="flex items-center gap-2 rounded-full border border-gray-100 bg-gray-50 py-1.5 pl-1.5 pr-3">
+                  <Image
+                    src={
+                      m.user?.avatarUrl ??
+                      `https://api.dicebear.com/7.x/avataaars/svg?seed=${m.user?.username ?? m.name}`
+                    }
+                    alt=""
+                    width={28}
+                    height={28}
+                    className="rounded-full"
+                    unoptimized={!m.user?.avatarUrl}
+                  />
+                  <span className="text-sm font-medium">{m.user?.fullName ?? m.name}</span>
+                  <Badge variant="muted" size="sm" className="capitalize">
+                    {m.role.toLowerCase()}
+                  </Badge>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {mediaGallery.length > 0 && (
+          <div className="mt-8">
+            <h2 className="section-accent-title text-base">Gallery</h2>
+            <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
+              {mediaGallery.map((m, i) =>
+                m.type === "video" ? (
+                  <a
+                    key={i}
+                    href={m.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex aspect-video items-center justify-center rounded-lg bg-gray-900 text-sm font-medium text-white"
+                  >
+                    ▶ Watch video
+                  </a>
+                ) : (
+                  <div key={i} className="relative aspect-video overflow-hidden rounded-lg">
+                    <Image
+                      src={m.url}
+                      alt={m.caption ?? ""}
+                      fill
+                      sizes="(max-width: 640px) 50vw, 33vw"
+                      className="object-cover"
+                      unoptimized={m.url.startsWith("/content/")}
+                    />
+                  </div>
+                )
+              )}
+            </div>
+          </div>
+        )}
+
+        {project.documentation && (
+          <div className="mt-8">
+            <h2 className="section-accent-title text-base">Documentation</h2>
+            <p className="mt-2 whitespace-pre-wrap text-gray-600 leading-relaxed">{project.documentation}</p>
+          </div>
+        )}
+
+        {project.impact && (
+          <div className="mt-8">
+            <h2 className="section-accent-title text-base">Impact assessment</h2>
+            <p className="mt-2 whitespace-pre-wrap text-gray-600 leading-relaxed">{project.impact}</p>
+          </div>
+        )}
 
         <Card className="mt-8 p-6">
           <h2 className="section-accent-title text-base">Share this project</h2>

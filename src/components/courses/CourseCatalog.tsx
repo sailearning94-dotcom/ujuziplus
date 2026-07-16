@@ -17,6 +17,7 @@ import { getBannerImage } from "@/lib/banner-images";
 import { LAB_COURSE_FILTERS } from "@/lib/ujuzi-brand";
 import { MotionGrid } from "@/components/motion/RevealStagger";
 import { Reveal } from "@/components/motion/Reveal";
+import { usePersistedFilter } from "@/hooks/usePersistedFilter";
 
 type SortKey = "popular" | "title" | "price-low" | "price-high";
 type PriceFilter = "all" | "free" | "paid";
@@ -74,9 +75,9 @@ export function CourseCatalog({
   const router = useRouter();
   const searchParams = useSearchParams();
   const [category, setCategory] = useState<string | null>(null);
-  const [sort, setSort] = useState<SortKey>("popular");
-  const [priceFilter, setPriceFilter] = useState<PriceFilter>("all");
-  const [levelFilter, setLevelFilter] = useState<LevelFilter>("all");
+  const [sort, setSort] = usePersistedFilter<SortKey>("courses_sort", "popular");
+  const [priceFilter, setPriceFilter] = usePersistedFilter<PriceFilter>("courses_price_filter", "all");
+  const [levelFilter, setLevelFilter] = usePersistedFilter<LevelFilter>("courses_level_filter", "all");
 
   useEffect(() => {
     const fromUrl = searchParams.get("category");

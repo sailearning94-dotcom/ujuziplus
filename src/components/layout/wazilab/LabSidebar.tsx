@@ -13,6 +13,7 @@ import {
   FolderKanban,
   Users,
   Trophy,
+  Library,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
@@ -32,6 +33,7 @@ const iconMap = {
   FolderKanban,
   Users,
   Trophy,
+  Library,
 } as const;
 
 export function LabSidebar({

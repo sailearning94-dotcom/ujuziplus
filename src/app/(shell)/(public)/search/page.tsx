@@ -160,7 +160,7 @@ export default async function SearchPage({ searchParams }: Props) {
                               alt={c.title}
                               fill
                               className="object-cover transition-transform duration-500 group-hover:scale-105"
-                              unoptimized
+                              unoptimized={c.thumbnailUrl.startsWith("/content/")}
                             />
                           ) : (
                             <div className="flex h-full items-center justify-center">
@@ -219,7 +219,7 @@ export default async function SearchPage({ searchParams }: Props) {
                               width={48}
                               height={48}
                               className="rounded-full object-cover"
-                              unoptimized
+                              unoptimized={u.avatarUrl.includes("dicebear.com")}
                             />
                           ) : (
                             u.fullName.charAt(0)

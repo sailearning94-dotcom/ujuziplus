@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { LearnerPageHero } from "@/components/shared/LearnerPageHero";
@@ -150,10 +151,16 @@ export function LabResourcesClient({
                     hover
                     className="flex flex-col overflow-hidden transition-all duration-300 hover:-translate-y-0.5 hover:shadow-card-hover sm:flex-row"
                   >
-                    <div className="h-40 w-full shrink-0 overflow-hidden bg-gray-100 sm:h-auto sm:w-48">
+                    <div className="relative h-40 w-full shrink-0 overflow-hidden bg-gray-100 sm:h-auto sm:w-48">
                       {item.thumbnailUrl ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img src={item.thumbnailUrl} alt={item.title} className="h-full w-full object-cover" />
+                        <Image
+                          src={item.thumbnailUrl}
+                          alt={item.title}
+                          fill
+                          sizes="(max-width: 640px) 100vw, 192px"
+                          className="object-cover"
+                          unoptimized={item.thumbnailUrl.startsWith("/content/")}
+                        />
                       ) : (
                         <div className="flex h-full w-full items-center justify-center">
                           <FlaskConical className="h-8 w-8 text-gray-300" />

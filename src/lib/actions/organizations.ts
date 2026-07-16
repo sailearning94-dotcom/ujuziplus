@@ -54,6 +54,11 @@ export async function getOrganizationPublic(slug: string) {
     where: { slug },
     include: {
       _count: { select: { members: true, kitInventory: true } },
+      projects: {
+        where: { isPublished: true },
+        orderBy: { createdAt: "desc" },
+        select: { slug: true, title: true, description: true, category: true, thumbnailUrl: true },
+      },
     },
   });
 }

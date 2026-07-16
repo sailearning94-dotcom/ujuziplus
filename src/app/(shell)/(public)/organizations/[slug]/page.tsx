@@ -22,7 +22,6 @@ export default async function OrganizationPublicPage({ params }: { params: { slu
               alt={org.name}
               width={80}
               height={80}
-              unoptimized
               className="rounded-xl bg-white"
             />
           ) : (
@@ -69,6 +68,28 @@ export default async function OrganizationPublicPage({ params }: { params: { slu
                   {c.title}
                 </Link>
                 <span className="text-gray-500">{c.enrolledMembers} enrolled</span>
+              </li>
+            ))}
+          </ul>
+        </Card>
+      )}
+
+      {org.projects.length > 0 && (
+        <Card className="mt-8 p-4">
+          <h2 className="font-semibold">Joint innovation projects</h2>
+          <p className="mt-1 text-sm text-gray-500">
+            Community and student projects developed in partnership with {org.name}.
+          </p>
+          <ul className="mt-4 space-y-3">
+            {org.projects.map((p) => (
+              <li key={p.slug} className="border-b border-gray-100 pb-3 last:border-0 last:pb-0">
+                <Link href={`/projects/${p.slug}`} className="font-medium text-brand hover:underline">
+                  {p.title}
+                </Link>
+                <p className="mt-1 line-clamp-2 text-sm text-gray-500">{p.description}</p>
+                <Badge variant="muted" size="sm" className="mt-2">
+                  {p.category}
+                </Badge>
               </li>
             ))}
           </ul>

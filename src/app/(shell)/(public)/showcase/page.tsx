@@ -7,8 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Trophy, Rocket, Star, Upload } from "lucide-react";
 
-export const dynamic = "force-dynamic";
-
 export default async function ShowcasePage() {
   const [session, projects] = await Promise.all([
     getAuthSession(),
