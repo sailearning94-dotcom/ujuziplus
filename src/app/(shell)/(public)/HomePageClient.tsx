@@ -458,9 +458,9 @@ export function HomePageClient({
       )}
 
       {!isAuthenticated && (
-        <DossierSection align="center">
+        <Reveal className="mt-8" delay={0.05}>
           <Box sx={contentShellSx}>
-            <div className="cta-band cta-band--live">
+            <div className="cta-band cta-band--live mx-auto max-w-2xl">
               <Typography sx={{ fontWeight: 800, fontSize: "1.375rem", mb: 1, letterSpacing: "-0.02em" }}>
                 Create a free account
               </Typography>
@@ -477,7 +477,7 @@ export function HomePageClient({
               </div>
             </div>
           </Box>
-        </DossierSection>
+        </Reveal>
       )}
     </Box>
   );
