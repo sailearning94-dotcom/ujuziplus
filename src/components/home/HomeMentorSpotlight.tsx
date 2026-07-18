@@ -6,7 +6,6 @@ import { Avatar } from "@/components/ui/avatar";
 import type { SerializedMentor } from "@/lib/actions/mentors";
 
 export function HomeMentorSpotlight({ mentor }: { mentor: SerializedMentor }) {
-  const quote = mentor.quote ?? mentor.hook;
   const tags = mentor.expertiseTags.slice(0, 2);
 
   return (
@@ -46,12 +45,6 @@ export function HomeMentorSpotlight({ mentor }: { mentor: SerializedMentor }) {
             <p className="mentor-spotlight-v3__role">
               {[mentor.title, mentor.company].filter(Boolean).join(" · ")}
             </p>
-          )}
-
-          {quote && (
-            <blockquote className="mentor-spotlight-v3__quote">
-              <p>{quote}</p>
-            </blockquote>
           )}
 
           {tags.length > 0 && (
