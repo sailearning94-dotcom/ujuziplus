@@ -1425,7 +1425,9 @@
   }
 
   .home-rail-grid {
-    @apply grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3;
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   }
 
   .home-course-card {

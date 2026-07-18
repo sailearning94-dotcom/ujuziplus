@@ -309,7 +309,7 @@ export function HomePageClient({
         )}
 
         {competitions.length > 0 && (
-          <Reveal className="mt-8">
+          <DossierSection align="right">
             <Box sx={contentShellSx}>
               <HomeCatalogRail
                 title="Competitions & challenges"
@@ -323,7 +323,7 @@ export function HomePageClient({
                 ))}
               </HomeCatalogRail>
             </Box>
-          </Reveal>
+          </DossierSection>
         )}
 
         {aiRoboticsCourses.length > 0 && (
