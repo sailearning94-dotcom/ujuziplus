@@ -7,7 +7,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import { UjuziLogo } from "@/components/brand/UjuziLogo";
 
-/** Mobile-only header for guests and non-student signed-in users on public pages. */
+/** Header for guests and non-student signed-in users on public pages (all breakpoints). */
 export function PublicMobileHeader({
   session,
   isAuthenticated,
@@ -25,7 +25,6 @@ export function PublicMobileHeader({
       elevation={0}
       className="glass-topbar"
       sx={{
-        display: { sm: "none" },
         bgcolor: "rgba(255,255,255,0.85)",
         backdropFilter: "blur(12px)",
         color: "text.primary",
@@ -34,7 +33,7 @@ export function PublicMobileHeader({
       }}
     >
       <Toolbar>
-        <IconButton edge="start" onClick={onMenuClick} aria-label="menu">
+        <IconButton edge="start" onClick={onMenuClick} aria-label="menu" sx={{ display: { sm: "none" } }}>
           <MenuIcon />
         </IconButton>
         <UjuziLogo variant="full" theme="light" logoHeight={40} href="/" />
@@ -51,8 +50,22 @@ export function PublicMobileHeader({
             />
           </Link>
         ) : (
-          <Box sx={{ display: "flex", gap: 1 }}>
-            <Button component={Link} href="/auth/login" color="primary" size="small" sx={{ textTransform: "none" }}>
+          <Box sx={{ display: "flex", alignItems: "center", gap: { xs: 0.5, sm: 1 } }}>
+            <Button
+              component={Link}
+              href="/auth/login"
+              variant="outlined"
+              color="primary"
+              size="medium"
+              sx={{
+                textTransform: "none",
+                fontWeight: 700,
+                px: { xs: 1.5, sm: 3 },
+                borderRadius: 999,
+                borderWidth: 1.5,
+                "&:hover": { borderWidth: 1.5 },
+              }}
+            >
               Log in
             </Button>
             <Button
@@ -60,10 +73,18 @@ export function PublicMobileHeader({
               href="/auth/register"
               variant="contained"
               color="primary"
-              size="small"
-              sx={{ textTransform: "none" }}
+              size="medium"
+              disableElevation
+              sx={{
+                textTransform: "none",
+                fontWeight: 700,
+                px: { xs: 2, sm: 3 },
+                borderRadius: 999,
+                boxShadow: "0 2px 10px rgba(0,0,0,0.12)",
+                "&:hover": { boxShadow: "0 4px 14px rgba(0,0,0,0.18)" },
+              }}
             >
-              Sign up
+              Sign up free
             </Button>
           </Box>
         )}

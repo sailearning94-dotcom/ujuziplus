@@ -19,6 +19,20 @@ export function PublicFooter() {
                 contact us
               </Link>
             </p>
+            <div className="mt-5 flex flex-wrap items-center gap-3">
+              <Link
+                href="/auth/login"
+                className="rounded-full border border-gray-500 px-4 py-2 text-sm font-semibold text-white transition hover:border-white hover:bg-white/10"
+              >
+                Log in
+              </Link>
+              <Link
+                href="/auth/register"
+                className="rounded-full bg-brand px-4 py-2 text-sm font-bold text-white shadow-sm transition hover:bg-brand-dark"
+              >
+                Sign up free
+              </Link>
+            </div>
           </div>
           <div>
             <h4 className="mb-3 font-semibold text-white">Platform</h4>
