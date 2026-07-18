@@ -8,7 +8,6 @@ import { MuiLabDrawer } from "./MuiLabDrawer";
 import { LabFooter } from "./LabFooter";
 import { AppTopbar } from "@/components/layout/AppTopbar";
 import { MobileNav } from "@/components/layout/MobileNav";
-import { PublicMobileHeader } from "@/components/layout/wazilab/PublicMobileHeader";
 import { DRAWER_COLLAPSED, DRAWER_WIDTH } from "@/theme/wazilab-mui-theme";
 import { isAdminRole, isInstructorRole, isStudentRole } from "@/lib/auth/roles";
 
@@ -26,8 +25,6 @@ export function LabShell({ children }: { children: React.ReactNode }) {
   const isAdmin = isAdminRole(role);
   const chromeless = CHROMELESS_PREFIXES.some((p) => pathname.startsWith(p));
 
-  const showAuthenticatedChrome =
-    !chromeless && (status === "authenticated" || status === "loading");
   const showStudentMobileNav = !chromeless && status === "authenticated" && isStudent;
 
   return (
@@ -59,15 +56,9 @@ export function LabShell({ children }: { children: React.ReactNode }) {
           transition: "margin-left 300ms cubic-bezier(0.4, 0, 0.2, 1)",
         }}
       >
-        {showAuthenticatedChrome ? (
+        {!chromeless && (
           <AppTopbar session={session ?? null} onMenuClick={() => setMobileOpen(true)} />
-        ) : !chromeless ? (
-          <PublicMobileHeader
-            session={session}
-            isAuthenticated={false}
-            onMenuClick={() => setMobileOpen(true)}
-          />
-        ) : null}
+        )}
 
         <Box
           className="page-transition"
