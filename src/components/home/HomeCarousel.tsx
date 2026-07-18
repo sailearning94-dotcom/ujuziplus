@@ -28,7 +28,7 @@ export function HomeCarousel({
   const childArray = Children.toArray(children).filter(isValidElement);
   const childCount = childArray.length;
   // Only loop/duplicate when there are enough unique items — otherwise clones sit side-by-side.
-  const shouldAutoScroll = autoScroll && childCount >= 4;
+  const shouldAutoScroll = autoScroll && childCount >= 3;
   const loopItems =
     shouldAutoScroll ? [...childArray, ...childArray] : childArray;
 
