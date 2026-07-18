@@ -704,11 +704,14 @@
   }
 
   .home-carousel {
-    @apply overflow-x-auto scroll-smooth;
+    @apply overflow-x-auto;
     scrollbar-width: none;
     -ms-overflow-style: none;
-    scroll-snap-type: x proximity;
     padding-block: 0.25rem 0.5rem;
+  }
+
+  .home-carousel--snap {
+    scroll-snap-type: x proximity;
   }
 
   .home-carousel::-webkit-scrollbar {

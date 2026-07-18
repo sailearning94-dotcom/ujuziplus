@@ -52,14 +52,19 @@ export function HomeCarousel({
     const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (prefersReduced) return;
 
+    // Track position in a float accumulator — el.scrollLeft rounds to whole
+    // pixels, so reading it back each frame and adding a sub-pixel speed
+    // truncates the increment away and the scroll never visibly advances.
+    let position = el.scrollLeft;
     let raf = 0;
     const tick = () => {
       if (el && !paused) {
-        el.scrollLeft += speed;
+        position += speed;
         const loopPoint = el.scrollWidth / 2;
-        if (loopPoint > 0 && el.scrollLeft >= loopPoint) {
-          el.scrollLeft -= loopPoint;
+        if (loopPoint > 0 && position >= loopPoint) {
+          position -= loopPoint;
         }
+        el.scrollLeft = position;
       }
       raf = requestAnimationFrame(tick);
     };
@@ -106,7 +111,7 @@ export function HomeCarousel({
 
       <div
         ref={scrollRef}
-        className="home-carousel"
+        className={cn("home-carousel", !shouldAutoScroll && "home-carousel--snap")}
         tabIndex={0}
         onFocus={() => setPaused(true)}
         onBlur={() => setPaused(false)}
