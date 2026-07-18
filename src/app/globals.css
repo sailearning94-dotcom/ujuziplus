@@ -732,13 +732,8 @@
 
   .home-carousel-nav {
     @apply absolute top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/80 bg-white/95 text-brand shadow-lg backdrop-blur-sm;
-    opacity: 0;
-    transition: opacity 0.25s ease, background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
-  }
-
-  .home-carousel-wrap:hover .home-carousel-nav,
-  .home-carousel-wrap:focus-within .home-carousel-nav {
     opacity: 1;
+    transition: opacity 0.25s ease, background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
   }
 
   .home-carousel-nav:hover {
