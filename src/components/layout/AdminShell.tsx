@@ -24,6 +24,7 @@ import {
   Settings,
   GraduationCap,
   FlaskConical,
+  Library,
 } from "lucide-react";
 const ICONS: Record<string, React.ElementType> = {
   "/admin": LayoutDashboard,
@@ -35,6 +36,7 @@ const ICONS: Record<string, React.ElementType> = {
   "/admin/kits": Package,
   "/admin/kit-requests": ClipboardList,
   "/admin/lab-resources": FlaskConical,
+  "/admin/open-knowledge": Library,
   "/admin/mentors": Users,
   "/admin/mentors/requests": ClipboardList,
   "/admin/programs": GraduationCap,
@@ -53,6 +55,7 @@ const ADMIN_NAV = [
   { href: "/admin/kits", label: "Learning Kits" },
   { href: "/admin/kit-requests", label: "Kit Requests" },
   { href: "/admin/lab-resources", label: "Lab Resources" },
+  { href: "/admin/open-knowledge", label: "Open Knowledge" },
   { href: "/admin/programs", label: "Programs" },
   { href: "/admin/mentors", label: "Mentors" },
   { href: "/admin/mentors/requests", label: "Mentor Requests" },
