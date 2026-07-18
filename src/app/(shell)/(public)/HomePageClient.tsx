@@ -445,11 +445,11 @@ export function HomePageClient({
         )}
       </div>
 
-      <DossierSection align="left">
+      <Reveal className="mt-8" delay={0.04}>
         <Box sx={contentShellSx}>
           <HomeValueBand />
         </Box>
-      </DossierSection>
+      </Reveal>
 
       {organizations.length >= 3 && (
         <Reveal className="mt-8" delay={0.05}>
