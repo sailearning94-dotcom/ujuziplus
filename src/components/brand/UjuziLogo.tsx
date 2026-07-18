@@ -62,7 +62,7 @@ export function UjuziLogo({
     <span
       className={cn(
         "inline-flex items-center justify-center",
-        isIcon ? "max-h-full max-w-full" : "w-full",
+        isIcon ? "max-h-full max-w-full" : "",
         className
       )}
     >
@@ -80,7 +80,7 @@ export function UjuziLogo({
       href={href}
       className={cn(
         "inline-flex shrink-0 items-center justify-center overflow-visible",
-        isIcon ? "max-h-full max-w-full py-1" : "w-full"
+        isIcon ? "max-h-full max-w-full py-1" : ""
       )}
     >
       {inner}
