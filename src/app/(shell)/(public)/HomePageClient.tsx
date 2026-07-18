@@ -309,22 +309,21 @@ export function HomePageClient({
         )}
 
         {competitions.length > 0 && (
-          <DossierSection align="right">
+          <Reveal className="mt-8">
             <Box sx={contentShellSx}>
               <HomeCatalogRail
                 title="Competitions & challenges"
                 description="Build, compete, and showcase your skills with teams across the platform."
                 seeAllHref="/competitions"
                 seeAllLabel="All competitions"
-                itemWidth={300}
-                autoScroll
+                layout="grid"
               >
                 {competitions.map((c) => (
                   <HomeCompetitionCard key={c.id} {...c} />
                 ))}
               </HomeCatalogRail>
             </Box>
-          </DossierSection>
+          </Reveal>
         )}
 
         {aiRoboticsCourses.length > 0 && (

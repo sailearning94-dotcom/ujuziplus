@@ -11,6 +11,7 @@ export function HomeCatalogRail({
   children,
   itemWidth = 280,
   autoScroll = false,
+  layout = "carousel",
 }: {
   title: string;
   description?: string;
@@ -19,6 +20,8 @@ export function HomeCatalogRail({
   children: React.ReactNode;
   itemWidth?: number;
   autoScroll?: boolean;
+  /** "grid" wraps all cards in a responsive grid instead of a scrollable carousel. */
+  layout?: "carousel" | "grid";
 }) {
   return (
     <section className="home-rail">
@@ -36,9 +39,13 @@ export function HomeCatalogRail({
           </Link>
         )}
       </div>
-      <HomeCarousel itemWidth={itemWidth} autoScroll={autoScroll} speed={0.35}>
-        {children}
-      </HomeCarousel>
+      {layout === "grid" ? (
+        <div className="home-rail-grid">{children}</div>
+      ) : (
+        <HomeCarousel itemWidth={itemWidth} autoScroll={autoScroll} speed={0.35}>
+          {children}
+        </HomeCarousel>
+      )}
     </section>
   );
 }

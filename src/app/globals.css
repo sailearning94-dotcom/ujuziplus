@@ -1424,6 +1424,10 @@
     @apply inline-flex shrink-0 items-center gap-1 text-sm font-semibold text-brand no-underline transition hover:text-brand-dark;
   }
 
+  .home-rail-grid {
+    @apply grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3;
+  }
+
   .home-course-card {
     @apply block h-full overflow-hidden rounded-2xl border border-gray-200/80 bg-white no-underline shadow-soft ring-1 ring-gray-100/70 transition duration-300 hover:-translate-y-1 hover:border-brand/20 hover:shadow-card;
   }
