@@ -156,20 +156,12 @@ export function AppTopbar({
             </button>
           </div>
         ) : (
-          <div className="flex items-center gap-2">
-            <Link
-              href="/auth/login"
-              className="rounded-xl border border-gray-300 px-3 py-2 text-sm font-semibold text-gray-800 transition hover:border-gray-400 hover:bg-gray-100 sm:px-4"
-            >
-              Log in
-            </Link>
-            <Link
-              href="/auth/register"
-              className="rounded-xl bg-brand px-4 py-2 text-sm font-bold text-white shadow-sm transition hover:bg-brand-dark hover:shadow-md"
-            >
-              Sign up free
-            </Link>
-          </div>
+          <Link
+            href="/auth/login"
+            className="rounded-xl bg-brand px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-dark hover:shadow-md"
+          >
+            Sign in
+          </Link>
         )}
       </div>
     </header>
