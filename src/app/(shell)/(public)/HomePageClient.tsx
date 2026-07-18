@@ -297,8 +297,7 @@ export function HomePageClient({
                 description="Cohort-based learning with fixed start dates and seat limits."
                 seeAllHref="/programs"
                 seeAllLabel="All programs"
-                itemWidth={300}
-                autoScroll
+                layout="grid"
               >
                 {programs.map((p) => (
                   <HomeProgramCard key={p.id} {...p} />
