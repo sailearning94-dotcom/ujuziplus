@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { EmptyState } from "@/components/shared/EmptyState";
 
-export const revalidate = 60;
+export const dynamic = "force-dynamic";
 
 export default async function OrganizationsPage() {
   const organizations = await getAllOrganizations();

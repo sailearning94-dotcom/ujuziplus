@@ -1,7 +1,7 @@
 import { getCommunityPreview } from "@/lib/actions/discussions";
 import { CommunityHubLayout } from "@/components/community/CommunityHubLayout";
 
-export const revalidate = 30;
+export const dynamic = "force-dynamic";
 
 export default async function CommunityPreviewPage() {
   const { recent, postCounts, total } = await getCommunityPreview();

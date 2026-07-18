@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "sh scripts/clean-uploads-symlink.sh && next start",
+    "start": "sh scripts/clean-uploads-symlink.sh && prisma migrate deploy && next start",
     "lint": "next lint",
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
