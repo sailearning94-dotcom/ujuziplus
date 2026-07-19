@@ -1565,6 +1565,9 @@ model ShowcaseLike {
 model PlatformSettings {
   id                        String   @id @default("singleton")
   homeSectionBackgroundUrl  String?
+  /// "tile" (repeat at natural size — best for patterns/textures) or
+  /// "cover" (stretch to fill — best for photos)
+  homeSectionBackgroundMode String   @default("tile")
   updatedAt                 DateTime @updatedAt
 
   @@map("platform_settings")

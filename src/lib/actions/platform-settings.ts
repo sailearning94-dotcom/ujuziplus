@@ -10,6 +10,8 @@ import { requireAdmin } from "@/lib/auth-server";
 
 const SETTINGS_ID = "singleton";
 
+export type HomeBackgroundMode = "tile" | "cover";
+
 const getPlatformSettingsCached = unstable_cache(
   async () =>
     db.platformSettings.upsert({
@@ -26,14 +28,15 @@ export async function getPlatformSettings() {
 }
 
 export async function updateHomeSectionBackground(
-  homeSectionBackgroundUrl: string | null
+  homeSectionBackgroundUrl: string | null,
+  homeSectionBackgroundMode: HomeBackgroundMode = "tile"
 ): Promise<ActionResult> {
   await requireAdmin();
 
   await db.platformSettings.upsert({
     where: { id: SETTINGS_ID },
-    update: { homeSectionBackgroundUrl },
-    create: { id: SETTINGS_ID, homeSectionBackgroundUrl },
+    update: { homeSectionBackgroundUrl, homeSectionBackgroundMode },
+    create: { id: SETTINGS_ID, homeSectionBackgroundUrl, homeSectionBackgroundMode },
   });
 
   revalidatePath("/");

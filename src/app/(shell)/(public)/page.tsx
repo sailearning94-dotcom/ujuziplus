@@ -66,6 +66,7 @@ export default async function HomePage() {
     <HomePageClient
       isAuthenticated={!!userId}
       homeSectionBackgroundUrl={platformSettings?.homeSectionBackgroundUrl ?? null}
+      homeSectionBackgroundMode={platformSettings?.homeSectionBackgroundMode ?? "tile"}
       stats={{
         programCount: programs.length,
         courseCount: courses.length,

@@ -24,7 +24,10 @@ export default async function AdminSettingsPage() {
           Set a custom background image for the homepage, applied from the mentor spotlight
           section down to the bottom of the page.
         </p>
-        <HomeBackgroundSetting initialUrl={settings.homeSectionBackgroundUrl} />
+        <HomeBackgroundSetting
+          initialUrl={settings.homeSectionBackgroundUrl}
+          initialMode={settings.homeSectionBackgroundMode}
+        />
       </Card>
 
       <Card className="p-4 space-y-4 mb-4">

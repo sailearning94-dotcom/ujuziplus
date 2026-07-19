@@ -145,6 +145,7 @@ export function HomePageClient({
   featuredInnovationProjects,
   aiRoboticsCourses,
   homeSectionBackgroundUrl,
+  homeSectionBackgroundMode,
 }: {
   continueCourse: ContinueCourse | null;
   pendingProgram: { title: string; slug: string; startDate: string; endDate: string; format: string } | null;
@@ -163,6 +164,7 @@ export function HomePageClient({
   featuredInnovationProjects: InnovationProjectItem[];
   aiRoboticsCourses: CourseItem[];
   homeSectionBackgroundUrl?: string | null;
+  homeSectionBackgroundMode?: string;
 }) {
   const spotlightCourse =
     courses.find((c) => c.thumbnailUrl) ?? courses[0] ?? null;
@@ -258,12 +260,19 @@ export function HomePageClient({
       <Box
         sx={
           homeSectionBackgroundUrl
-            ? {
-                backgroundImage: `url(${homeSectionBackgroundUrl})`,
-                backgroundSize: "cover",
-                backgroundPosition: "top center",
-                backgroundRepeat: "no-repeat",
-              }
+            ? homeSectionBackgroundMode === "cover"
+              ? {
+                  backgroundImage: `url(${homeSectionBackgroundUrl})`,
+                  backgroundSize: "cover",
+                  backgroundPosition: "top center",
+                  backgroundRepeat: "no-repeat",
+                }
+              : {
+                  backgroundImage: `url(${homeSectionBackgroundUrl})`,
+                  backgroundSize: "auto",
+                  backgroundPosition: "top center",
+                  backgroundRepeat: "repeat",
+                }
             : undefined
         }
       >
