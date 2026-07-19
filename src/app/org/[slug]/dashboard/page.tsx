@@ -29,8 +29,7 @@ export default async function OrgDashboardPage({ params }: { params: { slug: str
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {[
-          { label: "Active enrollments", value: stats.activeEnrollments },
-          { label: "Completions (this month)", value: stats.completionsThisMonth },
+          { label: "Courses offered", value: stats.coursesOffered },
           ...(isOrgStaff
             ? [
                 { label: "Kit units on hand", value: stats.kitUnitsOnHand },
@@ -38,7 +37,6 @@ export default async function OrgDashboardPage({ params }: { params: { slug: str
                 { label: "Pending invites", value: stats.pendingInvites },
               ]
             : []),
-          { label: "Platform courses", value: stats.publishedCourses },
         ].map((s) => (
           <Card key={s.label} className="p-4">
             <p className="text-sm text-gray-500">{s.label}</p>

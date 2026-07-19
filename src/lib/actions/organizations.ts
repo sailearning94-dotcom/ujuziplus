@@ -74,7 +74,6 @@ export async function getOrgDashboardStats(orgSlug: string) {
   const org = await db.organization.findUnique({
     where: { slug: orgSlug },
     include: {
-      members: { select: { userId: true } },
       kitInventory: { include: { kit: { select: { title: true } } } },
       kitRequests: {
         where: { status: "PENDING" },
@@ -84,28 +83,10 @@ export async function getOrgDashboardStats(orgSlug: string) {
         where: { status: "PENDING", expiresAt: { gt: new Date() } },
         select: { id: true },
       },
+      _count: { select: { courses: { where: { status: "PUBLISHED" } } } },
     },
   });
   if (!org) return null;
-
-  const memberIds = org.members.map((m) => m.userId);
-
-  const [activeEnrollments, completionsThisMonth, publishedCourses] = await Promise.all([
-    memberIds.length > 0
-      ? db.enrollment.count({
-          where: { userId: { in: memberIds }, completedAt: null },
-        })
-      : 0,
-    memberIds.length > 0
-      ? db.enrollment.count({
-          where: {
-            userId: { in: memberIds },
-            completedAt: { gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1) },
-          },
-        })
-      : 0,
-    db.course.count({ where: { status: "PUBLISHED" } }),
-  ]);
 
   const kitUnits = org.kitInventory.reduce((sum, row) => sum + row.quantityOnHand, 0);
 
@@ -113,9 +94,7 @@ export async function getOrgDashboardStats(orgSlug: string) {
     org,
     stats: {
       memberCount: org.memberCount,
-      activeEnrollments,
-      completionsThisMonth,
-      publishedCourses,
+      coursesOffered: org._count.courses,
       kitUnitsOnHand: kitUnits,
       pendingKitRequests: org.kitRequests.length,
       pendingInvites: org.invites.length,
