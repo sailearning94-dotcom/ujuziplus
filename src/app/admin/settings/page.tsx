@@ -5,6 +5,8 @@ import { PLATFORM } from "@/lib/constants";
 import { getPlatformSettings } from "@/lib/actions/platform-settings";
 import { HomeBackgroundSetting } from "@/components/admin/HomeBackgroundSetting";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminSettingsPage() {
   const settings = await getPlatformSettings();
 
