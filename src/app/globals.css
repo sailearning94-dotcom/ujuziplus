@@ -1694,6 +1694,36 @@
     @apply mt-1 text-[11px] text-gray-400;
   }
 
+  .org-pulse-strip {
+    @apply inline-flex items-center gap-2 text-sm font-semibold text-emerald-700;
+  }
+
+  .org-pulse-strip__dot {
+    @apply relative inline-flex h-2.5 w-2.5 shrink-0 rounded-full bg-emerald-500;
+    box-shadow: 0 0 0 0 rgb(34 197 94 / 0.45);
+    animation: trendingLivePulse 2.2s ease-in-out infinite;
+  }
+
+  .org-event-card {
+    @apply relative block overflow-hidden rounded-2xl border border-gray-200/80 bg-white p-4 no-underline shadow-soft ring-1 ring-gray-100/70 transition duration-300 hover:-translate-y-1 hover:border-emerald-500/25 hover:shadow-card;
+  }
+
+  .org-event-card__type {
+    @apply inline-flex rounded-full bg-emerald-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-emerald-700;
+  }
+
+  .org-event-card__title {
+    @apply mt-2.5 line-clamp-2 font-display text-sm font-bold leading-snug text-navy transition-colors group-hover:text-brand;
+  }
+
+  .org-event-card__meta {
+    @apply mt-1.5 flex items-center gap-1.5 text-xs text-gray-500;
+  }
+
+  .org-event-card__program {
+    @apply mt-3 block text-[11px] font-medium text-gray-400;
+  }
+
   .home-value-band__inner {
     display: grid;
     gap: 1rem;

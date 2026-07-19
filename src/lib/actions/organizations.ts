@@ -50,7 +50,7 @@ const getAllOrganizationsCached = unstable_cache(
 );
 
 export async function getOrganizationPublic(slug: string) {
-  return db.organization.findUnique({
+  const org = await db.organization.findUnique({
     where: { slug },
     include: {
       _count: { select: { members: true } },
@@ -66,8 +66,41 @@ export async function getOrganizationPublic(slug: string) {
           isFree: true,
         },
       },
+      programs: {
+        where: { status: { in: ["OPEN", "FULL"] } },
+        orderBy: { startDate: "asc" },
+        select: {
+          id: true,
+          slug: true,
+          title: true,
+          type: true,
+          thumbnailUrl: true,
+          startDate: true,
+          format: true,
+          enrolledCount: true,
+          seats: true,
+        },
+      },
     },
   });
+  if (!org) return null;
+
+  const events = await db.programEvent.findMany({
+    where: { program: { organizationId: org.id }, startAt: { gte: new Date() } },
+    orderBy: { startAt: "asc" },
+    take: 6,
+    select: {
+      id: true,
+      title: true,
+      type: true,
+      startAt: true,
+      endAt: true,
+      location: true,
+      program: { select: { slug: true, title: true } },
+    },
+  });
+
+  return { ...org, events };
 }
 
 export async function getOrgDashboardStats(orgSlug: string) {
