@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { FileText, ChevronDown, ChevronUp, Download, Maximize2, Minimize2 } from "lucide-react";
+import { FileText, ChevronDown, ChevronUp, Download, Maximize2, X } from "lucide-react";
 
 type Props = {
   url: string;
@@ -20,17 +20,26 @@ export function PdfViewer({ url, title, defaultExpanded = true, fullBleed = fals
   const fileName = title ?? url.split("/").pop()?.split("?")[0] ?? "Document";
   const src = `${url}#toolbar=1&navpanes=0&scrollbar=0&view=FitH`;
 
-  if (fullBleed) {
+  if (fullBleed || fullscreen) {
     return (
-      <div className="absolute inset-0 z-20 bg-white">
+      <div className="fixed inset-0 z-50 bg-white">
+        {fullscreen && (
+          <button
+            type="button"
+            onClick={() => setFullscreen(false)}
+            title="Close"
+            className="absolute right-3 top-3 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-gray-600 shadow-sm backdrop-blur-sm transition-colors hover:bg-white"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        )}
         <iframe src={src} title={fileName} className="h-full w-full border-0" />
       </div>
     );
   }
 
   return (
-    <div className={`rounded-xl border border-gray-200 overflow-hidden bg-white shadow-sm
-      ${fullscreen ? "fixed inset-4 z-50 flex flex-col shadow-2xl" : ""}`}>
+    <div className="rounded-xl border border-gray-200 overflow-hidden bg-white shadow-sm">
       {/* Header bar */}
       <div className="flex items-center justify-between px-4 py-2.5 bg-gray-50 border-b border-gray-100">
         <div className="flex items-center gap-2 min-w-0">
@@ -48,11 +57,11 @@ export function PdfViewer({ url, title, defaultExpanded = true, fullBleed = fals
           </a>
           <button
             type="button"
-            onClick={() => setFullscreen(!fullscreen)}
-            title={fullscreen ? "Exit fullscreen" : "Fullscreen"}
+            onClick={() => setFullscreen(true)}
+            title="Fullscreen"
             className="h-7 w-7 flex items-center justify-center rounded hover:bg-gray-200 text-gray-500 transition-colors"
           >
-            {fullscreen ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
+            <Maximize2 className="h-3.5 w-3.5" />
           </button>
           <button
             type="button"
@@ -67,14 +76,12 @@ export function PdfViewer({ url, title, defaultExpanded = true, fullBleed = fals
 
       {/* PDF iframe */}
       {expanded && (
-        <div className={fullscreen ? "flex-1 overflow-hidden" : ""}>
-          <iframe
-            src={src}
-            title={fileName}
-            className="w-full border-0"
-            style={fullscreen ? { height: "100%" } : { height: "calc(100vh - 220px)", minHeight: 500 }}
-          />
-        </div>
+        <iframe
+          src={src}
+          title={fileName}
+          className="w-full border-0"
+          style={{ height: "calc(100vh - 220px)", minHeight: 500 }}
+        />
       )}
 
       {/* Collapsed state */}
@@ -85,14 +92,6 @@ export function PdfViewer({ url, title, defaultExpanded = true, fullBleed = fals
             click to expand
           </button>
         </div>
-      )}
-
-      {/* Fullscreen backdrop */}
-      {fullscreen && (
-        <div
-          className="fixed inset-0 bg-black/50 -z-10"
-          onClick={() => setFullscreen(false)}
-        />
       )}
     </div>
   );
