@@ -4,13 +4,11 @@ import { notFound } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { getOrganizationPublic, getOrgMemberCourseActivity } from "@/lib/actions/organizations";
+import { getOrganizationPublic } from "@/lib/actions/organizations";
 
 export default async function OrganizationPublicPage({ params }: { params: { slug: string } }) {
   const org = await getOrganizationPublic(params.slug);
   if (!org) notFound();
-
-  const courseActivity = await getOrgMemberCourseActivity(params.slug);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12">
@@ -43,58 +41,56 @@ export default async function OrganizationPublicPage({ params }: { params: { slu
         </div>
       </div>
 
-      <div className="mt-8 grid gap-4 sm:grid-cols-3">
+      <div className="mt-8 grid gap-4 sm:grid-cols-2">
         <Card className="p-4">
           <p className="text-sm text-gray-500">Members</p>
           <p className="text-2xl font-bold">{org._count.members}</p>
         </Card>
         <Card className="p-4">
-          <p className="text-sm text-gray-500">Kit inventory lines</p>
-          <p className="text-2xl font-bold">{org._count.kitInventory}</p>
-        </Card>
-        <Card className="p-4">
-          <p className="text-sm text-gray-500">Active course enrollments</p>
-          <p className="text-2xl font-bold">{courseActivity.length}</p>
+          <p className="text-sm text-gray-500">Courses offered</p>
+          <p className="text-2xl font-bold">{org.courses.length}</p>
         </Card>
       </div>
 
-      {courseActivity.length > 0 && (
-        <Card className="mt-8 p-4">
-          <h2 className="font-semibold">Courses members are taking</h2>
-          <ul className="mt-4 space-y-2">
-            {courseActivity.map((c) => (
-              <li key={c.id} className="flex justify-between text-sm">
-                <Link href={`/courses/${c.slug}`} className="text-brand hover:underline">
-                  {c.title}
+      <Card className="mt-8 p-4">
+        <h2 className="font-semibold">Courses offered by {org.name}</h2>
+        {org.courses.length > 0 ? (
+          <ul className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {org.courses.map((c) => (
+              <li key={c.slug}>
+                <Link
+                  href={`/courses/${c.slug}`}
+                  className="block overflow-hidden rounded-lg border border-gray-100 transition hover:border-brand/30 hover:shadow-sm"
+                >
+                  <div className="relative aspect-video bg-gray-100">
+                    {c.thumbnailUrl ? (
+                      <Image src={c.thumbnailUrl} alt={c.title} fill className="object-cover" />
+                    ) : null}
+                  </div>
+                  <div className="p-3">
+                    <p className="font-medium text-gray-900">{c.title}</p>
+                    {c.subtitle && (
+                      <p className="mt-1 line-clamp-2 text-sm text-gray-500">{c.subtitle}</p>
+                    )}
+                    <div className="mt-2 flex gap-1.5">
+                      <Badge variant="muted" size="sm" className="capitalize">
+                        {c.level.toLowerCase()}
+                      </Badge>
+                      {c.isFree && (
+                        <Badge variant="accent" size="sm">
+                          Free
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
                 </Link>
-                <span className="text-gray-500">{c.enrolledMembers} enrolled</span>
               </li>
             ))}
           </ul>
-        </Card>
-      )}
-
-      {org.projects.length > 0 && (
-        <Card className="mt-8 p-4">
-          <h2 className="font-semibold">Joint innovation projects</h2>
-          <p className="mt-1 text-sm text-gray-500">
-            Community and student projects developed in partnership with {org.name}.
-          </p>
-          <ul className="mt-4 space-y-3">
-            {org.projects.map((p) => (
-              <li key={p.slug} className="border-b border-gray-100 pb-3 last:border-0 last:pb-0">
-                <Link href={`/projects/${p.slug}`} className="font-medium text-brand hover:underline">
-                  {p.title}
-                </Link>
-                <p className="mt-1 line-clamp-2 text-sm text-gray-500">{p.description}</p>
-                <Badge variant="muted" size="sm" className="mt-2">
-                  {p.category}
-                </Badge>
-              </li>
-            ))}
-          </ul>
-        </Card>
-      )}
+        ) : (
+          <p className="mt-2 text-sm text-gray-400">No courses published by this organization yet.</p>
+        )}
+      </Card>
 
       <Button asChild className="mt-6">
         <Link href={`/org/${org.slug}/dashboard`}>Organization portal</Link>

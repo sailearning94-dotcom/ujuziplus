@@ -177,6 +177,9 @@ model Course {
   // Moderation
   reviewNote String? @db.Text
 
+  organizationId String?
+  organization   Organization? @relation("OrgCourses", fields: [organizationId], references: [id], onDelete: SetNull)
+
   modules       CourseModule[]
   enrollments   Enrollment[]         @relation("Enrollments")
   orderItems    OrderItem[]          @relation("OrderItems")
@@ -189,6 +192,7 @@ model Course {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@index([organizationId])
   @@map("courses")
 }
 
@@ -927,6 +931,7 @@ model Organization {
   programs     Program[]            @relation("OrgPrograms")
   solutions    Solution[]           @relation("OrgSolutions")
   projects     Project[]            @relation("OrgProjects")
+  courses      Course[]             @relation("OrgCourses")
   createdAt    DateTime             @default(now())
   updatedAt    DateTime             @updatedAt
 

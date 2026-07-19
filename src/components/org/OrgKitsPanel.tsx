@@ -6,9 +6,7 @@ import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Input } from "@/components/ui/input";
 import {
-  submitOrgKitRequest,
   updateOrgKitRequestStatus,
   adjustOrgKitInventory,
   removeOrgKitInventory,
@@ -48,46 +46,19 @@ export function OrgKitsPanel({
   isOrgAdmin,
   inventory,
   requests,
-  publishedKits,
-  preselectKitId,
-  openRequestForm,
 }: {
   orgSlug: string;
   userId: string;
   isOrgAdmin: boolean;
   inventory: InventoryRow[];
   requests: RequestRow[];
-  publishedKits: { id: string; slug: string; title: string }[];
-  preselectKitId?: string;
-  openRequestForm?: boolean;
 }) {
   const router = useRouter();
   const showToast = useAppStore((s) => s.showToast);
   const [tab, setTab] = useState<"inventory" | "requests">("inventory");
   const [isPending, startTransition] = useTransition();
-  const [showForm, setShowForm] = useState(openRequestForm ?? false);
-  const [kitId, setKitId] = useState(
-    preselectKitId ?? publishedKits[0]?.id ?? ""
-  );
-  const [quantity, setQuantity] = useState("10");
-  const [notes, setNotes] = useState("");
 
   const pendingCount = requests.filter((r) => r.status === "PENDING").length;
-
-  const submitRequest = () => {
-    startTransition(async () => {
-      const res = await submitOrgKitRequest(userId, orgSlug, {
-        kitId,
-        quantity: parseInt(quantity, 10) || 1,
-        notes,
-      });
-      if (res.success) {
-        showToast("Kit request submitted", "success");
-        setShowForm(false);
-        router.refresh();
-      } else showToast(res.error ?? "Failed", "error");
-    });
-  };
 
   const setStatus = (requestId: string, status: OrgKitRequestStatus) => {
     startTransition(async () => {
@@ -119,49 +90,7 @@ export function OrgKitsPanel({
             Inventory on hand and procurement requests for your organization
           </p>
         </div>
-        <Button onClick={() => setShowForm((v) => !v)} disabled={publishedKits.length === 0}>
-          Request kits
-        </Button>
       </div>
-
-      {showForm && (
-        <Card className="mb-6 p-4 space-y-3">
-          <h3 className="font-semibold text-sm">New kit request</h3>
-          <label className="block text-sm">
-            <span className="font-medium">Kit</span>
-            <select
-              className="mt-1 w-full rounded-lg border px-3 py-2"
-              value={kitId}
-              onChange={(e) => setKitId(e.target.value)}
-            >
-              {publishedKits.map((k) => (
-                <option key={k.id} value={k.id}>
-                  {k.title}
-                </option>
-              ))}
-            </select>
-          </label>
-          <Input
-            label="Quantity"
-            type="number"
-            value={quantity}
-            onChange={(e) => setQuantity(e.target.value)}
-          />
-          <Input
-            label="Notes (class size, semester…)"
-            value={notes}
-            onChange={(e) => setNotes(e.target.value)}
-          />
-          <div className="flex gap-2">
-            <Button disabled={isPending} onClick={submitRequest}>
-              Submit request
-            </Button>
-            <Button variant="ghost" onClick={() => setShowForm(false)}>
-              Cancel
-            </Button>
-          </div>
-        </Card>
-      )}
 
       <div className="mb-4 flex gap-2">
         <button

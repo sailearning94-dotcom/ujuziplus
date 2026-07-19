@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { formatCurrency } from "@/lib/utils";
 import { KitPurchaseActions } from "@/components/kits/KitPurchaseActions";
-import { RequestKitForSchool } from "@/components/kits/RequestKitForSchool";
 import { Check, BookOpen, Play, FileText, Lightbulb, ClipboardList } from "lucide-react";
 
 const TABS = ["Overview", "What's in the box", "Learning materials", "Projects", "Gallery"] as const;
@@ -61,12 +60,10 @@ export function KitDetailView({
   kit,
   owned,
   relatedCourses,
-  userOrgs = [],
 }: {
   kit: KitDetail;
   owned: boolean;
   relatedCourses: { slug: string; title: string }[];
-  userOrgs?: { slug: string; name: string }[];
 }) {
   const [tab, setTab] = useState(0);
   const hero = kit.gallery.find((g) => g.isPrimary) ?? kit.gallery[0];
@@ -99,7 +96,6 @@ export function KitDetailView({
             </p>
             <div className="mt-4 flex flex-col gap-3">
               <KitPurchaseActions kit={kit} owned={owned} />
-              <RequestKitForSchool kitSlug={kit.slug} orgs={userOrgs} />
             </div>
           </div>
         </div>

@@ -53,11 +53,18 @@ export async function getOrganizationPublic(slug: string) {
   return db.organization.findUnique({
     where: { slug },
     include: {
-      _count: { select: { members: true, kitInventory: true } },
-      projects: {
-        where: { isPublished: true },
+      _count: { select: { members: true } },
+      courses: {
+        where: { status: "PUBLISHED" },
         orderBy: { createdAt: "desc" },
-        select: { slug: true, title: true, description: true, category: true, thumbnailUrl: true },
+        select: {
+          slug: true,
+          title: true,
+          subtitle: true,
+          thumbnailUrl: true,
+          level: true,
+          isFree: true,
+        },
       },
     },
   });
@@ -230,7 +237,7 @@ export async function getAdminOrganizations() {
   return db.organization.findMany({
     orderBy: { name: "asc" },
     include: {
-      _count: { select: { members: true, kitRequests: true } },
+      _count: { select: { members: true, kitRequests: true, courses: true } },
     },
   });
 }

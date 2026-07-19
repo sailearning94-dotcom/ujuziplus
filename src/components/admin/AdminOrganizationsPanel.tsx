@@ -25,7 +25,7 @@ type OrgRow = {
   memberCount: number;
   isVerified: boolean;
   logoUrl: string | null;
-  _count: { members: number; kitRequests: number };
+  _count: { members: number; kitRequests: number; courses: number };
 };
 
 const ORG_TYPES: OrgType[] = ["UNIVERSITY", "HUB", "SCHOOL", "OTHER"];
@@ -200,6 +200,7 @@ export function AdminOrganizationsPanel({ organizations }: { organizations: OrgR
                     <span className="flex items-center gap-1">
                       <Users className="h-3.5 w-3.5" />{org._count.members} members
                     </span>
+                    <span>{org._count.courses} courses</span>
                     <span>{org._count.kitRequests} kit requests</span>
                   </p>
                 </div>

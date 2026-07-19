@@ -9,7 +9,6 @@ import type { OrgKitRequestStatus } from "@prisma/client";
 import type { ActionResult } from "./courses";
 import { requireUser, requireAdmin } from "@/lib/auth-server";
 import { createNotification } from "@/lib/actions/notifications";
-import { sendEmail, orgKitRequestAdminEmail } from "@/lib/email";
 
 async function requireOrgMember(orgSlug: string, userId: string, roles?: ("ADMIN" | "INSTRUCTOR")[]) {
   const org = await db.organization.findUnique({ where: { slug: orgSlug } });
@@ -60,80 +59,6 @@ export async function getPublishedKitsForRequest() {
     select: { id: true, slug: true, title: true },
     orderBy: { title: "asc" },
   });
-}
-
-export async function submitOrgKitRequest(
-  userId: string,
-  orgSlug: string,
-  input: { kitId: string; quantity: number; notes?: string }
-): Promise<ActionResult> {
-  const { user } = await requireUser();
-  if (user.id !== userId && user.role !== "ADMIN") {
-    return { success: false, error: "Unauthorized." };
-  }
-
-  const access = await requireOrgMember(orgSlug, userId);
-  if (!access.ok) return { success: false, error: access.error };
-
-  const kit = await db.kit.findFirst({
-    where: { id: input.kitId, status: "PUBLISHED" },
-  });
-  if (!kit) return { success: false, error: "Kit not found." };
-
-  if (input.quantity < 1) return { success: false, error: "Quantity must be at least 1." };
-
-  const req = await db.orgKitRequest.create({
-    data: {
-      orgId: access.org.id,
-      kitId: kit.id,
-      requesterId: userId,
-      quantity: input.quantity,
-      notes: input.notes?.trim() ?? null,
-    },
-    include: {
-      org: { select: { name: true, slug: true } },
-      requester: { select: { fullName: true } },
-    },
-  });
-
-  const base = process.env.NEXTAUTH_URL ?? "http://localhost:3000";
-  const orgReviewUrl = `${base}/org/${orgSlug}/kits`;
-
-  const orgAdmins = await db.organizationMember.findMany({
-    where: { orgId: access.org.id, role: "ADMIN" },
-    include: { user: { select: { id: true, email: true, fullName: true } } },
-  });
-
-  for (const { user: orgAdmin } of orgAdmins) {
-    await createNotification(orgAdmin.id, {
-      type: "SYSTEM",
-      title: "Kit request needs review",
-      message: `${req.requester.fullName} requested ${input.quantity}× ${kit.title}.`,
-      href: orgReviewUrl,
-      prefCategory: "Course updates",
-    });
-
-    const emailResult = await sendEmail({
-      to: orgAdmin.email,
-      subject: `[${access.org.name}] New kit request: ${kit.title}`,
-      html: orgKitRequestAdminEmail({
-        adminName: orgAdmin.fullName,
-        orgName: access.org.name,
-        requesterName: req.requester.fullName,
-        kitTitle: kit.title,
-        quantity: input.quantity,
-        notes: input.notes,
-        reviewUrl: orgReviewUrl,
-      }),
-    });
-    if (!emailResult.ok) {
-      console.error("Org kit request admin email failed:", emailResult.error);
-    }
-  }
-
-  revalidatePath(`/org/${orgSlug}/kits`);
-  revalidatePath("/admin/kit-requests");
-  return { success: true, data: undefined };
 }
 
 export async function updateOrgKitRequestStatus(

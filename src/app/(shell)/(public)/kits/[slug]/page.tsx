@@ -2,7 +2,6 @@ import { notFound } from "next/navigation";
 import { getAuthSession } from "@/lib/auth-server";
 import { getKitBySlug } from "@/lib/actions/kits";
 import { userOwnsKit } from "@/lib/actions/orders";
-import { getUserOrganizations } from "@/lib/actions/org-kits";
 import { db } from "@/lib/db";
 import { KitDetailView } from "@/components/kits/KitDetailView";
 
@@ -16,13 +15,7 @@ export default async function KitDetailPage({ params }: { params: { slug: string
   if (!kit) notFound();
 
   const session = await getAuthSession();
-  const [owned, memberships] = session?.user?.id
-    ? await Promise.all([
-        userOwnsKit(session.user.id, kit.id),
-        getUserOrganizations(session.user.id),
-      ])
-    : [false, []];
-  const userOrgs = memberships.map((m) => ({ slug: m.org.slug, name: m.org.name }));
+  const owned = session?.user?.id ? await userOwnsKit(session.user.id, kit.id) : false;
 
   const slugs = parseJsonList(kit.relatedCourseSlugs);
   const relatedCourses =
@@ -37,7 +30,6 @@ export default async function KitDetailPage({ params }: { params: { slug: string
     <KitDetailView
       owned={owned}
       relatedCourses={relatedCourses}
-      userOrgs={userOrgs}
       kit={{
         id: kit.id,
         slug: kit.slug,
