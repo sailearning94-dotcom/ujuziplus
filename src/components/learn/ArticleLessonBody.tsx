@@ -4,7 +4,9 @@ import { useEffect, useRef, useCallback } from "react";
 import { PdfViewer } from "@/components/ui/PdfViewer";
 import { PDF_PREFIX } from "@/lib/constants";
 
-/** Marks explored when the learner scrolls to the end of the article. */
+/** Marks explored when the learner scrolls to the end of the article
+ * (or immediately for PDF lessons, which render as a full-screen panel
+ * with no page scrolling involved). */
 export function ArticleLessonBody({
   body,
   onExplored,
@@ -28,6 +30,11 @@ export function ArticleLessonBody({
   }, [body]);
 
   useEffect(() => {
+    if (isPdf) {
+      fire();
+      return;
+    }
+
     const sentinel = endRef.current;
     if (!sentinel || !onExplored) return;
 
@@ -59,17 +66,15 @@ export function ArticleLessonBody({
       cancelAnimationFrame(raf);
       observer.disconnect();
     };
-  }, [body, fire, onExplored]);
+  }, [body, isPdf, fire, onExplored]);
+
+  if (isPdf) {
+    return <PdfViewer url={pdfUrl} fullBleed />;
+  }
 
   return (
-    <div className={isPdf ? "" : "max-w-2xl"}>
-      {isPdf ? (
-        <div className="-mx-4 -mb-8 w-[calc(100%+2rem)] sm:-mx-6 sm:w-[calc(100%+3rem)]">
-          <PdfViewer url={pdfUrl} fullBleed />
-        </div>
-      ) : (
-        <div className="prose prose-sm max-w-none whitespace-pre-wrap text-gray-700">{body}</div>
-      )}
+    <div className="max-w-2xl">
+      <div className="prose prose-sm max-w-none whitespace-pre-wrap text-gray-700">{body}</div>
       <div ref={endRef} className="h-px w-full" aria-hidden />
     </div>
   );

@@ -28,6 +28,7 @@ import { AssignmentPlayer } from "@/components/assignments/AssignmentPlayer";
 import type { RubricItem } from "@/lib/actions/assignments";
 import { markLessonComplete, getLessonPlayerContent } from "@/lib/actions/enrollments";
 import { getAssignmentForStudent } from "@/lib/actions/assignments";
+import { PDF_PREFIX } from "@/lib/constants";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -207,6 +208,8 @@ export function DbLearnPlayer({
   const lessonMeta = allLessons[currentIndex] ?? allLessons[0];
   const currentModule = modules.find((m) => m.lessons.some((l) => l.id === lessonMeta?.id));
   const lesson = lessonMeta ? contentById[lessonMeta.id] ?? lessonMeta : undefined;
+  const isPdfLesson =
+    lesson?.type === "ARTICLE" && !!lesson.articleBody?.startsWith(PDF_PREFIX);
   const prev = allLessons[currentIndex - 1];
   const next = allLessons[currentIndex + 1];
 
@@ -500,29 +503,34 @@ export function DbLearnPlayer({
         {/* Main content area */}
         <main className="flex flex-1 flex-col overflow-hidden">
           {/* Content */}
-          <div className="learn-scroll-root flex-1 overflow-y-auto bg-gray-50/50">
-            <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
+          <div className="learn-scroll-root relative flex-1 overflow-y-auto bg-gray-50/50">
+            <div className={isPdfLesson ? "h-full" : "mx-auto max-w-4xl px-4 py-8 sm:px-6"}>
               <AnimatePresence mode="wait">
               {lesson ? (
                 <motion.div
                   key={lesson.id}
+                  className={isPdfLesson ? "h-full" : undefined}
                   initial={reduceMotion ? false : { opacity: 0, x: 12 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={reduceMotion ? undefined : { opacity: 0, x: -12 }}
                   transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
                 >
-                  <div className="mb-2 flex items-center gap-2">
-                    <Badge variant="outline" className="text-xs capitalize">
-                      {lesson.type.toLowerCase()}
-                    </Badge>
-                    {lesson.isFreePreview && (
-                      <Badge variant="success" className="text-xs">Free preview</Badge>
-                    )}
-                    {isCurrentDone && (
-                      <Badge variant="success" className="text-xs">Completed</Badge>
-                    )}
-                  </div>
-                  <h2 className="mb-6 font-display text-2xl font-bold tracking-tight">{lesson.title}</h2>
+                  {!isPdfLesson && (
+                    <div className="mb-2 flex items-center gap-2">
+                      <Badge variant="outline" className="text-xs capitalize">
+                        {lesson.type.toLowerCase()}
+                      </Badge>
+                      {lesson.isFreePreview && (
+                        <Badge variant="success" className="text-xs">Free preview</Badge>
+                      )}
+                      {isCurrentDone && (
+                        <Badge variant="success" className="text-xs">Completed</Badge>
+                      )}
+                    </div>
+                  )}
+                  {!isPdfLesson && (
+                    <h2 className="mb-6 font-display text-2xl font-bold tracking-tight">{lesson.title}</h2>
+                  )}
                   {loadingContent ? (
                     <div className="flex items-center justify-center py-24 text-gray-400">
                       <Loader2 className="h-8 w-8 animate-spin" />
