@@ -34,12 +34,11 @@ export function ParticleNetworkBackground({
         position: "absolute",
         inset: 0,
         overflow: "hidden",
-        zIndex: 3,
+        zIndex: 0,
         pointerEvents: "none",
-        borderRadius: "inherit",
       }}
     >
-      <div style={{ position: "absolute", inset: 0, pointerEvents: "auto" }}>
+      <div style={{ position: "sticky", top: 0, height: "100vh", pointerEvents: "auto" }}>
         <ParticleNetwork
           colors={colorList.length > 0 ? colorList : ["#f39223"]}
           rainbowMode={rainbowMode}

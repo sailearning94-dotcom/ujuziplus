@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import {
   updateParticlesSettings,
   type ParticlesInteraction,
+  type ParticlesScope,
 } from "@/lib/actions/platform-settings";
 import { useAppStore } from "@/store/appStore";
 import { cn } from "@/lib/utils";
@@ -20,6 +21,7 @@ export function ParticlesSetting({
   initialConnectDistance,
   initialLineThickness,
   initialInteraction,
+  initialScope,
 }: {
   initialEnabled: boolean;
   initialColors: string;
@@ -28,6 +30,7 @@ export function ParticlesSetting({
   initialConnectDistance: number;
   initialLineThickness: number;
   initialInteraction: string;
+  initialScope: string;
 }) {
   const router = useRouter();
   const showToast = useAppStore((s) => s.showToast);
@@ -41,6 +44,9 @@ export function ParticlesSetting({
   const [lineThickness, setLineThickness] = useState(initialLineThickness || 1);
   const [interaction, setInteraction] = useState<ParticlesInteraction>(
     initialInteraction === "attract" ? "attract" : "repel"
+  );
+  const [scope, setScope] = useState<ParticlesScope>(
+    initialScope === "belowFeatured" ? "belowFeatured" : "full"
   );
 
   const colorList = colors
@@ -58,6 +64,7 @@ export function ParticlesSetting({
         particlesConnectDistance: connectDistance,
         particlesLineThickness: lineThickness,
         particlesInteraction: interaction,
+        particlesScope: scope,
       });
       if (res.success) {
         showToast("Particle network settings updated", "success");
@@ -102,6 +109,34 @@ export function ParticlesSetting({
 
       {enabled && (
         <>
+          <div className="text-sm">
+            <span className="font-medium">Coverage</span>
+            <div className="mt-1.5 flex gap-2">
+              <button
+                type="button"
+                onClick={() => setScope("full")}
+                className={cn(
+                  "flex-1 rounded-lg border px-3 py-2 text-left text-xs transition",
+                  scope === "full" ? "border-brand bg-brand-light text-brand-dark" : "border-gray-200 text-gray-600 hover:bg-gray-50"
+                )}
+              >
+                <span className="block font-semibold">Entire homepage</span>
+                Runs behind the whole page, top to bottom.
+              </button>
+              <button
+                type="button"
+                onClick={() => setScope("belowFeatured")}
+                className={cn(
+                  "flex-1 rounded-lg border px-3 py-2 text-left text-xs transition",
+                  scope === "belowFeatured" ? "border-brand bg-brand-light text-brand-dark" : "border-gray-200 text-gray-600 hover:bg-gray-50"
+                )}
+              >
+                <span className="block font-semibold">Below Featured courses</span>
+                Starts after the Trending/Featured section, showing only through empty white gaps between cards.
+              </button>
+            </div>
+          </div>
+
           <div>
             <span className="text-sm font-medium">Colors</span>
             <div className="mt-1.5 flex flex-wrap items-center gap-2">

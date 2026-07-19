@@ -74,6 +74,7 @@ export default async function HomePage() {
       particlesConnectDistance={platformSettings?.particlesConnectDistance ?? 140}
       particlesLineThickness={platformSettings?.particlesLineThickness ?? 1}
       particlesInteraction={platformSettings?.particlesInteraction ?? "repel"}
+      particlesScope={platformSettings?.particlesScope ?? "full"}
       stats={{
         programCount: programs.length,
         courseCount: courses.length,

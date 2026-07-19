@@ -12,6 +12,7 @@ const SETTINGS_ID = "singleton";
 
 export type HomeBackgroundMode = "tile" | "cover";
 export type ParticlesInteraction = "repel" | "attract";
+export type ParticlesScope = "full" | "belowFeatured";
 
 export interface ParticlesSettingsInput {
   particlesEnabled: boolean;
@@ -21,6 +22,7 @@ export interface ParticlesSettingsInput {
   particlesConnectDistance: number;
   particlesLineThickness: number;
   particlesInteraction: ParticlesInteraction;
+  particlesScope: ParticlesScope;
 }
 
 const getPlatformSettingsCached = unstable_cache(

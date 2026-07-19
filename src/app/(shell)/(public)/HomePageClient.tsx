@@ -157,6 +157,7 @@ export function HomePageClient({
   particlesConnectDistance,
   particlesLineThickness,
   particlesInteraction,
+  particlesScope,
 }: {
   continueCourse: ContinueCourse | null;
   pendingProgram: { title: string; slug: string; startDate: string; endDate: string; format: string } | null;
@@ -183,6 +184,7 @@ export function HomePageClient({
   particlesConnectDistance?: number;
   particlesLineThickness?: number;
   particlesInteraction?: string;
+  particlesScope?: string;
 }) {
   const spotlightCourse =
     courses.find((c) => c.thumbnailUrl) ?? courses[0] ?? null;
@@ -193,6 +195,17 @@ export function HomePageClient({
 
   return (
     <Box className="learner-canvas home-landing" sx={{ pb: { xs: 2, md: 2.5 }, position: "relative" }}>
+        {particlesEnabled && particlesScope === "full" && (
+          <ParticleNetworkBackground
+            enabled={particlesEnabled}
+            colors={particlesColors ?? "#f39223,#00004D,#1a1a6b,#e0831a"}
+            rainbowMode={!!particlesRainbowMode}
+            speed={particlesSpeed ?? 1}
+            connectDistance={particlesConnectDistance ?? 140}
+            lineThickness={particlesLineThickness ?? 1}
+            interaction={particlesInteraction ?? "repel"}
+          />
+        )}
         <Box sx={{ position: "relative", zIndex: 1, pt: { xs: 2, md: 2.5 } }}>
         <Box sx={contentShellSx}>
         <div className="home-fold" style={{ position: "relative" }}>
@@ -200,19 +213,6 @@ export function HomePageClient({
             size="default"
             banner="home"
             className="home-hero--compact"
-            particlesLayer={
-              particlesEnabled ? (
-                <ParticleNetworkBackground
-                  enabled={particlesEnabled}
-                  colors={particlesColors ?? "#f39223,#00004D,#1a1a6b,#e0831a"}
-                  rainbowMode={!!particlesRainbowMode}
-                  speed={particlesSpeed ?? 1}
-                  connectDistance={particlesConnectDistance ?? 140}
-                  lineThickness={particlesLineThickness ?? 1}
-                  interaction={particlesInteraction ?? "repel"}
-                />
-              ) : undefined
-            }
             eyebrow={isAuthenticated ? "Your learning hub" : "STEM · Robotics · Innovation"}
             title={
               isAuthenticated
@@ -267,6 +267,19 @@ export function HomePageClient({
         </Reveal>
       )}
       </Box>
+
+      <Box sx={{ position: "relative" }}>
+      {particlesEnabled && particlesScope === "belowFeatured" && (
+        <ParticleNetworkBackground
+          enabled={particlesEnabled}
+          colors={particlesColors ?? "#f39223,#00004D,#1a1a6b,#e0831a"}
+          rainbowMode={!!particlesRainbowMode}
+          speed={particlesSpeed ?? 1}
+          connectDistance={particlesConnectDistance ?? 140}
+          lineThickness={particlesLineThickness ?? 1}
+          interaction={particlesInteraction ?? "repel"}
+        />
+      )}
 
       <DossierSection align="right">
         <Box sx={contentShellSx}>
@@ -531,6 +544,7 @@ export function HomePageClient({
           </Box>
         </Reveal>
       )}
+      </Box>
       </Box>
     </Box>
   );

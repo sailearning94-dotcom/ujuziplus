@@ -1579,6 +1579,10 @@ model PlatformSettings {
   particlesLineThickness    Float    @default(1)
   /// "repel" (hover pushes particles away) or "attract" (click-drag pulls them in)
   particlesInteraction      String   @default("repel")
+  /// "full" (entire homepage, top to bottom) or "belowFeatured" (from the
+  /// Trending/Featured courses section downward, showing only through the
+  /// empty white gaps between cards/photos — content sections stay opaque)
+  particlesScope             String   @default("full")
 
   updatedAt                 DateTime @updatedAt
 

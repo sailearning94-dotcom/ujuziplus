@@ -34,7 +34,8 @@ export default async function AdminSettingsPage() {
       <Card className="p-4 space-y-4 mb-4">
         <h2 className="font-semibold text-sm">Particle network</h2>
         <p className="text-xs text-gray-500">
-          Animated connected-dots background layered into the homepage hero section.
+          Animated connected-dots background for the homepage. Choose whether it covers the
+          entire page or only starts below the Featured courses section.
         </p>
         <ParticlesSetting
           initialEnabled={settings.particlesEnabled}
@@ -44,6 +45,7 @@ export default async function AdminSettingsPage() {
           initialConnectDistance={settings.particlesConnectDistance}
           initialLineThickness={settings.particlesLineThickness}
           initialInteraction={settings.particlesInteraction}
+          initialScope={settings.particlesScope}
         />
       </Card>
 
