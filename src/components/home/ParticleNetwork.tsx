@@ -22,8 +22,8 @@ interface Particle {
   hue: number;
 }
 
-const BASE_AREA_PER_PARTICLE = 9000;
-const MAX_PARTICLES = 140;
+const BASE_AREA_PER_PARTICLE = 16000;
+const MAX_PARTICLES = 220;
 const MOUSE_RADIUS = 160;
 
 function hexToRgb(hex: string): [number, number, number] {
@@ -201,7 +201,9 @@ export function ParticleNetwork({
         for (let j = i + 1; j < particles.length; j++) {
           const b = particles[j];
           const dx = a.x - b.x;
+          if (dx > cfg.connectDistance || dx < -cfg.connectDistance) continue;
           const dy = a.y - b.y;
+          if (dy > cfg.connectDistance || dy < -cfg.connectDistance) continue;
           const dist = Math.hypot(dx, dy);
           if (dist < cfg.connectDistance) {
             const alpha = (1 - dist / cfg.connectDistance) * 0.5;

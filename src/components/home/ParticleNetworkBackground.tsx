@@ -33,21 +33,18 @@ export function ParticleNetworkBackground({
       style={{
         position: "absolute",
         inset: 0,
-        overflow: "hidden",
         zIndex: 0,
-        pointerEvents: "none",
+        pointerEvents: "auto",
       }}
     >
-      <div style={{ position: "sticky", top: 0, height: "100vh", pointerEvents: "auto" }}>
-        <ParticleNetwork
-          colors={colorList.length > 0 ? colorList : ["#f39223"]}
-          rainbowMode={rainbowMode}
-          speed={speed}
-          connectDistance={connectDistance}
-          lineThickness={lineThickness}
-          interaction={interaction === "attract" ? "attract" : "repel"}
-        />
-      </div>
+      <ParticleNetwork
+        colors={colorList.length > 0 ? colorList : ["#f39223"]}
+        rainbowMode={rainbowMode}
+        speed={speed}
+        connectDistance={connectDistance}
+        lineThickness={lineThickness}
+        interaction={interaction === "attract" ? "attract" : "repel"}
+      />
     </div>
   );
 }
