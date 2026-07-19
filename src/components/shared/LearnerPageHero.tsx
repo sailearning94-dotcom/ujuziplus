@@ -15,6 +15,7 @@ export function LearnerPageHero({
   eyebrow,
   size = "default",
   banner = "default",
+  particlesLayer,
 }: {
   title: string;
   subtitle?: string;
@@ -25,6 +26,8 @@ export function LearnerPageHero({
   eyebrow?: string | false;
   size?: "default" | "large";
   banner?: BannerSection;
+  /** Optional animated layer (e.g. particle network) clipped to the hero's rounded corners, behind the content. */
+  particlesLayer?: React.ReactNode;
 }) {
   const reduceMotion = useReducedMotion();
 
@@ -84,6 +87,7 @@ export function LearnerPageHero({
         } as React.CSSProperties
       }
     >
+      {particlesLayer}
       {reduceMotion ? (
         inner
       ) : (

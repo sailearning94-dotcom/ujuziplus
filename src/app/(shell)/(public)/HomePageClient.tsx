@@ -40,6 +40,10 @@ const HomeMentorSpotlight = dynamic(
   () => import("@/components/home/HomeMentorSpotlight").then((m) => ({ default: m.HomeMentorSpotlight })),
   { loading: () => <div className="h-56 animate-pulse rounded-3xl bg-gray-100" /> }
 );
+const ParticleNetworkBackground = dynamic(
+  () => import("@/components/home/ParticleNetworkBackground").then((m) => ({ default: m.ParticleNetworkBackground })),
+  { ssr: false }
+);
 
 type ContinueCourse = {
   title: string;
@@ -146,6 +150,13 @@ export function HomePageClient({
   aiRoboticsCourses,
   homeSectionBackgroundUrl,
   homeSectionBackgroundMode,
+  particlesEnabled,
+  particlesColors,
+  particlesRainbowMode,
+  particlesSpeed,
+  particlesConnectDistance,
+  particlesLineThickness,
+  particlesInteraction,
 }: {
   continueCourse: ContinueCourse | null;
   pendingProgram: { title: string; slug: string; startDate: string; endDate: string; format: string } | null;
@@ -165,6 +176,13 @@ export function HomePageClient({
   aiRoboticsCourses: CourseItem[];
   homeSectionBackgroundUrl?: string | null;
   homeSectionBackgroundMode?: string;
+  particlesEnabled?: boolean;
+  particlesColors?: string;
+  particlesRainbowMode?: boolean;
+  particlesSpeed?: number;
+  particlesConnectDistance?: number;
+  particlesLineThickness?: number;
+  particlesInteraction?: string;
 }) {
   const spotlightCourse =
     courses.find((c) => c.thumbnailUrl) ?? courses[0] ?? null;
@@ -177,11 +195,24 @@ export function HomePageClient({
     <Box className="learner-canvas home-landing" sx={{ pb: { xs: 2, md: 2.5 }, position: "relative" }}>
         <Box sx={{ position: "relative", zIndex: 1, pt: { xs: 2, md: 2.5 } }}>
         <Box sx={contentShellSx}>
-        <div className="home-fold">
+        <div className="home-fold" style={{ position: "relative" }}>
           <LearnerPageHero
             size="default"
             banner="home"
             className="home-hero--compact"
+            particlesLayer={
+              particlesEnabled ? (
+                <ParticleNetworkBackground
+                  enabled={particlesEnabled}
+                  colors={particlesColors ?? "#f39223,#00004D,#1a1a6b,#e0831a"}
+                  rainbowMode={!!particlesRainbowMode}
+                  speed={particlesSpeed ?? 1}
+                  connectDistance={particlesConnectDistance ?? 140}
+                  lineThickness={particlesLineThickness ?? 1}
+                  interaction={particlesInteraction ?? "repel"}
+                />
+              ) : undefined
+            }
             eyebrow={isAuthenticated ? "Your learning hub" : "STEM · Robotics · Innovation"}
             title={
               isAuthenticated

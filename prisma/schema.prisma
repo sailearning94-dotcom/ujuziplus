@@ -1568,6 +1568,18 @@ model PlatformSettings {
   /// "tile" (repeat at natural size — best for patterns/textures) or
   /// "cover" (stretch to fill — best for photos)
   homeSectionBackgroundMode String   @default("tile")
+
+  // ─── Homepage particle network background ──────────────────────────────
+  particlesEnabled          Boolean  @default(false)
+  /// Comma-separated hex colors, e.g. "#f39223,#00004D,#1a1a6b"
+  particlesColors           String   @default("#f39223,#00004D,#1a1a6b,#e0831a")
+  particlesRainbowMode      Boolean  @default(false)
+  particlesSpeed            Float    @default(1)
+  particlesConnectDistance  Int      @default(140)
+  particlesLineThickness    Float    @default(1)
+  /// "repel" (hover pushes particles away) or "attract" (click-drag pulls them in)
+  particlesInteraction      String   @default("repel")
+
   updatedAt                 DateTime @updatedAt
 
   @@map("platform_settings")

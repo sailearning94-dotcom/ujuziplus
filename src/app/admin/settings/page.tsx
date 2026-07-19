@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { PLATFORM } from "@/lib/constants";
 import { getPlatformSettings } from "@/lib/actions/platform-settings";
 import { HomeBackgroundSetting } from "@/components/admin/HomeBackgroundSetting";
+import { ParticlesSetting } from "@/components/admin/ParticlesSetting";
 
 export const dynamic = "force-dynamic";
 
@@ -27,6 +28,22 @@ export default async function AdminSettingsPage() {
         <HomeBackgroundSetting
           initialUrl={settings.homeSectionBackgroundUrl}
           initialMode={settings.homeSectionBackgroundMode}
+        />
+      </Card>
+
+      <Card className="p-4 space-y-4 mb-4">
+        <h2 className="font-semibold text-sm">Particle network</h2>
+        <p className="text-xs text-gray-500">
+          Animated connected-dots background layered into the homepage hero section.
+        </p>
+        <ParticlesSetting
+          initialEnabled={settings.particlesEnabled}
+          initialColors={settings.particlesColors}
+          initialRainbowMode={settings.particlesRainbowMode}
+          initialSpeed={settings.particlesSpeed}
+          initialConnectDistance={settings.particlesConnectDistance}
+          initialLineThickness={settings.particlesLineThickness}
+          initialInteraction={settings.particlesInteraction}
         />
       </Card>
 

@@ -67,6 +67,13 @@ export default async function HomePage() {
       isAuthenticated={!!userId}
       homeSectionBackgroundUrl={platformSettings?.homeSectionBackgroundUrl ?? null}
       homeSectionBackgroundMode={platformSettings?.homeSectionBackgroundMode ?? "tile"}
+      particlesEnabled={platformSettings?.particlesEnabled ?? false}
+      particlesColors={platformSettings?.particlesColors ?? "#f39223,#00004D,#1a1a6b,#e0831a"}
+      particlesRainbowMode={platformSettings?.particlesRainbowMode ?? false}
+      particlesSpeed={platformSettings?.particlesSpeed ?? 1}
+      particlesConnectDistance={platformSettings?.particlesConnectDistance ?? 140}
+      particlesLineThickness={platformSettings?.particlesLineThickness ?? 1}
+      particlesInteraction={platformSettings?.particlesInteraction ?? "repel"}
       stats={{
         programCount: programs.length,
         courseCount: courses.length,

@@ -1,0 +1,272 @@
+"use client";
+
+import { useEffect, useRef } from "react";
+
+export interface ParticleNetworkProps {
+  colors: string[];
+  rainbowMode?: boolean;
+  speed?: number;
+  connectDistance?: number;
+  lineThickness?: number;
+  interaction?: "repel" | "attract";
+  className?: string;
+}
+
+interface Particle {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  r: number;
+  color: string;
+  hue: number;
+}
+
+const BASE_AREA_PER_PARTICLE = 9000;
+const MAX_PARTICLES = 140;
+const MOUSE_RADIUS = 160;
+
+function hexToRgb(hex: string): [number, number, number] {
+  const m = hex.replace("#", "");
+  const n = parseInt(m.length === 3 ? m.split("").map((c) => c + c).join("") : m, 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+
+function hslToRgb(h: number, s: number, l: number): [number, number, number] {
+  const c = (1 - Math.abs(2 * l - 1)) * s;
+  const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+  const m = l - c / 2;
+  let r = 0, g = 0, b = 0;
+  if (h < 60) [r, g, b] = [c, x, 0];
+  else if (h < 120) [r, g, b] = [x, c, 0];
+  else if (h < 180) [r, g, b] = [0, c, x];
+  else if (h < 240) [r, g, b] = [0, x, c];
+  else if (h < 300) [r, g, b] = [x, 0, c];
+  else [r, g, b] = [c, 0, x];
+  return [(r + m) * 255, (g + m) * 255, (b + m) * 255];
+}
+
+export function ParticleNetwork({
+  colors,
+  rainbowMode = false,
+  speed = 1,
+  connectDistance = 140,
+  lineThickness = 1,
+  interaction = "repel",
+  className,
+}: ParticleNetworkProps) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const configRef = useRef({ colors, rainbowMode, speed, connectDistance, lineThickness, interaction });
+  configRef.current = { colors, rainbowMode, speed, connectDistance, lineThickness, interaction };
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) return;
+
+    let width = 0;
+    let height = 0;
+    let particles: Particle[] = [];
+    let rafId = 0;
+    let hueCycle = 0;
+
+    const mouse = { x: -9999, y: -9999, active: false, down: false };
+
+    const palette = configRef.current.colors.length > 0 ? configRef.current.colors : ["#f39223"];
+
+    function makeParticle(): Particle {
+      const hue = Math.random() * 360;
+      const color = palette[Math.floor(Math.random() * palette.length)];
+      return {
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+        r: 1.5 + Math.random() * 1.8,
+        color,
+        hue,
+      };
+    }
+
+    function resize() {
+      if (!canvas) return;
+      const rect = canvas.parentElement?.getBoundingClientRect();
+      width = rect?.width ?? window.innerWidth;
+      height = rect?.height ?? window.innerHeight;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      ctx?.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const targetCount = Math.min(
+        MAX_PARTICLES,
+        Math.max(24, Math.round((width * height) / BASE_AREA_PER_PARTICLE))
+      );
+      if (particles.length === 0) {
+        particles = Array.from({ length: targetCount }, makeParticle);
+      } else if (particles.length < targetCount) {
+        particles = particles.concat(
+          Array.from({ length: targetCount - particles.length }, makeParticle)
+        );
+      } else if (particles.length > targetCount) {
+        particles = particles.slice(0, targetCount);
+      }
+    }
+
+    function onPointerMove(e: PointerEvent) {
+      const rect = canvas!.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+      mouse.active = true;
+    }
+    function onPointerLeave() {
+      mouse.active = false;
+      mouse.down = false;
+    }
+    function onPointerDown(e: PointerEvent) {
+      const rect = canvas!.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+      mouse.active = true;
+      mouse.down = true;
+    }
+    function onPointerUp() {
+      mouse.down = false;
+    }
+
+    function colorWithAlpha(hexOrHsl: string, alpha: number, hue?: number): string {
+      const cfg = configRef.current;
+      if (cfg.rainbowMode && hue !== undefined) {
+        const [r, g, b] = hslToRgb(hue, 0.85, 0.55);
+        return `rgba(${r | 0},${g | 0},${b | 0},${alpha})`;
+      }
+      const [r, g, b] = hexToRgb(hexOrHsl);
+      return `rgba(${r},${g},${b},${alpha})`;
+    }
+
+    function step() {
+      const cfg = configRef.current;
+      if (!ctx || !canvas) return;
+      ctx.clearRect(0, 0, width, height);
+      hueCycle = (hueCycle + 0.15) % 360;
+
+      for (const p of particles) {
+        p.x += p.vx * cfg.speed;
+        p.y += p.vy * cfg.speed;
+
+        if (p.x < 0 || p.x > width) p.vx *= -1;
+        if (p.y < 0 || p.y > height) p.vy *= -1;
+        p.x = Math.max(0, Math.min(width, p.x));
+        p.y = Math.max(0, Math.min(height, p.y));
+
+        if (mouse.active) {
+          const dx = p.x - mouse.x;
+          const dy = p.y - mouse.y;
+          const dist = Math.hypot(dx, dy) || 1;
+          const attracting = cfg.interaction === "attract" && mouse.down;
+          const repelling = cfg.interaction === "repel" || (cfg.interaction === "attract" && !mouse.down);
+
+          if (attracting && dist < MOUSE_RADIUS * 2.2) {
+            const force = (1 - dist / (MOUSE_RADIUS * 2.2)) * 0.6;
+            p.vx -= (dx / dist) * force;
+            p.vy -= (dy / dist) * force;
+          } else if (repelling && dist < MOUSE_RADIUS) {
+            const force = (1 - dist / MOUSE_RADIUS) * 0.8;
+            p.vx += (dx / dist) * force;
+            p.vy += (dy / dist) * force;
+          }
+
+          const maxV = 2.2;
+          const v = Math.hypot(p.vx, p.vy);
+          if (v > maxV) {
+            p.vx = (p.vx / v) * maxV;
+            p.vy = (p.vy / v) * maxV;
+          }
+        }
+
+        // gentle damping back toward base drift speed
+        p.vx *= 0.985;
+        p.vy *= 0.985;
+      }
+
+      // connections
+      for (let i = 0; i < particles.length; i++) {
+        const a = particles[i];
+        for (let j = i + 1; j < particles.length; j++) {
+          const b = particles[j];
+          const dx = a.x - b.x;
+          const dy = a.y - b.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist < cfg.connectDistance) {
+            const alpha = (1 - dist / cfg.connectDistance) * 0.5;
+            const grad = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
+            const hueA = cfg.rainbowMode ? (a.hue + hueCycle) % 360 : 0;
+            const hueB = cfg.rainbowMode ? (b.hue + hueCycle) % 360 : 0;
+            grad.addColorStop(0, colorWithAlpha(a.color, alpha, hueA));
+            grad.addColorStop(1, colorWithAlpha(b.color, alpha, hueB));
+            ctx.strokeStyle = grad;
+            ctx.lineWidth = cfg.lineThickness;
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.stroke();
+          }
+        }
+      }
+
+      // dots
+      for (const p of particles) {
+        const hue = cfg.rainbowMode ? (p.hue + hueCycle) % 360 : 0;
+        ctx.beginPath();
+        ctx.fillStyle = colorWithAlpha(p.color, 0.95, hue);
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      rafId = requestAnimationFrame(step);
+    }
+
+    resize();
+    const ro = new ResizeObserver(resize);
+    if (canvas.parentElement) ro.observe(canvas.parentElement);
+
+    canvas.addEventListener("pointermove", onPointerMove);
+    canvas.addEventListener("pointerleave", onPointerLeave);
+    canvas.addEventListener("pointerdown", onPointerDown);
+    window.addEventListener("pointerup", onPointerUp);
+
+    rafId = requestAnimationFrame(step);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      ro.disconnect();
+      canvas.removeEventListener("pointermove", onPointerMove);
+      canvas.removeEventListener("pointerleave", onPointerLeave);
+      canvas.removeEventListener("pointerdown", onPointerDown);
+      window.removeEventListener("pointerup", onPointerUp);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className={className}
+      style={{
+        position: "absolute",
+        inset: 0,
+        width: "100%",
+        height: "100%",
+        pointerEvents: "auto",
+        touchAction: "none",
+      }}
+      aria-hidden="true"
+    />
+  );
+}

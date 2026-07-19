@@ -11,6 +11,17 @@ import { requireAdmin } from "@/lib/auth-server";
 const SETTINGS_ID = "singleton";
 
 export type HomeBackgroundMode = "tile" | "cover";
+export type ParticlesInteraction = "repel" | "attract";
+
+export interface ParticlesSettingsInput {
+  particlesEnabled: boolean;
+  particlesColors: string;
+  particlesRainbowMode: boolean;
+  particlesSpeed: number;
+  particlesConnectDistance: number;
+  particlesLineThickness: number;
+  particlesInteraction: ParticlesInteraction;
+}
 
 const getPlatformSettingsCached = unstable_cache(
   async () =>
@@ -37,6 +48,23 @@ export async function updateHomeSectionBackground(
     where: { id: SETTINGS_ID },
     update: { homeSectionBackgroundUrl, homeSectionBackgroundMode },
     create: { id: SETTINGS_ID, homeSectionBackgroundUrl, homeSectionBackgroundMode },
+  });
+
+  revalidatePath("/");
+  revalidatePath("/admin/settings");
+  revalidateTag("platform-settings");
+  return { success: true, data: undefined };
+}
+
+export async function updateParticlesSettings(
+  input: ParticlesSettingsInput
+): Promise<ActionResult> {
+  await requireAdmin();
+
+  await db.platformSettings.upsert({
+    where: { id: SETTINGS_ID },
+    update: { ...input },
+    create: { id: SETTINGS_ID, ...input },
   });
 
   revalidatePath("/");
