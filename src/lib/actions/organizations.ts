@@ -102,48 +102,6 @@ export async function getOrgDashboardStats(orgSlug: string) {
   };
 }
 
-export async function getOrgMemberCourseActivity(orgSlug: string) {
-  const org = await db.organization.findUnique({
-    where: { slug: orgSlug },
-    include: { members: { select: { userId: true } } },
-  });
-  if (!org) return [];
-
-  const memberIds = org.members.map((m) => m.userId);
-  if (memberIds.length === 0) return [];
-
-  const grouped = await db.enrollment.groupBy({
-    by: ["courseId"],
-    where: { userId: { in: memberIds } },
-    _count: { userId: true },
-  });
-
-  if (grouped.length === 0) return [];
-
-  const courseIds = grouped.map((g) => g.courseId);
-  const courses = await db.course.findMany({
-    where: { id: { in: courseIds }, status: "PUBLISHED" },
-    select: {
-      id: true,
-      title: true,
-      slug: true,
-      instructor: { select: { fullName: true } },
-    },
-  });
-
-  const countMap = Object.fromEntries(grouped.map((g) => [g.courseId, g._count.userId]));
-
-  return courses
-    .map((c) => ({
-      id: c.id,
-      title: c.title,
-      slug: c.slug,
-      instructorName: c.instructor.fullName,
-      enrolledMembers: countMap[c.id] ?? 0,
-    }))
-    .sort((a, b) => b.enrolledMembers - a.enrolledMembers);
-}
-
 export async function getOrgAnalytics(orgSlug: string) {
   const org = await db.organization.findUnique({
     where: { slug: orgSlug },
@@ -205,6 +163,54 @@ export async function updateOrganizationSettings(
   revalidatePath(`/org/${orgSlug}/dashboard`);
   revalidatePath("/organizations");
   revalidatePath("/admin/organizations");
+  revalidateTag("published-organizations");
+  return { success: true, data: undefined };
+}
+
+/**
+ * Mark (or unmark) a published course as offered by this organization.
+ * Org admins can only manage their own org's courses; platform staff can
+ * manage any org. No approval step — org admins are trusted to curate
+ * their own org's course listing directly.
+ */
+export async function setCourseOrganization(
+  actorUserId: string,
+  orgSlug: string,
+  courseId: string,
+  offered: boolean
+): Promise<ActionResult> {
+  const { user } = await requireUser();
+  if (user.id !== actorUserId) return { success: false, error: "Unauthorized." };
+
+  const isPlatformStaff = user.role === "ADMIN" || user.role === "MODERATOR";
+  let orgId: string;
+
+  if (isPlatformStaff) {
+    const org = await db.organization.findUnique({ where: { slug: orgSlug } });
+    if (!org) return { success: false, error: "Organization not found." };
+    orgId = org.id;
+  } else {
+    const access = await requireOrgAdmin(orgSlug, actorUserId);
+    if (!access.ok) return { success: false, error: access.error };
+    orgId = access.org.id;
+  }
+
+  const course = await db.course.findUnique({ where: { id: courseId } });
+  if (!course || course.status !== "PUBLISHED") {
+    return { success: false, error: "Course not found." };
+  }
+  if (offered && course.organizationId && course.organizationId !== orgId) {
+    return { success: false, error: "This course is already offered by another organization." };
+  }
+
+  await db.course.update({
+    where: { id: courseId },
+    data: { organizationId: offered ? orgId : null },
+  });
+
+  revalidatePath(`/org/${orgSlug}/courses`);
+  revalidatePath(`/organizations/${orgSlug}`);
+  revalidatePath(`/courses/${course.slug}`);
   revalidateTag("published-organizations");
   return { success: true, data: undefined };
 }
