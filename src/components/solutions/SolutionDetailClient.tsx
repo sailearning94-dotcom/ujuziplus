@@ -348,7 +348,7 @@ export function SolutionDetailClient({
               ) : (
                 <>
                   <p className="text-sm text-gray-600">
-                    Join to unlock step tracking, save your progress, and access the innovation lab workspace.
+                    Join to unlock step tracking and save your progress.
                   </p>
                   <Button disabled={isPending} className="w-full" size="lg" onClick={handleJoin}>
                     {isPending ? "Joining…" : "Start this solution"}

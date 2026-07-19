@@ -90,7 +90,7 @@ export async function joinSolution(userId: string, solutionSlug: string): Promis
   });
   revalidatePath("/solutions");
   revalidateTag("published-solutions");
-  revalidatePath("/dashboard/lab");
+  revalidatePath("/dashboard/solutions");
   return { success: true, data: undefined };
 }
 
@@ -196,7 +196,7 @@ export async function createSolutionDraft(
 
   revalidatePath("/solutions");
   revalidateTag("published-solutions");
-  revalidatePath("/dashboard/lab");
+  revalidatePath("/dashboard/solutions");
   return { success: true, data: { slug: solution.slug } };
 }
 
@@ -507,6 +507,6 @@ export async function deleteSolutionDraft(solutionId: string): Promise<ActionRes
 
   revalidatePath("/solutions");
   revalidateTag("published-solutions");
-  revalidatePath("/dashboard/lab");
+  revalidatePath("/dashboard/solutions");
   return { success: true, data: undefined };
 }

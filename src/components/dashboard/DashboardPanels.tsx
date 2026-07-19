@@ -21,9 +21,9 @@ const ACTIONS = [
     accent: "brand",
   },
   {
-    href: "/dashboard/lab",
-    label: "Innovation lab",
-    desc: "Hands-on labs",
+    href: "/dashboard/solutions",
+    label: "My solutions",
+    desc: "Track your submissions",
     icon: FlaskConical,
     accent: "navy",
   },

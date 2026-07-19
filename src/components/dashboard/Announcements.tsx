@@ -14,13 +14,6 @@ const ANNOUNCEMENTS = [
     tag: "Competition",
   },
   {
-    id: "a2",
-    title: "New lab: Motor Control with Arduino",
-    body: "Hands-on split-screen lab now in Innovation Lab.",
-    href: "/dashboard/lab",
-    tag: "Lab",
-  },
-  {
     id: "a3",
     title: "Platform maintenance — May 28",
     body: "Brief downtime 02:00–04:00 EAT.",

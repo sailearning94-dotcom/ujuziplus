@@ -41,7 +41,7 @@ export default async function DashboardPage() {
           primary={{ href: "/courses", label: "Browse courses" }}
           links={[
             { href: "/dashboard/community", label: "Community" },
-            { href: "/dashboard/lab", label: "Innovation lab" },
+            { href: "/dashboard/solutions", label: "My solutions" },
           ]}
         />
       </LearnerPageHero>

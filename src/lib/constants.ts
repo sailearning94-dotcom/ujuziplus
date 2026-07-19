@@ -52,7 +52,7 @@ export const NAV_STUDENT = [
   { href: "/dashboard/programs", label: "Programs", icon: "GraduationCap" },
   { href: "/dashboard/mentors", label: "Mentors", icon: "Users" },
   { href: "/kits", label: "Kit Store", icon: "Package" },
-  { href: "/dashboard/lab", label: "Innovation Lab", icon: "FlaskConical" },
+  { href: "/dashboard/solutions", label: "My Solutions", icon: "FlaskConical" },
   { href: "/dashboard/competitions", label: "Competitions", icon: "Trophy" },
   { href: "/dashboard/community", label: "Community", icon: "Users" },
   { href: "/dashboard/resources", label: "Resources", icon: "FolderOpen" },

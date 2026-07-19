@@ -235,7 +235,7 @@ export function SolutionEditorForm({
       const res = await deleteSolutionDraft(solutionId);
       if (res.success) {
         showToast("Draft deleted", "success");
-        router.push("/dashboard/lab");
+        router.push("/dashboard/solutions");
       } else showToast(!res.success ? res.error : "Failed", "error");
     });
   };

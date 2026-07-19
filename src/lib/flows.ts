@@ -240,15 +240,6 @@ export const PLATFORM_FLOWS: FlowNode[] = [
         ],
       },
       {
-        id: "stu-lab",
-        level: "L1",
-        title: "Innovation lab",
-        route: "/dashboard/lab",
-        children: [
-          { id: "stu-lab-steps", level: "L4", title: "Mark step complete", action: "toast" },
-        ],
-      },
-      {
         id: "stu-settings",
         level: "L1",
         title: "Settings",
@@ -380,7 +371,7 @@ export const ALL_ROUTES = [
   "/dashboard/community/post/[postId]",
   "/dashboard/resources",
   "/dashboard/organizations",
-  "/dashboard/lab",
+  "/dashboard/solutions",
   "/dashboard/projects",
   "/dashboard/projects/new",
   "/dashboard/certificates",
