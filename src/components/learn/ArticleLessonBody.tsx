@@ -64,7 +64,9 @@ export function ArticleLessonBody({
   return (
     <div className={isPdf ? "" : "max-w-2xl"}>
       {isPdf ? (
-        <PdfViewer url={pdfUrl} />
+        <div className="-mx-4 w-[calc(100%+2rem)] sm:-mx-6 sm:w-[calc(100%+3rem)]">
+          <PdfViewer url={pdfUrl} />
+        </div>
       ) : (
         <div className="prose prose-sm max-w-none whitespace-pre-wrap text-gray-700">{body}</div>
       )}
