@@ -62,7 +62,7 @@ export function ArticleLessonBody({
   }, [body, fire, onExplored]);
 
   return (
-    <div className="max-w-2xl">
+    <div className={isPdf ? "" : "max-w-2xl"}>
       {isPdf ? (
         <PdfViewer url={pdfUrl} />
       ) : (

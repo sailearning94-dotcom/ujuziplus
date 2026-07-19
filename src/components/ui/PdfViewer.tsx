@@ -59,7 +59,7 @@ export function PdfViewer({ url, title, defaultExpanded = true }: Props) {
             src={`${url}#toolbar=1&navpanes=0&scrollbar=1&view=FitH`}
             title={fileName}
             className="w-full border-0"
-            style={{ height: fullscreen ? "100%" : "680px" }}
+            style={{ height: fullscreen ? "100%" : "calc(100vh - 220px)", minHeight: 500 }}
           />
         </div>
       )}
