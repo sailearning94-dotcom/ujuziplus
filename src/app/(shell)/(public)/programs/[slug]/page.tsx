@@ -102,18 +102,20 @@ export default async function ProgramDetailPage({ params }: { params: { slug: st
         {program.organization && (
           <Link
             href={`/org/${program.organization.slug}`}
-            className="mt-3 inline-flex items-center gap-1.5 text-sm text-gray-500 hover:text-brand transition-colors"
+            className="mt-3 inline-flex items-center gap-2 text-sm text-gray-500 hover:text-brand transition-colors"
           >
             {program.organization.logoUrl ? (
               <Image
                 src={program.organization.logoUrl}
                 alt=""
-                width={18}
-                height={18}
-                className="rounded object-contain"
+                width={28}
+                height={28}
+                className="shrink-0 rounded-md border border-gray-200/80 bg-white object-contain p-0.5"
               />
             ) : (
-              <Building2 className="h-4 w-4" />
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-gray-200/80 bg-gray-50">
+                <Building2 className="h-4 w-4 text-gray-400" />
+              </span>
             )}
             Published by: {program.organization.name}
           </Link>
