@@ -12,6 +12,7 @@ import { getFeaturedMentors } from "@/lib/actions/mentors";
 import { getPublishedBlogPosts } from "@/lib/actions/blog";
 import { getShowcaseProjects } from "@/lib/actions/showcase";
 import { getPublishedProjects } from "@/lib/actions/projects";
+import { getPlatformSettings } from "@/lib/actions/platform-settings";
 import { formatDateTz } from "@/lib/utils";
 import { HomePageClient } from "./HomePageClient";
 
@@ -33,6 +34,7 @@ export default async function HomePage() {
     blogPosts,
     showcaseProjects,
     innovationProjects,
+    platformSettings,
   ] =
     await Promise.all([
       getPrograms().catch(() => []),
@@ -46,6 +48,7 @@ export default async function HomePage() {
       getPublishedBlogPosts().catch(() => []),
       getShowcaseProjects().catch(() => []),
       getPublishedProjects().catch(() => []),
+      getPlatformSettings().catch(() => null),
     ]);
 
   const kitItems = kits.slice(0, 12);
@@ -62,6 +65,7 @@ export default async function HomePage() {
   return (
     <HomePageClient
       isAuthenticated={!!userId}
+      homeSectionBackgroundUrl={platformSettings?.homeSectionBackgroundUrl ?? null}
       stats={{
         programCount: programs.length,
         courseCount: courses.length,

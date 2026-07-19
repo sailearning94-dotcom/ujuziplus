@@ -1559,3 +1559,13 @@ model ShowcaseLike {
   @@index([userId])
   @@map("showcase_likes")
 }
+
+// ─── Platform-wide settings (singleton) ────────────────────────────────────
+
+model PlatformSettings {
+  id                        String   @id @default("singleton")
+  homeSectionBackgroundUrl  String?
+  updatedAt                 DateTime @updatedAt
+
+  @@map("platform_settings")
+}

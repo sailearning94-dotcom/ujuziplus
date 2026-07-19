@@ -144,6 +144,7 @@ export function HomePageClient({
   studentShowcase,
   featuredInnovationProjects,
   aiRoboticsCourses,
+  homeSectionBackgroundUrl,
 }: {
   continueCourse: ContinueCourse | null;
   pendingProgram: { title: string; slug: string; startDate: string; endDate: string; format: string } | null;
@@ -161,6 +162,7 @@ export function HomePageClient({
   studentShowcase: ShowcaseItem[];
   featuredInnovationProjects: InnovationProjectItem[];
   aiRoboticsCourses: CourseItem[];
+  homeSectionBackgroundUrl?: string | null;
 }) {
   const spotlightCourse =
     courses.find((c) => c.thumbnailUrl) ?? courses[0] ?? null;
@@ -253,6 +255,18 @@ export function HomePageClient({
         </Reveal>
       )}
 
+      <Box
+        sx={
+          homeSectionBackgroundUrl
+            ? {
+                backgroundImage: `url(${homeSectionBackgroundUrl})`,
+                backgroundSize: "cover",
+                backgroundPosition: "top center",
+                backgroundRepeat: "no-repeat",
+              }
+            : undefined
+        }
+      >
       {spotlightMentor && (
         <DossierSection align="right">
           <Box sx={contentShellSx}>
@@ -477,6 +491,7 @@ export function HomePageClient({
           </Box>
         </Reveal>
       )}
+      </Box>
     </Box>
   );
 }

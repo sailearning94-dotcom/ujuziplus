@@ -2,8 +2,12 @@ import Link from "next/link";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PLATFORM } from "@/lib/constants";
+import { getPlatformSettings } from "@/lib/actions/platform-settings";
+import { HomeBackgroundSetting } from "@/components/admin/HomeBackgroundSetting";
 
-export default function AdminSettingsPage() {
+export default async function AdminSettingsPage() {
+  const settings = await getPlatformSettings();
+
   return (
     <div className="max-w-2xl">
       <h1 className="text-2xl font-bold mb-2">Platform settings</h1>
@@ -11,6 +15,15 @@ export default function AdminSettingsPage() {
         Core platform configuration. Advanced settings (revenue split, feature flags, email
         templates) are managed via environment variables for now.
       </p>
+
+      <Card className="p-4 space-y-4 mb-4">
+        <h2 className="font-semibold text-sm">Homepage appearance</h2>
+        <p className="text-xs text-gray-500">
+          Set a custom background image for the homepage, applied from the mentor spotlight
+          section down to the bottom of the page.
+        </p>
+        <HomeBackgroundSetting initialUrl={settings.homeSectionBackgroundUrl} />
+      </Card>
 
       <Card className="p-4 space-y-4 mb-4">
         <h2 className="font-semibold text-sm">General</h2>
