@@ -6,7 +6,7 @@ import { requireOrgPageAccess } from "@/lib/org-access";
 import { notFound } from "next/navigation";
 
 export default async function OrgDashboardPage({ params }: { params: { slug: string } }) {
-  const { isOrgAdmin, isOrgStaff } = await requireOrgPageAccess(params.slug);
+  const { isOrgAdmin } = await requireOrgPageAccess(params.slug);
   const data = await getOrgDashboardStats(params.slug);
   if (!data) notFound();
 
@@ -20,23 +20,14 @@ export default async function OrgDashboardPage({ params }: { params: { slug: str
           {stats.memberCount.toLocaleString()} members
           {org.isVerified && " · Verified partner"}
         </p>
-        {!isOrgStaff && (
-          <p className="mt-2 text-sm text-blue-100/90">
-            Member view — contact your organization admin for procurement and settings.
-          </p>
-        )}
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {[
           { label: "Courses offered", value: stats.coursesOffered },
-          ...(isOrgStaff
-            ? [
-                { label: "Kit units on hand", value: stats.kitUnitsOnHand },
-                { label: "Pending kit requests", value: stats.pendingKitRequests },
-                { label: "Pending invites", value: stats.pendingInvites },
-              ]
-            : []),
+          { label: "Kit units on hand", value: stats.kitUnitsOnHand },
+          { label: "Pending kit requests", value: stats.pendingKitRequests },
+          { label: "Pending invites", value: stats.pendingInvites },
         ].map((s) => (
           <Card key={s.label} className="p-4">
             <p className="text-sm text-gray-500">{s.label}</p>
@@ -57,28 +48,24 @@ export default async function OrgDashboardPage({ params }: { params: { slug: str
           )}
           <li>
             <Link href={`/org/${params.slug}/kits`} className="text-brand hover:underline">
-              {isOrgStaff ? "Kit inventory & procurement" : "View kit catalog"}
+              Kit inventory & procurement
             </Link>
-            {isOrgStaff && stats.pendingKitRequests > 0 && (
+            {stats.pendingKitRequests > 0 && (
               <Badge variant="warning" className="ml-2">
                 {stats.pendingKitRequests} pending
               </Badge>
             )}
           </li>
-          {isOrgStaff && (
-            <>
-              <li>
-                <Link href={`/org/${params.slug}/courses`} className="text-brand hover:underline">
-                  Organization courses
-                </Link>
-              </li>
-              <li>
-                <Link href={`/org/${params.slug}/programs`} className="text-brand hover:underline">
-                  Programs & bootcamps
-                </Link>
-              </li>
-            </>
-          )}
+          <li>
+            <Link href={`/org/${params.slug}/courses`} className="text-brand hover:underline">
+              Organization courses
+            </Link>
+          </li>
+          <li>
+            <Link href={`/org/${params.slug}/programs`} className="text-brand hover:underline">
+              Programs & bootcamps
+            </Link>
+          </li>
           {isOrgAdmin && (
             <li>
               <Link href={`/org/${params.slug}/analytics`} className="text-brand hover:underline">

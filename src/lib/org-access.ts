@@ -24,8 +24,13 @@ export async function requireOrgPageAccess(orgSlug: string, callbackPath?: strin
   const isPlatformStaff =
     session.user.role === "ADMIN" || session.user.role === "MODERATOR";
 
-  if (!membership && !isPlatformStaff) {
-    redirect("/dashboard/organizations");
+  const isStaffMember =
+    membership?.role === "ADMIN" || membership?.role === "INSTRUCTOR";
+
+  // The portal only has content for org admins/instructors — regular
+  // members have nothing to do here, so send them to the public org page.
+  if (!isStaffMember && !isPlatformStaff) {
+    redirect(`/organizations/${org.slug}`);
   }
 
   return {
@@ -60,19 +65,14 @@ export async function requireOrgStaff(orgSlug: string) {
   return ctx;
 }
 
-export function getOrgNavItems(
-  orgSlug: string,
-  access: { isOrgAdmin: boolean; isOrgStaff: boolean }
-) {
-  const items = [{ href: `/org/${orgSlug}/dashboard`, label: "Overview" }];
-  if (access.isOrgStaff) {
-    items.push(
-      { href: `/org/${orgSlug}/courses`, label: "Courses" },
-      { href: `/org/${orgSlug}/kits`, label: "Learning Kits" },
-      { href: `/org/${orgSlug}/programs`, label: "Programs" },
-      { href: `/org/${orgSlug}/competitions`, label: "Competitions" }
-    );
-  }
+export function getOrgNavItems(orgSlug: string, access: { isOrgAdmin: boolean }) {
+  const items = [
+    { href: `/org/${orgSlug}/dashboard`, label: "Overview" },
+    { href: `/org/${orgSlug}/courses`, label: "Courses" },
+    { href: `/org/${orgSlug}/kits`, label: "Learning Kits" },
+    { href: `/org/${orgSlug}/programs`, label: "Programs" },
+    { href: `/org/${orgSlug}/competitions`, label: "Competitions" },
+  ];
   if (access.isOrgAdmin) {
     items.push(
       { href: `/org/${orgSlug}/members`, label: "Members" },
