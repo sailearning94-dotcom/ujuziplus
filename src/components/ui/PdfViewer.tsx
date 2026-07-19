@@ -7,19 +7,24 @@ type Props = {
   url: string;
   title?: string;
   defaultExpanded?: boolean;
+  /** Locks to the top of the viewport and fills the full screen height as the page scrolls. */
+  fullBleed?: boolean;
 };
 
-export function PdfViewer({ url, title, defaultExpanded = true }: Props) {
+export function PdfViewer({ url, title, defaultExpanded = true, fullBleed = false }: Props) {
   const [expanded, setExpanded] = useState(defaultExpanded);
   const [fullscreen, setFullscreen] = useState(false);
 
   const fileName = title ?? url.split("/").pop()?.split("?")[0] ?? "Document";
 
   return (
-    <div className={`rounded-xl border border-gray-200 overflow-hidden bg-white shadow-sm
-      ${fullscreen ? "fixed inset-4 z-50 flex flex-col shadow-2xl" : ""}`}>
+    <div
+      className={`bg-white
+      ${fullBleed ? "sticky top-0 z-10 flex h-[calc(100vh-3.5rem)] flex-col" : "rounded-xl border border-gray-200 overflow-hidden shadow-sm"}
+      ${fullscreen ? "fixed inset-4 z-50 flex flex-col rounded-xl border border-gray-200 shadow-2xl" : ""}`}
+    >
       {/* Header bar */}
-      <div className="flex items-center justify-between px-4 py-2.5 bg-gray-50 border-b border-gray-100">
+      <div className="flex shrink-0 items-center justify-between px-4 py-2.5 bg-gray-50 border-b border-gray-100">
         <div className="flex items-center gap-2 min-w-0">
           <FileText className="h-4 w-4 text-red-500 shrink-0" />
           <span className="text-sm font-medium text-gray-700 truncate">{fileName}</span>
@@ -54,12 +59,16 @@ export function PdfViewer({ url, title, defaultExpanded = true }: Props) {
 
       {/* PDF iframe */}
       {expanded && (
-        <div className={fullscreen ? "flex-1 overflow-hidden" : ""}>
+        <div className={fullBleed || fullscreen ? "flex-1 overflow-hidden" : ""}>
           <iframe
             src={`${url}#toolbar=1&navpanes=0&scrollbar=1&view=FitH`}
             title={fileName}
             className="w-full border-0"
-            style={{ height: fullscreen ? "100%" : "calc(100vh - 220px)", minHeight: 500 }}
+            style={
+              fullBleed || fullscreen
+                ? { height: "100%" }
+                : { height: "calc(100vh - 220px)", minHeight: 500 }
+            }
           />
         </div>
       )}
