@@ -17,6 +17,8 @@ interface Particle {
   y: number;
   vx: number;
   vy: number;
+  baseVx: number;
+  baseVy: number;
   r: number;
   color: string;
   hue: number;
@@ -81,11 +83,15 @@ export function ParticleNetwork({
     function makeParticle(): Particle {
       const hue = Math.random() * 360;
       const color = palette[Math.floor(Math.random() * palette.length)];
+      const baseVx = (Math.random() - 0.5) * 0.7;
+      const baseVy = (Math.random() - 0.5) * 0.7;
       return {
         x: Math.random() * width,
         y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.4,
-        vy: (Math.random() - 0.5) * 0.4,
+        vx: baseVx,
+        vy: baseVy,
+        baseVx,
+        baseVy,
         r: 1.5 + Math.random() * 1.8,
         color,
         hue,
@@ -160,8 +166,14 @@ export function ParticleNetwork({
         p.x += p.vx * cfg.speed;
         p.y += p.vy * cfg.speed;
 
-        if (p.x < 0 || p.x > width) p.vx *= -1;
-        if (p.y < 0 || p.y > height) p.vy *= -1;
+        if (p.x < 0 || p.x > width) {
+          p.vx *= -1;
+          p.baseVx *= -1;
+        }
+        if (p.y < 0 || p.y > height) {
+          p.vy *= -1;
+          p.baseVy *= -1;
+        }
         p.x = Math.max(0, Math.min(width, p.x));
         p.y = Math.max(0, Math.min(height, p.y));
 
@@ -190,9 +202,10 @@ export function ParticleNetwork({
           }
         }
 
-        // gentle damping back toward base drift speed
-        p.vx *= 0.985;
-        p.vy *= 0.985;
+        // ease back toward this particle's constant ambient drift, rather than
+        // decaying to a full stop — keeps the field alive when the mouse is idle
+        p.vx += (p.baseVx - p.vx) * 0.02;
+        p.vy += (p.baseVy - p.vy) * 0.02;
       }
 
       // connections
