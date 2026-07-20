@@ -6,7 +6,6 @@ import Link from "next/link";
 import { LearnerPageHero } from "@/components/shared/LearnerPageHero";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Reveal } from "@/components/motion/Reveal";
 import { cn } from "@/lib/utils";
 import { BookOpen } from "lucide-react";
 import type { OpenKnowledgeCategory } from "@prisma/client";
@@ -52,7 +51,6 @@ export function OpenKnowledgeClient({ resources }: { resources: ResourceItem[] }
         subtitle="A free digital knowledge hub: tutorials, AI & IoT resources, STEM teaching materials, entrepreneurship guides, and research — open to every learner and innovator."
       />
 
-      <Reveal delay={0.06}>
         <div className="mt-6 flex flex-col gap-6 lg:flex-row">
           <Card className="h-fit w-full shrink-0 p-4 lg:w-56">
             <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
@@ -167,7 +165,6 @@ export function OpenKnowledgeClient({ resources }: { resources: ResourceItem[] }
             )}
           </div>
         </div>
-      </Reveal>
     </div>
   );
 }
