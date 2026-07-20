@@ -1207,6 +1207,10 @@
     max-width: 640px;
   }
 
+  .dossier-section__inner--full {
+    max-width: none;
+  }
+
   .dossier-section--center .dossier-section__inner {
     max-width: 720px;
     text-align: center;

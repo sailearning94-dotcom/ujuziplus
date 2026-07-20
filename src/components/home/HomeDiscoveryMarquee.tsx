@@ -220,9 +220,6 @@ export function OrgMarquee({
           />
         ))}
       </MarqueeRow>
-      <div className="org-marquee-section__cta">
-        <Link href="/organizations">Explore organizations →</Link>
-      </div>
     </section>
   );
 }

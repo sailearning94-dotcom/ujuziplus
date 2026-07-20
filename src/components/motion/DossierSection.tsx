@@ -12,6 +12,8 @@ type DossierSectionProps = {
   delay?: number;
   /** How much of the element must enter the viewport (0–1). */
   amount?: number;
+  /** Skip the narrow 640px dossier-card width cap — for full-width content like catalog rails. */
+  fullWidth?: boolean;
 };
 
 const slideVariants = {
@@ -42,6 +44,7 @@ export function DossierSection({
   align = "left",
   delay = 0,
   amount = 0.15,
+  fullWidth = false,
 }: DossierSectionProps) {
   // useReducedMotion() returns null on the server and the real OS
   // preference on the client's first render, so branching JSX structure on
@@ -60,7 +63,7 @@ export function DossierSection({
   return (
     <div className={cn("dossier-section", alignClass, className)}>
       <motion.div
-        className="dossier-section__inner"
+        className={cn("dossier-section__inner", fullWidth && "dossier-section__inner--full")}
         initial={animationsDisabled ? false : "hidden"}
         whileInView={animationsDisabled ? undefined : "visible"}
         animate={animationsDisabled ? "visible" : undefined}

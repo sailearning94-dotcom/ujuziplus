@@ -24,6 +24,10 @@ import { HomeShowcaseCard } from "@/components/home/HomeShowcaseCard";
 import { HomeCourseCard } from "@/components/home/HomeCourseCard";
 import type { SerializedMentor } from "@/lib/actions/mentors";
 
+const OrgMarquee = dynamic(
+  () => import("@/components/home/HomeDiscoveryMarquee").then((m) => ({ default: m.OrgMarquee })),
+  { loading: () => <div className="h-24 animate-pulse rounded-2xl bg-gray-100" /> }
+);
 const HomeQuickCoursePeek = dynamic(
   () => import("@/components/home/HomeQuickCoursePeek").then((m) => ({ default: m.HomeQuickCoursePeek })),
   { loading: () => <div className="h-48 animate-pulse rounded-2xl bg-gray-100" /> }
@@ -329,7 +333,7 @@ export function HomePageClient({
       )}
 
       {mentors.length >= 3 && (
-        <DossierSection align="left">
+        <DossierSection align="left" fullWidth>
           <Box sx={contentShellSx}>
             <HomeMentorRail mentors={mentors} />
           </Box>
@@ -338,7 +342,7 @@ export function HomePageClient({
 
       <div className="home-catalog-zone">
         {kits.length > 0 && (
-          <DossierSection align="right">
+          <DossierSection align="right" fullWidth>
             <Box sx={contentShellSx}>
               <HomeCatalogRail
                 title="Hands-on learning kits"
@@ -357,7 +361,7 @@ export function HomePageClient({
         )}
 
         {programs.length > 0 && (
-          <DossierSection align="left">
+          <DossierSection align="left" fullWidth>
             <Box sx={contentShellSx}>
               <HomeCatalogRail
                 title="Bootcamps & programs"
@@ -375,7 +379,7 @@ export function HomePageClient({
         )}
 
         {competitions.length > 0 && (
-          <DossierSection align="right">
+          <DossierSection align="right" fullWidth>
             <Box sx={contentShellSx}>
               <HomeCatalogRail
                 title="Competitions & challenges"
@@ -393,7 +397,7 @@ export function HomePageClient({
         )}
 
         {aiRoboticsCourses.length > 0 && (
-          <DossierSection align="left">
+          <DossierSection align="left" fullWidth>
             <Box sx={contentShellSx}>
               <HomeCatalogRail
                 title="AI & Robotics activities"
@@ -412,7 +416,7 @@ export function HomePageClient({
         )}
 
         {featuredInnovationProjects.length > 0 && (
-          <DossierSection align="right">
+          <DossierSection align="right" fullWidth>
             <Box sx={contentShellSx}>
               <HomeCatalogRail
                 title="Featured innovation projects"
@@ -437,7 +441,7 @@ export function HomePageClient({
         )}
 
         {studentShowcase.length > 0 && (
-          <DossierSection align="left">
+          <DossierSection align="left" fullWidth>
             <Box sx={contentShellSx}>
               <HomeCatalogRail
                 title="Student innovation showcase"
@@ -456,7 +460,7 @@ export function HomePageClient({
         )}
 
         {stemUpdates.length > 0 && (
-          <DossierSection align="right">
+          <DossierSection align="right" fullWidth>
             <Box sx={contentShellSx}>
               <HomeCatalogRail
                 title="Latest STEM & technology updates"
@@ -474,7 +478,7 @@ export function HomePageClient({
         )}
 
         {womenInTechStories.length > 0 && (
-          <DossierSection align="left">
+          <DossierSection align="left" fullWidth>
             <Box sx={contentShellSx}>
               <HomeCatalogRail
                 title="Women in technology stories"
@@ -492,7 +496,7 @@ export function HomePageClient({
         )}
 
         {communityNews.length > 0 && (
-          <DossierSection align="right">
+          <DossierSection align="right" fullWidth>
             <Box sx={contentShellSx}>
               <HomeCatalogRail
                 title="Community innovation news"
@@ -515,6 +519,12 @@ export function HomePageClient({
           <HomeValueBand />
         </Box>
       </Reveal>
+
+      {organizations.length >= 3 && (
+        <Reveal className="mt-8" delay={0.05}>
+          <OrgMarquee orgs={organizations} />
+        </Reveal>
+      )}
 
       {!isAuthenticated && (
         <Reveal className="mt-8" delay={0.05}>
