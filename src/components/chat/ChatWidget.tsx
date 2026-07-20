@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect, type FormEvent } from "react";
 import { MessageCircle, X, Send } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { PLATFORM } from "@/lib/constants";
 
 interface ChatMessage {
   id: string;
@@ -13,7 +14,7 @@ interface ChatMessage {
 const WELCOME_MESSAGE: ChatMessage = {
   id: "welcome",
   role: "assistant",
-  text: "Hi! I'm the UjuziLab assistant. Ask me anything about courses, kits, or programs.",
+  text: `Hi! I'm the ${PLATFORM.name} assistant. Ask me anything about courses, kits, or programs.`,
 };
 
 const PLACEHOLDER_REPLY =
@@ -50,10 +51,10 @@ export function ChatWidget() {
   return (
     <div className="chat-widget" aria-live="polite">
       {open && (
-        <div className="chat-widget__panel" role="dialog" aria-label="UjuziLab chat assistant">
+        <div className="chat-widget__panel" role="dialog" aria-label={`${PLATFORM.name} chat assistant`}>
           <div className="chat-widget__header">
             <div className="chat-widget__header-copy">
-              <span className="chat-widget__title">UjuziLab Assistant</span>
+              <span className="chat-widget__title">{PLATFORM.name} Assistant</span>
               <span className="chat-widget__status">
                 <span className="chat-widget__status-dot" aria-hidden />
                 Replies coming soon
