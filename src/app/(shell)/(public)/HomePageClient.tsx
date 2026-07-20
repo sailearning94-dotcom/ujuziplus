@@ -17,7 +17,6 @@ import { HomeFeaturedSpotlight } from "@/components/home/HomeFeaturedSpotlight";
 import { HomeCatalogRail } from "@/components/home/HomeCatalogRail";
 import { HomeProgramCard } from "@/components/home/HomeProgramCard";
 import { HomeCompetitionCard } from "@/components/home/HomeCompetitionCard";
-import { HomeValueBand } from "@/components/home/HomeValueBand";
 import { HomeContinueCompact } from "@/components/home/HomeContinueCompact";
 import { HomeNewsCard } from "@/components/home/HomeNewsCard";
 import { HomeShowcaseCard } from "@/components/home/HomeShowcaseCard";
@@ -514,12 +513,6 @@ export function HomePageClient({
           </DossierSection>
         )}
       </div>
-
-      <Reveal className="mt-8" delay={0.04}>
-        <Box sx={contentShellSx}>
-          <HomeValueBand />
-        </Box>
-      </Reveal>
 
       {organizations.length >= 3 && (
         <Reveal className="mt-8" delay={0.05}>
