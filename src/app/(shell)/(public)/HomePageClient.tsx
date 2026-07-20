@@ -24,10 +24,6 @@ import { HomeShowcaseCard } from "@/components/home/HomeShowcaseCard";
 import { HomeCourseCard } from "@/components/home/HomeCourseCard";
 import type { SerializedMentor } from "@/lib/actions/mentors";
 
-const OrgMarquee = dynamic(
-  () => import("@/components/home/HomeDiscoveryMarquee").then((m) => ({ default: m.OrgMarquee })),
-  { loading: () => <div className="h-24 animate-pulse rounded-2xl bg-gray-100" /> }
-);
 const HomeQuickCoursePeek = dynamic(
   () => import("@/components/home/HomeQuickCoursePeek").then((m) => ({ default: m.HomeQuickCoursePeek })),
   { loading: () => <div className="h-48 animate-pulse rounded-2xl bg-gray-100" /> }
@@ -519,12 +515,6 @@ export function HomePageClient({
           <HomeValueBand />
         </Box>
       </Reveal>
-
-      {organizations.length >= 3 && (
-        <Reveal className="mt-8" delay={0.05}>
-          <OrgMarquee orgs={organizations} />
-        </Reveal>
-      )}
 
       {!isAuthenticated && (
         <Reveal className="mt-8" delay={0.05}>

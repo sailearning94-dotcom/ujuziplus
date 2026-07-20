@@ -217,29 +217,67 @@ export function ParticleNetwork({
         p.vy += (p.baseVy - p.vy) * 0.02;
       }
 
-      // connections
-      for (let i = 0; i < particles.length; i++) {
-        const a = particles[i];
-        for (let j = i + 1; j < particles.length; j++) {
-          const b = particles[j];
-          const dx = a.x - b.x;
-          if (dx > cfg.connectDistance || dx < -cfg.connectDistance) continue;
-          const dy = a.y - b.y;
-          if (dy > cfg.connectDistance || dy < -cfg.connectDistance) continue;
-          const dist = Math.hypot(dx, dy);
-          if (dist < cfg.connectDistance) {
-            const alpha = (1 - dist / cfg.connectDistance) * 0.5;
-            const grad = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
-            const hueA = cfg.rainbowMode ? (a.hue + hueCycle) % 360 : 0;
-            const hueB = cfg.rainbowMode ? (b.hue + hueCycle) % 360 : 0;
-            grad.addColorStop(0, colorWithAlpha(a.color, alpha, hueA));
-            grad.addColorStop(1, colorWithAlpha(b.color, alpha, hueB));
-            ctx.strokeStyle = grad;
-            ctx.lineWidth = cfg.lineThickness;
-            ctx.beginPath();
-            ctx.moveTo(a.x, a.y);
-            ctx.lineTo(b.x, b.y);
-            ctx.stroke();
+      // connections — bucket particles into a uniform grid sized to
+      // connectDistance so each particle only checks nearby cells instead of
+      // every other particle on the page (critical once intensity/canvas
+      // height push particle counts into the hundreds).
+      const cellSize = Math.max(20, cfg.connectDistance);
+      const cols = Math.max(1, Math.ceil(width / cellSize));
+      const rows = Math.max(1, Math.ceil(height / cellSize));
+      const grid: Particle[][] = new Array(cols * rows);
+      for (const p of particles) {
+        const cx = Math.min(cols - 1, Math.max(0, Math.floor(p.x / cellSize)));
+        const cy = Math.min(rows - 1, Math.max(0, Math.floor(p.y / cellSize)));
+        const idx = cy * cols + cx;
+        (grid[idx] ??= []).push(p);
+      }
+
+      ctx.lineWidth = cfg.lineThickness;
+      const connectDistSq = cfg.connectDistance * cfg.connectDistance;
+
+      for (let cy = 0; cy < rows; cy++) {
+        for (let cx = 0; cx < cols; cx++) {
+          const cellParticles = grid[cy * cols + cx];
+          if (!cellParticles) continue;
+
+          for (let ni = 0; ni < 9; ni++) {
+            const nx = cx + (ni % 3) - 1;
+            const ny = cy + Math.floor(ni / 3) - 1;
+            if (nx < 0 || nx >= cols || ny < 0 || ny >= rows) continue;
+            const neighborIdx = ny * cols + nx;
+            if (neighborIdx < cy * cols + cx) continue; // each cell-pair once
+            const neighborParticles = grid[neighborIdx];
+            if (!neighborParticles) continue;
+
+            const sameCell = neighborIdx === cy * cols + cx;
+            for (let i = 0; i < cellParticles.length; i++) {
+              const a = cellParticles[i];
+              const startJ = sameCell ? i + 1 : 0;
+              for (let j = startJ; j < neighborParticles.length; j++) {
+                const b = neighborParticles[j];
+                const dx = a.x - b.x;
+                const dy = a.y - b.y;
+                const distSq = dx * dx + dy * dy;
+                if (distSq >= connectDistSq) continue;
+
+                const dist = Math.sqrt(distSq);
+                const alpha = (1 - dist / cfg.connectDistance) * 0.5;
+                if (cfg.rainbowMode) {
+                  const hueA = (a.hue + hueCycle) % 360;
+                  const hueB = (b.hue + hueCycle) % 360;
+                  const grad = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
+                  grad.addColorStop(0, colorWithAlpha(a.color, alpha, hueA));
+                  grad.addColorStop(1, colorWithAlpha(b.color, alpha, hueB));
+                  ctx.strokeStyle = grad;
+                } else {
+                  ctx.strokeStyle = colorWithAlpha(a.color, alpha);
+                }
+                ctx.beginPath();
+                ctx.moveTo(a.x, a.y);
+                ctx.lineTo(b.x, b.y);
+                ctx.stroke();
+              }
+            }
           }
         }
       }
