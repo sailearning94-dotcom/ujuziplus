@@ -397,7 +397,7 @@ export function HomePageClient({
         )}
 
         {aiRoboticsCourses.length > 0 && (
-          <DossierSection align="left" fullWidth>
+          <DossierSection align="right" fullWidth>
             <Box sx={contentShellSx}>
               <HomeCatalogRail
                 title="AI & Robotics activities"
@@ -406,6 +406,7 @@ export function HomePageClient({
                 seeAllLabel="All AI & Robotics"
                 itemWidth={280}
                 autoScroll
+                align="right"
               >
                 {aiRoboticsCourses.map((c) => (
                   <HomeCourseCard key={c.id} {...c} />

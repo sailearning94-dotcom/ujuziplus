@@ -724,6 +724,16 @@
     padding-inline: 2px;
   }
 
+  /* When there are fewer cards than fit the row, hug the right edge instead
+     of leaving them stranded on the left with empty space on the right. */
+  .home-carousel--justify-end .home-carousel {
+    display: flex;
+  }
+
+  .home-carousel--justify-end .home-carousel-track {
+    margin-left: auto;
+  }
+
   .home-carousel-item {
     flex-shrink: 0;
     scroll-snap-align: start;

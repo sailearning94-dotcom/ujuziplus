@@ -12,6 +12,7 @@ export function HomeCatalogRail({
   itemWidth = 280,
   autoScroll = false,
   layout = "carousel",
+  align = "left",
 }: {
   title: string;
   description?: string;
@@ -22,6 +23,8 @@ export function HomeCatalogRail({
   autoScroll?: boolean;
   /** "grid" wraps all cards in a responsive grid instead of a scrollable carousel. */
   layout?: "carousel" | "grid";
+  /** Which side the cards hug when there are too few to fill the row's width. */
+  align?: "left" | "right";
 }) {
   return (
     <section className="home-rail">
@@ -42,7 +45,12 @@ export function HomeCatalogRail({
       {layout === "grid" ? (
         <div className="home-rail-grid">{children}</div>
       ) : (
-        <HomeCarousel itemWidth={itemWidth} autoScroll={autoScroll} speed={0.35}>
+        <HomeCarousel
+          itemWidth={itemWidth}
+          autoScroll={autoScroll}
+          speed={0.35}
+          className={align === "right" ? "home-carousel--justify-end" : undefined}
+        >
           {children}
         </HomeCarousel>
       )}
