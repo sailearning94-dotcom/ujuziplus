@@ -1429,6 +1429,10 @@
     @apply mb-4 flex flex-wrap items-end justify-between gap-3;
   }
 
+  .home-rail__copy--right {
+    @apply text-right;
+  }
+
   .home-rail__title {
     @apply font-display text-xl font-bold tracking-tight text-navy md:text-[1.35rem];
   }
