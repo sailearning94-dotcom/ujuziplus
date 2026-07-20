@@ -137,10 +137,6 @@ export function ParticleNetwork({
       mouse.y = e.clientY - rect.top;
       mouse.active = true;
     }
-    function onPointerLeave() {
-      mouse.active = false;
-      mouse.down = false;
-    }
     function onPointerDown(e: PointerEvent) {
       const rect = canvas!.getBoundingClientRect();
       mouse.x = e.clientX - rect.left;
@@ -150,6 +146,13 @@ export function ParticleNetwork({
     }
     function onPointerUp() {
       mouse.down = false;
+    }
+    function onPointerOut(e: PointerEvent) {
+      // only deactivate when the pointer actually leaves the document/window
+      if (!e.relatedTarget) {
+        mouse.active = false;
+        mouse.down = false;
+      }
     }
 
     function colorWithAlpha(hexOrHsl: string, alpha: number, hue?: number): string {
@@ -257,20 +260,23 @@ export function ParticleNetwork({
     const ro = new ResizeObserver(resize);
     if (canvas.parentElement) ro.observe(canvas.parentElement);
 
-    canvas.addEventListener("pointermove", onPointerMove);
-    canvas.addEventListener("pointerleave", onPointerLeave);
-    canvas.addEventListener("pointerdown", onPointerDown);
+    // Listen on window rather than the canvas: normal page content (text,
+    // buttons, cards) sits above the canvas in paint order and would
+    // otherwise swallow pointer events before they ever reach it.
+    window.addEventListener("pointermove", onPointerMove);
+    window.addEventListener("pointerdown", onPointerDown);
     window.addEventListener("pointerup", onPointerUp);
+    document.addEventListener("pointerout", onPointerOut);
 
     rafId = requestAnimationFrame(step);
 
     return () => {
       cancelAnimationFrame(rafId);
       ro.disconnect();
-      canvas.removeEventListener("pointermove", onPointerMove);
-      canvas.removeEventListener("pointerleave", onPointerLeave);
-      canvas.removeEventListener("pointerdown", onPointerDown);
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerdown", onPointerDown);
       window.removeEventListener("pointerup", onPointerUp);
+      document.removeEventListener("pointerout", onPointerOut);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -284,8 +290,7 @@ export function ParticleNetwork({
         inset: 0,
         width: "100%",
         height: "100%",
-        pointerEvents: "auto",
-        touchAction: "none",
+        pointerEvents: "none",
       }}
       aria-hidden="true"
     />

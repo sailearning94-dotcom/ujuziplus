@@ -36,7 +36,7 @@ export function ParticleNetworkBackground({
         position: "absolute",
         inset: 0,
         zIndex: 0,
-        pointerEvents: "auto",
+        pointerEvents: "none",
       }}
     >
       <ParticleNetwork
