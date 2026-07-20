@@ -959,7 +959,7 @@
 
   /* ── Organizations marquee ── */
   .org-marquee-section {
-    @apply py-4;
+    @apply pt-4 pb-0;
   }
 
   .org-marquee-section__label {
