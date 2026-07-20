@@ -75,6 +75,7 @@ export default async function HomePage() {
       particlesLineThickness={platformSettings?.particlesLineThickness ?? 1}
       particlesInteraction={platformSettings?.particlesInteraction ?? "repel"}
       particlesScope={platformSettings?.particlesScope ?? "full"}
+      particlesIntensity={platformSettings?.particlesIntensity ?? 1}
       stats={{
         programCount: programs.length,
         courseCount: courses.length,

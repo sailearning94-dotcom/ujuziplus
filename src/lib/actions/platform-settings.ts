@@ -23,6 +23,7 @@ export interface ParticlesSettingsInput {
   particlesLineThickness: number;
   particlesInteraction: ParticlesInteraction;
   particlesScope: ParticlesScope;
+  particlesIntensity: number;
 }
 
 const getPlatformSettingsCached = unstable_cache(

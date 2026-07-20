@@ -46,6 +46,7 @@ export default async function AdminSettingsPage() {
           initialLineThickness={settings.particlesLineThickness}
           initialInteraction={settings.particlesInteraction}
           initialScope={settings.particlesScope}
+          initialIntensity={settings.particlesIntensity}
         />
       </Card>
 

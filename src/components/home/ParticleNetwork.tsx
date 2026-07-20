@@ -9,6 +9,8 @@ export interface ParticleNetworkProps {
   connectDistance?: number;
   lineThickness?: number;
   interaction?: "repel" | "attract";
+  /** Density multiplier on top of the default particle count. 1 = default. */
+  intensity?: number;
   className?: string;
 }
 
@@ -26,6 +28,7 @@ interface Particle {
 
 const BASE_AREA_PER_PARTICLE = 16000;
 const MAX_PARTICLES = 220;
+const MAX_INTENSITY = 4;
 const MOUSE_RADIUS = 160;
 
 function hexToRgb(hex: string): [number, number, number] {
@@ -55,11 +58,12 @@ export function ParticleNetwork({
   connectDistance = 140,
   lineThickness = 1,
   interaction = "repel",
+  intensity = 1,
   className,
 }: ParticleNetworkProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const configRef = useRef({ colors, rainbowMode, speed, connectDistance, lineThickness, interaction });
-  configRef.current = { colors, rainbowMode, speed, connectDistance, lineThickness, interaction };
+  const configRef = useRef({ colors, rainbowMode, speed, connectDistance, lineThickness, interaction, intensity });
+  configRef.current = { colors, rainbowMode, speed, connectDistance, lineThickness, interaction, intensity };
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -110,10 +114,12 @@ export function ParticleNetwork({
       canvas.style.height = `${height}px`;
       ctx?.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      const targetCount = Math.min(
+      const intensityFactor = Math.min(MAX_INTENSITY, Math.max(1, configRef.current.intensity));
+      const baseCount = Math.min(
         MAX_PARTICLES,
         Math.max(24, Math.round((width * height) / BASE_AREA_PER_PARTICLE))
       );
+      const targetCount = Math.round(baseCount * intensityFactor);
       if (particles.length === 0) {
         particles = Array.from({ length: targetCount }, makeParticle);
       } else if (particles.length < targetCount) {

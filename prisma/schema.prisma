@@ -1577,6 +1577,8 @@ model PlatformSettings {
   particlesSpeed            Float    @default(1)
   particlesConnectDistance  Int      @default(140)
   particlesLineThickness    Float    @default(1)
+  /// Density multiplier applied on top of the default particle count. 1 = current default.
+  particlesIntensity        Float    @default(1)
   /// "repel" (hover pushes particles away) or "attract" (click-drag pulls them in)
   particlesInteraction      String   @default("repel")
   /// "full" (entire homepage, top to bottom) or "belowFeatured" (from the

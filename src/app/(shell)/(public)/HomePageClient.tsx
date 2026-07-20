@@ -158,6 +158,7 @@ export function HomePageClient({
   particlesLineThickness,
   particlesInteraction,
   particlesScope,
+  particlesIntensity,
 }: {
   continueCourse: ContinueCourse | null;
   pendingProgram: { title: string; slug: string; startDate: string; endDate: string; format: string } | null;
@@ -185,6 +186,7 @@ export function HomePageClient({
   particlesLineThickness?: number;
   particlesInteraction?: string;
   particlesScope?: string;
+  particlesIntensity?: number;
 }) {
   const spotlightCourse =
     courses.find((c) => c.thumbnailUrl) ?? courses[0] ?? null;
@@ -204,6 +206,7 @@ export function HomePageClient({
             connectDistance={particlesConnectDistance ?? 140}
             lineThickness={particlesLineThickness ?? 1}
             interaction={particlesInteraction ?? "repel"}
+            intensity={particlesIntensity ?? 1}
           />
         )}
         <Box sx={{ position: "relative", zIndex: 1, pt: { xs: 2, md: 2.5 } }}>
@@ -278,6 +281,7 @@ export function HomePageClient({
           connectDistance={particlesConnectDistance ?? 140}
           lineThickness={particlesLineThickness ?? 1}
           interaction={particlesInteraction ?? "repel"}
+          intensity={particlesIntensity ?? 1}
         />
       )}
 

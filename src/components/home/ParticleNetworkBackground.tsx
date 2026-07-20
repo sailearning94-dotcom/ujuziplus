@@ -10,6 +10,7 @@ export interface ParticleNetworkBackgroundProps {
   connectDistance: number;
   lineThickness: number;
   interaction: string;
+  intensity: number;
 }
 
 export function ParticleNetworkBackground({
@@ -20,6 +21,7 @@ export function ParticleNetworkBackground({
   connectDistance,
   lineThickness,
   interaction,
+  intensity,
 }: ParticleNetworkBackgroundProps) {
   if (!enabled) return null;
 
@@ -44,6 +46,7 @@ export function ParticleNetworkBackground({
         connectDistance={connectDistance}
         lineThickness={lineThickness}
         interaction={interaction === "attract" ? "attract" : "repel"}
+        intensity={intensity}
       />
     </div>
   );

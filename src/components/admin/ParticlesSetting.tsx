@@ -22,6 +22,7 @@ export function ParticlesSetting({
   initialLineThickness,
   initialInteraction,
   initialScope,
+  initialIntensity,
 }: {
   initialEnabled: boolean;
   initialColors: string;
@@ -31,6 +32,7 @@ export function ParticlesSetting({
   initialLineThickness: number;
   initialInteraction: string;
   initialScope: string;
+  initialIntensity: number;
 }) {
   const router = useRouter();
   const showToast = useAppStore((s) => s.showToast);
@@ -48,6 +50,7 @@ export function ParticlesSetting({
   const [scope, setScope] = useState<ParticlesScope>(
     initialScope === "belowFeatured" ? "belowFeatured" : "full"
   );
+  const [intensity, setIntensity] = useState(initialIntensity || 1);
 
   const colorList = colors
     .split(",")
@@ -65,6 +68,7 @@ export function ParticlesSetting({
         particlesLineThickness: lineThickness,
         particlesInteraction: interaction,
         particlesScope: scope,
+        particlesIntensity: intensity,
       });
       if (res.success) {
         showToast("Particle network settings updated", "success");
@@ -211,7 +215,20 @@ export function ParticlesSetting({
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-3 text-sm">
+          <div className="grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
+            <label className="block">
+              <span className="text-xs font-medium text-gray-600">Intensity</span>
+              <input
+                type="range"
+                min="1"
+                max="4"
+                step="0.25"
+                value={intensity}
+                onChange={(e) => setIntensity(Number(e.target.value))}
+                className="w-full accent-brand"
+              />
+              <span className="text-xs text-gray-500">{intensity.toFixed(2)}x particles</span>
+            </label>
             <label className="block">
               <span className="text-xs font-medium text-gray-600">Speed</span>
               <input
