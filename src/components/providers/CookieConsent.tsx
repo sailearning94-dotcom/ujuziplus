@@ -20,6 +20,11 @@ export function CookieConsent() {
     setVisible(false);
   };
 
+  const decline = () => {
+    window.localStorage.setItem(STORAGE_KEY, "declined");
+    setVisible(false);
+  };
+
   if (!visible) return null;
 
   return (
@@ -29,8 +34,8 @@ export function CookieConsent() {
       </div>
       <div className="cookie-consent__body">
         <p className="cookie-consent__text">
-          We use cookies to keep you signed in and improve your experience. By continuing, you
-          agree to our{" "}
+          We use cookies to keep you signed in and improve your experience. Essential cookies are
+          always on; you can decline the rest. See our{" "}
           <Link href="/privacy" className="cookie-consent__link">
             Privacy Policy
           </Link>
@@ -38,6 +43,9 @@ export function CookieConsent() {
         </p>
       </div>
       <div className="cookie-consent__actions">
+        <Button size="sm" variant="outline" onClick={decline}>
+          Decline
+        </Button>
         <Button size="sm" onClick={acceptAll}>
           Accept all cookies
         </Button>
