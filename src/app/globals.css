@@ -4187,6 +4187,14 @@
     background: linear-gradient(135deg, #ffb347 0%, #f39223 100%);
   }
 
+  .chat-widget__options {
+    @apply flex flex-col items-start gap-1 pt-1;
+  }
+
+  .chat-widget__option {
+    @apply flex items-center gap-1.5 rounded-xl px-1 py-1 text-sm font-medium text-brand no-underline transition hover:text-brand-dark hover:underline;
+  }
+
   .chat-widget__composer {
     @apply flex items-center gap-2 border-t border-gray-200/80 bg-white p-3;
   }
