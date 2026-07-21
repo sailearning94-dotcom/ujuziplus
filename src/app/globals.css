@@ -4139,6 +4139,20 @@
     box-shadow: 0 12px 28px -8px rgb(243 146 35 / 0.55);
   }
 
+  /* ── Topbar back/forward nav buttons: glassy, 20%-opacity orange, neon glow ── */
+  .topbar-nav-btn {
+    background-color: rgb(243 146 35 / 0.2);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgb(243 146 35 / 0.35);
+    box-shadow: 0 0 10px rgb(243 146 35 / 0.35), inset 0 0 6px rgb(255 179 71 / 0.25);
+  }
+
+  .topbar-nav-btn:hover {
+    background-color: rgb(243 146 35 / 0.32);
+    box-shadow: 0 0 16px rgb(243 146 35 / 0.55), inset 0 0 8px rgb(255 179 71 / 0.35);
+  }
+
   .chat-widget__panel {
     @apply flex flex-col overflow-hidden rounded-2xl border border-gray-200/80 bg-white shadow-2xl;
     width: min(360px, calc(100vw - 2.5rem));
