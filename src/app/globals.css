@@ -4256,4 +4256,32 @@
   .cookie-consent__actions {
     @apply flex w-full shrink-0 items-center gap-2 sm:w-auto;
   }
+
+  .cookie-consent--customize {
+    @apply sm:items-start;
+  }
+
+  .cookie-consent__text--title {
+    @apply text-sm font-semibold text-gray-900;
+  }
+
+  .cookie-consent__option {
+    @apply mt-2 flex items-center justify-between gap-3 border-t border-gray-100 pt-2;
+  }
+
+  .cookie-consent__option-label {
+    @apply block text-sm font-medium text-gray-800;
+  }
+
+  .cookie-consent__option-hint {
+    @apply block text-xs text-gray-500;
+  }
+
+  .cookie-consent__option--toggle {
+    @apply cursor-pointer;
+  }
+
+  .cookie-consent__option--toggle input[type="checkbox"] {
+    @apply h-5 w-9 shrink-0 cursor-pointer accent-brand;
+  }
 }
