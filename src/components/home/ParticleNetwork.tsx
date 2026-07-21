@@ -84,14 +84,14 @@ export function ParticleNetwork({
 
     const palette = configRef.current.colors.length > 0 ? configRef.current.colors : ["#f39223"];
 
-    function makeParticle(x?: number, y?: number): Particle {
+    function makeParticle(): Particle {
       const hue = Math.random() * 360;
       const color = palette[Math.floor(Math.random() * palette.length)];
       const baseVx = (Math.random() - 0.5) * 0.7;
       const baseVy = (Math.random() - 0.5) * 0.7;
       return {
-        x: x ?? Math.random() * width,
-        y: y ?? Math.random() * height,
+        x: Math.random() * width,
+        y: Math.random() * height,
         vx: baseVx,
         vy: baseVy,
         baseVx,
@@ -102,46 +102,9 @@ export function ParticleNetwork({
       };
     }
 
-    // Pure Math.random() placement tends to produce visible clumps (birthday-
-    // paradox clustering) especially at low counts spread over a tall page.
-    // Spawn on a jittered grid instead so particles start out evenly spread —
-    // ambient drift + repulsion then keeps them from re-clumping over time.
-    function makeScatteredParticles(count: number): Particle[] {
-      if (count <= 0 || width <= 0 || height <= 0) return [];
-      const aspect = width / height;
-      let cols = Math.max(1, Math.round(Math.sqrt(count * aspect)));
-      let rows = Math.max(1, Math.ceil(count / cols));
-      while (cols * rows < count) cols++;
-
-      const cellW = width / cols;
-      const cellH = height / rows;
-      const cells: Array<[number, number]> = [];
-      for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-          cells.push([c, r]);
-        }
-      }
-      // shuffle so leftover cells (when count isn't a perfect grid) are dropped
-      // from random spots rather than always the bottom-right
-      for (let i = cells.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [cells[i], cells[j]] = [cells[j], cells[i]];
-      }
-
-      return cells.slice(0, count).map(([c, r]) => {
-        const jitterX = (Math.random() - 0.5) * cellW * 0.8;
-        const jitterY = (Math.random() - 0.5) * cellH * 0.8;
-        const x = (c + 0.5) * cellW + jitterX;
-        const y = (r + 0.5) * cellH + jitterY;
-        return makeParticle(x, y);
-      });
-    }
-
     function resize() {
       if (!canvas) return;
       const rect = canvas.parentElement?.getBoundingClientRect();
-      const prevWidth = width;
-      const prevHeight = height;
       width = rect?.width ?? window.innerWidth;
       height = rect?.height ?? window.innerHeight;
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -157,20 +120,11 @@ export function ParticleNetwork({
         Math.max(24, Math.round((width * height) / BASE_AREA_PER_PARTICLE))
       );
       const targetCount = Math.round(baseCount * intensityFactor);
-
-      // If the container grew a lot (e.g. page content finished loading and
-      // pushed the canvas from an initial short viewport height to the full
-      // scroll height), existing particles would otherwise stay clumped in
-      // the old, much smaller bounds. Re-scatter them across the new area
-      // instead of only topping up the count.
-      const grewSubstantially =
-        prevHeight > 0 && (height > prevHeight * 1.5 || width > prevWidth * 1.5);
-
-      if (particles.length === 0 || grewSubstantially) {
-        particles = makeScatteredParticles(targetCount);
+      if (particles.length === 0) {
+        particles = Array.from({ length: targetCount }, makeParticle);
       } else if (particles.length < targetCount) {
         particles = particles.concat(
-          makeScatteredParticles(targetCount - particles.length)
+          Array.from({ length: targetCount - particles.length }, makeParticle)
         );
       } else if (particles.length > targetCount) {
         particles = particles.slice(0, targetCount);
@@ -278,59 +232,8 @@ export function ParticleNetwork({
         (grid[idx] ??= []).push(p);
       }
 
-      // mutual soft-repulsion — without this, pure random-walk drift lets
-      // particles pile up into a single dense clump over time (very visible
-      // on tall pages where the canvas spans the full scroll height). Nudge
-      // particles apart whenever they get closer than a minimum separation.
-      const minSep = Math.max(28, cellSize * 0.35);
-      const minSepSq = minSep * minSep;
-      for (let cy = 0; cy < rows; cy++) {
-        for (let cx = 0; cx < cols; cx++) {
-          const cellParticles = grid[cy * cols + cx];
-          if (!cellParticles) continue;
-
-          for (let ni = 0; ni < 9; ni++) {
-            const nx = cx + (ni % 3) - 1;
-            const ny = cy + Math.floor(ni / 3) - 1;
-            if (nx < 0 || nx >= cols || ny < 0 || ny >= rows) continue;
-            const neighborIdx = ny * cols + nx;
-            if (neighborIdx < cy * cols + cx) continue;
-            const neighborParticles = grid[neighborIdx];
-            if (!neighborParticles) continue;
-
-            const sameCell = neighborIdx === cy * cols + cx;
-            for (let i = 0; i < cellParticles.length; i++) {
-              const a = cellParticles[i];
-              const startJ = sameCell ? i + 1 : 0;
-              for (let j = startJ; j < neighborParticles.length; j++) {
-                const b = neighborParticles[j];
-                const dx = a.x - b.x;
-                const dy = a.y - b.y;
-                const distSq = dx * dx + dy * dy;
-                if (distSq >= minSepSq || distSq === 0) continue;
-
-                const dist = Math.sqrt(distSq) || 0.01;
-                const push = ((minSep - dist) / minSep) * 0.4;
-                const ux = dx / dist;
-                const uy = dy / dist;
-                a.vx += ux * push;
-                a.vy += uy * push;
-                b.vx -= ux * push;
-                b.vy -= uy * push;
-              }
-            }
-          }
-        }
-      }
-
       ctx.lineWidth = cfg.lineThickness;
       const connectDistSq = cfg.connectDistance * cfg.connectDistance;
-      // Cap connections per particle — without this, a handful of particles
-      // that happen to drift close together become "hub" nodes with many
-      // lines radiating out, which reads as a dense stacked tangle even
-      // though the underlying particle distribution is even.
-      const maxLinksPerParticle = 4;
-      const linkCount = new Map<Particle, number>();
 
       for (let cy = 0; cy < rows; cy++) {
         for (let cx = 0; cx < cols; cx++) {
@@ -352,9 +255,6 @@ export function ParticleNetwork({
               const startJ = sameCell ? i + 1 : 0;
               for (let j = startJ; j < neighborParticles.length; j++) {
                 const b = neighborParticles[j];
-                if ((linkCount.get(a) ?? 0) >= maxLinksPerParticle) break;
-                if ((linkCount.get(b) ?? 0) >= maxLinksPerParticle) continue;
-
                 const dx = a.x - b.x;
                 const dy = a.y - b.y;
                 const distSq = dx * dx + dy * dy;
@@ -376,9 +276,6 @@ export function ParticleNetwork({
                 ctx.moveTo(a.x, a.y);
                 ctx.lineTo(b.x, b.y);
                 ctx.stroke();
-
-                linkCount.set(a, (linkCount.get(a) ?? 0) + 1);
-                linkCount.set(b, (linkCount.get(b) ?? 0) + 1);
               }
             }
           }
