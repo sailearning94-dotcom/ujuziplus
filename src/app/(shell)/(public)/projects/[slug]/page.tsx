@@ -52,14 +52,14 @@ export default async function ProjectDetailPage({ params }: { params: { slug: st
       </div>
 
       <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
-        <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
+        <div className="flex flex-col gap-8 lg:flex-row lg:items-stretch">
           {project.thumbnailUrl && (
-            <ImageContainer className="relative aspect-video w-full shrink-0 overflow-hidden rounded-xl shadow-md lg:sticky lg:top-24 lg:w-64">
+            <ImageContainer className="relative aspect-video w-full shrink-0 overflow-hidden rounded-xl shadow-md lg:sticky lg:top-24 lg:aspect-auto lg:h-auto lg:w-72 lg:self-stretch">
               <OptimizedImage
                 src={project.thumbnailUrl}
                 alt={project.title}
                 fill
-                sizes="(max-width: 1024px) 100vw, 256px"
+                sizes="(max-width: 1024px) 100vw, 288px"
                 className="object-cover"
               />
             </ImageContainer>
