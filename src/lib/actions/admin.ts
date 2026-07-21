@@ -11,6 +11,7 @@ import { archiveOrDeleteCourse } from "./courses";
 import { createNotification } from "./notifications";
 import { requireAdmin } from "@/lib/auth-server";
 import { revalidateCourseCatalog } from "@/lib/revalidate-catalog";
+import { sendEmail, instructorApprovedEmail, instructorRejectedEmail } from "@/lib/email";
 
 const MAX_PAGE_LIMIT = 100;
 
@@ -114,6 +115,97 @@ export async function rejectCourse(
   });
 
   revalidatePath("/admin/courses");
+  return { success: true, data: undefined };
+}
+
+// ─── Instructor approval queue ────────────────────────────────────────────────
+
+export async function getPendingInstructors() {
+  await requireAdmin();
+
+  return db.user.findMany({
+    where: { role: "INSTRUCTOR", instructorStatus: "PENDING" },
+    orderBy: { createdAt: "asc" },
+    select: {
+      id: true,
+      fullName: true,
+      email: true,
+      username: true,
+      avatarUrl: true,
+      bio: true,
+      createdAt: true,
+      instructorCredentials: {
+        orderBy: { orderIndex: "asc" },
+        select: {
+          id: true,
+          title: true,
+          issuer: true,
+          issueDate: true,
+          credentialUrl: true,
+        },
+      },
+    },
+  });
+}
+
+export async function approveInstructor(
+  adminId: string,
+  userId: string
+): Promise<ActionResult> {
+  await guardAdmin(adminId);
+
+  const user = await db.user.update({
+    where: { id: userId },
+    data: { instructorStatus: "APPROVED" },
+    select: { fullName: true, email: true },
+  });
+
+  await createNotification(userId, {
+    type: "SYSTEM",
+    title: "Instructor application approved!",
+    message: "Your instructor application has been approved. You can now sign in.",
+    href: "/instructor/dashboard",
+  });
+
+  sendEmail({
+    to: user.email,
+    subject: "Your UjuziLab instructor application was approved",
+    html: instructorApprovedEmail(user.fullName),
+  }).then((result) => {
+    if (!result.ok) console.error("Instructor approval email failed:", result.error);
+  });
+
+  revalidatePath("/admin/instructors");
+  return { success: true, data: undefined };
+}
+
+export async function rejectInstructor(
+  adminId: string,
+  userId: string,
+  reason: string
+): Promise<ActionResult> {
+  await guardAdmin(adminId);
+
+  const trimmed = reason.trim();
+  if (trimmed.length < 10) {
+    return { success: false, error: "Please provide a rejection reason (at least 10 characters)." };
+  }
+
+  const user = await db.user.update({
+    where: { id: userId },
+    data: { instructorStatus: "REJECTED" },
+    select: { fullName: true, email: true },
+  });
+
+  sendEmail({
+    to: user.email,
+    subject: "Update on your UjuziLab instructor application",
+    html: instructorRejectedEmail(user.fullName, trimmed),
+  }).then((result) => {
+    if (!result.ok) console.error("Instructor rejection email failed:", result.error);
+  });
+
+  revalidatePath("/admin/instructors");
   return { success: true, data: undefined };
 }
 

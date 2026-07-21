@@ -58,13 +58,15 @@ export function AppTopbar({
       <div className="flex flex-1 items-center gap-4">
         <button
           type="button"
+          aria-label="Open navigation menu"
+          aria-haspopup="true"
           className="rounded-xl p-2 transition hover:bg-gray-100 lg:hidden"
           onClick={(e) => {
             e.currentTarget.blur();
             onMenuClick?.();
           }}
         >
-          <Menu className="h-5 w-5" />
+          <Menu className="h-5 w-5" aria-hidden="true" />
         </button>
         <div className="topbar-nav-group hidden items-center sm:flex">
           <button

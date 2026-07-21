@@ -71,6 +71,7 @@ export const NAV_INSTRUCTOR = [
   { href: "/instructor/earnings", label: "Earnings" },
   { href: "/instructor/students", label: "Students" },
   { href: "/instructor/assignments", label: "Grade assignments" },
+  { href: "/instructor/settings/credentials", label: "Certifications" },
 ] as const;
 
 /** Example org portal routes — use /org/{slug}/… for each institution. */

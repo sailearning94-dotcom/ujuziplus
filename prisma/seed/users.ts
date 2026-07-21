@@ -76,6 +76,7 @@ export async function seedUsers(db: PrismaClient): Promise<UserIdMap> {
   const userIds: UserIdMap = {};
 
   for (const account of SEED_USERS) {
+    const instructorStatus = account.role === "INSTRUCTOR" ? "APPROVED" : undefined;
     const user = await db.user.upsert({
       where: { email: account.email },
       update: {
@@ -87,6 +88,7 @@ export async function seedUsers(db: PrismaClient): Promise<UserIdMap> {
         bio: account.bio,
         emailVerified: true,
         isActive: true,
+        instructorStatus,
       },
       create: {
         email: account.email,
@@ -98,6 +100,7 @@ export async function seedUsers(db: PrismaClient): Promise<UserIdMap> {
         bio: account.bio,
         emailVerified: true,
         isActive: true,
+        instructorStatus,
       },
     });
     userIds[account.email] = user.id;

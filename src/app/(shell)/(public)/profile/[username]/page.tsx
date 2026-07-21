@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SectionBanner } from "@/components/shared/LearnerPageHero";
-import { Award, MessageSquare, MapPin, ExternalLink } from "lucide-react";
+import { Award, MessageSquare, MapPin, ExternalLink, BadgeCheck } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { getPublicUserProfile } from "@/lib/actions/organizations";
@@ -16,7 +16,7 @@ export default async function PublicProfilePage({ params }: { params: { username
   const profile = await getPublicUserProfile(params.username, session?.user?.id);
   if (!profile) notFound();
 
-  const { user, courses, certCount, discussionCount } = profile;
+  const { user, courses, certCount, discussionCount, instructorCredentials } = profile;
   const isOwner = session?.user?.id === user.id;
   const followState = await getFollowState(session?.user?.id ?? null, user.id);
 
@@ -134,6 +134,37 @@ export default async function PublicProfilePage({ params }: { params: { username
             </div>
           </div>
         </PageSection>
+
+        {user.role === "INSTRUCTOR" && instructorCredentials.length > 0 && (
+          <PageSection delay={0.1} className="mt-8">
+            <h2 className="section-accent-title mb-4 text-lg">Certifications</h2>
+            <Card className="divide-y divide-gray-100 p-0 overflow-hidden">
+              {instructorCredentials.map((cred) => (
+                <div key={cred.id} className="flex items-start gap-3 p-4">
+                  <BadgeCheck className="mt-0.5 h-4 w-4 shrink-0 text-brand" />
+                  <div>
+                    <p className="font-medium text-gray-900">{cred.title}</p>
+                    <p className="text-sm text-gray-500">
+                      {[cred.issuer, cred.issueDate ? new Date(cred.issueDate).getFullYear() : null]
+                        .filter(Boolean)
+                        .join(" · ")}
+                    </p>
+                    {cred.credentialUrl && (
+                      <a
+                        href={cred.credentialUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-1 inline-flex items-center gap-1 text-sm font-medium text-brand hover:underline"
+                      >
+                        View credential <ExternalLink className="h-3 w-3" />
+                      </a>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </Card>
+          </PageSection>
+        )}
 
         {courses.length > 0 && (
           <PageSection delay={0.12} className="mt-8">

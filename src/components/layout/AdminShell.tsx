@@ -16,6 +16,7 @@ import {
   Menu,
   X,
   ShieldCheck,
+  UserCheck,
   ChevronRight,
   Trophy,
   Building2,
@@ -29,6 +30,7 @@ import {
 const ICONS: Record<string, React.ElementType> = {
   "/admin": LayoutDashboard,
   "/admin/users": Users,
+  "/admin/instructors": UserCheck,
   "/admin/courses": BookOpen,
   "/admin/payments": DollarSign,
   "/admin/discussions": MessageSquare,
@@ -51,6 +53,7 @@ const ICONS: Record<string, React.ElementType> = {
 const ADMIN_NAV = [
   { href: "/admin", label: "Overview" },
   { href: "/admin/users", label: "Users" },
+  { href: "/admin/instructors", label: "Instructor Applications" },
   { href: "/admin/courses", label: "Course Review" },
   { href: "/admin/kits", label: "Learning Kits" },
   { href: "/admin/kit-requests", label: "Kit Requests" },

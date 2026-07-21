@@ -7,7 +7,6 @@ import { useSession } from "next-auth/react";
 import { MuiLabDrawer } from "./MuiLabDrawer";
 import { LabFooter } from "./LabFooter";
 import { AppTopbar } from "@/components/layout/AppTopbar";
-import { MobileNav } from "@/components/layout/MobileNav";
 import { DRAWER_COLLAPSED, DRAWER_WIDTH } from "@/theme/wazilab-mui-theme";
 import { isAdminRole, isInstructorRole, isStudentRole } from "@/lib/auth/roles";
 
@@ -24,8 +23,6 @@ export function LabShell({ children }: { children: React.ReactNode }) {
   const isInstructor = isInstructorRole(role);
   const isAdmin = isAdminRole(role);
   const chromeless = CHROMELESS_PREFIXES.some((p) => pathname.startsWith(p));
-
-  const showStudentMobileNav = !chromeless && status === "authenticated" && isStudent;
 
   return (
     <Box className="LabPage" sx={{ display: "flex", minHeight: "100vh", bgcolor: "background.default" }}>
@@ -68,13 +65,11 @@ export function LabShell({ children }: { children: React.ReactNode }) {
             flexDirection: "column",
             minWidth: 0,
             maxWidth: "100%",
-            pb: showStudentMobileNav ? { xs: 10, lg: 0 } : 0,
           }}
         >
           {children}
         </Box>
         <LabFooter />
-        {showStudentMobileNav && <MobileNav />}
       </Box>
     </Box>
   );

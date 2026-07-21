@@ -9,6 +9,7 @@ import { UjuziLoader } from "@/components/ui/UjuziLoader";
 import { Input } from "@/components/ui/input";
 import { FormAlert } from "@/components/ui/form-alert";
 import { resolvePostLoginPath } from "@/lib/auth/roles";
+import { getLoginFailureHint } from "@/lib/actions/auth";
 import {
   AuthShell,
   AuthCard,
@@ -38,7 +39,16 @@ function LoginForm() {
     });
 
     if (result?.error) {
-      setError("Incorrect email or password. Please try again.");
+      const hint = await getLoginFailureHint(email);
+      if (hint === "pending_instructor") {
+        setError(
+          "Your instructor application is still under review — you'll get an email once it's approved."
+        );
+      } else if (hint === "rejected_instructor") {
+        setError("Your instructor application was not approved. Contact support for details.");
+      } else {
+        setError("Incorrect email or password. Please try again.");
+      }
       setLoading(false);
       return;
     }

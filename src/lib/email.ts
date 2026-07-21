@@ -81,6 +81,50 @@ export function passwordResetEmail(resetUrl: string) {
   `;
 }
 
+export function verificationEmail(verifyUrl: string) {
+  return `
+    <div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;">
+      <h2 style="color:#f39223">Verify your email</h2>
+      <p>Click the button below to verify your UjuziLab email address. This link expires in 24 hours.</p>
+      <a href="${verifyUrl}"
+         style="display:inline-block;background:#f39223;color:#fff;padding:12px 24px;
+                border-radius:6px;text-decoration:none;font-weight:bold;margin:16px 0;">
+        Verify email
+      </a>
+      <p style="color:#666;font-size:12px;">
+        If you didn't create this account, you can safely ignore this email.
+      </p>
+    </div>
+  `;
+}
+
+export function instructorApprovedEmail(fullName: string) {
+  return `
+    <div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;">
+      <h2 style="color:#f39223">You're approved, ${fullName}!</h2>
+      <p>Your instructor application has been reviewed and approved. You can now sign in and start creating courses on UjuziLab.</p>
+      <a href="${process.env.NEXTAUTH_URL}/auth/login"
+         style="display:inline-block;background:#f39223;color:#fff;padding:12px 24px;
+                border-radius:6px;text-decoration:none;font-weight:bold;margin:16px 0;">
+        Sign in
+      </a>
+    </div>
+  `;
+}
+
+export function instructorRejectedEmail(fullName: string, reason?: string) {
+  return `
+    <div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;">
+      <h2 style="color:#f39223">Update on your instructor application</h2>
+      <p>Hi ${fullName}, after review we're unable to approve your instructor application at this time.</p>
+      ${reason ? `<p style="color:#666;">Reason: ${reason}</p>` : ""}
+      <p style="color:#666;font-size:12px;">
+        If you have questions, please contact UjuziLab support.
+      </p>
+    </div>
+  `;
+}
+
 export function welcomeEmail(fullName: string) {
   return `
     <div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;">

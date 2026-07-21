@@ -9,7 +9,7 @@ import { randomBytes } from "crypto";
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { assertActor } from "@/lib/auth-server";
-import { sendEmail, passwordResetEmail, welcomeEmail } from "@/lib/email";
+import { sendEmail, passwordResetEmail, welcomeEmail, verificationEmail } from "@/lib/email";
 import { RegisterSchema, ForgotPasswordSchema, ResetPasswordSchema } from "@/lib/validations/auth";
 
 export type UserProfileData = {
@@ -37,11 +37,20 @@ function optionalText(value: FormDataEntryValue | null): string | null {
 // ─── Register ─────────────────────────────────────────────────────────────────
 
 export async function registerUser(formData: FormData) {
+  const credentialsRaw = formData.get("credentials") as string | null;
+  let parsedCredentials: unknown;
+  try {
+    parsedCredentials = credentialsRaw ? JSON.parse(credentialsRaw) : undefined;
+  } catch {
+    return { error: "Invalid certification data." };
+  }
+
   const raw = {
     fullName: formData.get("fullName") as string,
     email: formData.get("email") as string,
     password: formData.get("password") as string,
     role: (formData.get("role") as string) || "STUDENT",
+    credentials: parsedCredentials,
   };
 
   const result = RegisterSchema.safeParse(raw);
@@ -49,7 +58,7 @@ export async function registerUser(formData: FormData) {
     return { error: result.error.issues[0].message };
   }
 
-  const { fullName, email, password, role } = result.data;
+  const { fullName, email, password, role, credentials } = result.data;
   const normalizedEmail = email.toLowerCase().trim();
 
   // Check duplicate email
@@ -68,12 +77,33 @@ export async function registerUser(formData: FormData) {
   }
 
   const passwordHash = await hash(password, 12);
+  const isInstructor = role === "INSTRUCTOR";
 
-  await db.user.create({
-    data: { fullName, email: normalizedEmail, username, passwordHash, role },
+  const user = await db.user.create({
+    data: {
+      fullName,
+      email: normalizedEmail,
+      username,
+      passwordHash,
+      role,
+      instructorStatus: isInstructor ? "PENDING" : undefined,
+    },
   });
 
-  // Send welcome email (non-blocking — don't fail registration if email fails)
+  if (isInstructor && credentials?.length) {
+    await db.instructorCredential.createMany({
+      data: credentials.map((c, index) => ({
+        userId: user.id,
+        title: c.title,
+        issuer: c.issuer || null,
+        issueDate: c.issueDate ? new Date(c.issueDate) : null,
+        credentialUrl: c.credentialUrl || null,
+        orderIndex: index,
+      })),
+    });
+  }
+
+  // Send welcome + verification emails (non-blocking — don't fail registration if email fails)
   sendEmail({
     to: normalizedEmail,
     subject: "Welcome to UjuziLab!",
@@ -82,7 +112,9 @@ export async function registerUser(formData: FormData) {
     if (!result.ok) console.error("Welcome email failed:", result.error);
   });
 
-  return { success: true };
+  issueVerificationEmail(user.id, normalizedEmail);
+
+  return { success: true, pendingInstructorApproval: isInstructor };
 }
 
 // ─── Forgot password ──────────────────────────────────────────────────────────
@@ -167,6 +199,81 @@ export async function resetPassword(formData: FormData) {
   ]);
 
   return { success: true };
+}
+
+// ─── Email verification ────────────────────────────────────────────────────────
+
+async function issueVerificationEmail(userId: string, email: string) {
+  await db.emailVerificationToken.deleteMany({ where: { userId } });
+
+  const token = randomBytes(32).toString("hex");
+  const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+  await db.emailVerificationToken.create({
+    data: { userId, token, expiresAt },
+  });
+
+  const verifyUrl = `${process.env.NEXTAUTH_URL}/auth/verify-email?token=${token}`;
+
+  const result = await sendEmail({
+    to: email,
+    subject: "Verify your UjuziLab email address",
+    html: verificationEmail(verifyUrl),
+  });
+  if (!result.ok) console.error("Verification email failed:", result.error);
+
+  return result;
+}
+
+export async function sendVerificationEmail(userId: string) {
+  await assertActor(userId);
+
+  const user = await db.user.findUnique({ where: { id: userId } });
+  if (!user) return { error: "User not found." };
+  if (user.emailVerified) return { success: true, alreadyVerified: true };
+
+  await issueVerificationEmail(user.id, user.email);
+  return { success: true };
+}
+
+export async function verifyEmail(token: string) {
+  if (!token) return { error: "This verification link is invalid." };
+
+  const record = await db.emailVerificationToken.findUnique({ where: { token } });
+
+  if (!record || record.usedAt || record.expiresAt < new Date()) {
+    return { error: "This verification link is invalid or has expired." };
+  }
+
+  await db.$transaction([
+    db.user.update({
+      where: { id: record.userId },
+      data: { emailVerified: true },
+    }),
+    db.emailVerificationToken.update({
+      where: { token },
+      data: { usedAt: new Date() },
+    }),
+  ]);
+
+  return { success: true };
+}
+
+// ─── Login failure messaging ───────────────────────────────────────────────────
+
+export async function getLoginFailureHint(
+  email: string
+): Promise<"pending_instructor" | "rejected_instructor" | null> {
+  const normalizedEmail = email.toLowerCase().trim();
+  const user = await db.user.findUnique({
+    where: { email: normalizedEmail },
+    select: { role: true, instructorStatus: true },
+  });
+
+  if (!user || user.role !== "INSTRUCTOR") return null;
+  if (user.instructorStatus === "PENDING") return "pending_instructor";
+  if (user.instructorStatus === "REJECTED") return "rejected_instructor";
+  return null;
 }
 
 // ─── Profile read / update ─────────────────────────────────────────────────────

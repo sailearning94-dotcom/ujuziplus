@@ -457,7 +457,7 @@ export async function getPublicUserProfile(username: string, viewerId?: string |
   if (!user) return null;
   if (!user.publicProfile && user.id !== viewerId) return null;
 
-  const [courses, certCount, discussionCount] = await Promise.all([
+  const [courses, certCount, discussionCount, instructorCredentials] = await Promise.all([
     user.showCoursesOnProfile && user.role === "INSTRUCTOR"
       ? db.course.findMany({
           where: { instructorId: user.id, status: "PUBLISHED" },
@@ -470,7 +470,13 @@ export async function getPublicUserProfile(username: string, viewerId?: string |
       ? db.certificate.count({ where: { userId: user.id } })
       : 0,
     db.discussion.count({ where: { authorId: user.id } }),
+    user.role === "INSTRUCTOR"
+      ? db.instructorCredential.findMany({
+          where: { userId: user.id },
+          orderBy: { orderIndex: "asc" },
+        })
+      : [],
   ]);
 
-  return { user, courses, certCount, discussionCount };
+  return { user, courses, certCount, discussionCount, instructorCredentials };
 }

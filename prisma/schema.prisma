@@ -20,6 +20,12 @@ enum Role {
   ADMIN
 }
 
+enum InstructorStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 // ─── Users ───────────────────────────────────────────────────────────────────
 model User {
   id           String @id @default(cuid())
@@ -43,14 +49,17 @@ model User {
   showCertificatesOnProfile Boolean @default(true)
 
   // Account state
-  isActive      Boolean @default(true)
-  emailVerified Boolean @default(false)
+  isActive         Boolean            @default(true)
+  emailVerified    Boolean            @default(false)
+  instructorStatus InstructorStatus?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   // Relations
   resetTokens             PasswordResetToken[]
+  verificationTokens      EmailVerificationToken[]
+  instructorCredentials   InstructorCredential[]       @relation("UserInstructorCredentials")
   courses                 Course[]                     @relation("InstructorCourses")
   enrollments             Enrollment[]
   orders                  Order[]                      @relation("UserOrders")
@@ -437,6 +446,39 @@ model PasswordResetToken {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("password_reset_tokens")
+}
+
+// ─── Email verification ────────────────────────────────────────────────────────
+model EmailVerificationToken {
+  id        String    @id @default(cuid())
+  userId    String
+  token     String    @unique @db.VarChar(191)
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("email_verification_tokens")
+}
+
+// ─── Instructor credentials ─────────────────────────────────────────────────────
+model InstructorCredential {
+  id            String    @id @default(cuid())
+  userId        String
+  title         String
+  issuer        String?
+  issueDate     DateTime?
+  credentialUrl String?
+  fileUrl       String?
+  orderIndex    Int       @default(0)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  user User @relation("UserInstructorCredentials", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("instructor_credentials")
 }
 
 // ─── Community & Discussions ──────────────────────────────────────────────────
