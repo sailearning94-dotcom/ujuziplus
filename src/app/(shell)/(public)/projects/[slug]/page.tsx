@@ -25,40 +25,45 @@ export default async function ProjectDetailPage({ params }: { params: { slug: st
   return (
     <div className="learner-canvas pb-12">
       <div className="relative overflow-hidden bg-gray-900">
-        {project.thumbnailUrl ? (
-          <ImageContainer className="absolute inset-0 opacity-40">
-            <OptimizedImage
-              src={project.thumbnailUrl}
-              alt=""
-              fill
-              priority
-              sizes="100vw"
-            />
-          </ImageContainer>
-        ) : null}
-        <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/80 to-gray-900/60" />
+        <div className="absolute inset-0 bg-gradient-to-b from-gray-900/40 via-gray-900/10 to-transparent" />
         <div className="relative mx-auto max-w-4xl px-4 py-10 sm:px-6">
           <Breadcrumbs
             theme="dark"
             className="mb-4"
             items={[{ label: "Projects", href: "/projects" }, { label: project.title }]}
           />
-          <div className="flex flex-wrap gap-2">
-            <Badge variant="outline" className="border-0 bg-brand/30 text-white shadow-none backdrop-blur-none">
-              {project.category}
-            </Badge>
-            <Badge variant="outline" className="border-white/30 bg-white/10 capitalize text-white/90">
-              {project.status.toLowerCase()}
-            </Badge>
-            {tags.map((t) => (
-              <Badge key={t} variant="outline" className="border-white/20 bg-white/5 text-white/80">
-                {t}
-              </Badge>
-            ))}
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
+            {project.thumbnailUrl && (
+              <ImageContainer className="relative aspect-video w-full shrink-0 overflow-hidden rounded-xl shadow-lg sm:w-72">
+                <OptimizedImage
+                  src={project.thumbnailUrl}
+                  alt={project.title}
+                  fill
+                  priority
+                  sizes="(max-width: 640px) 100vw, 288px"
+                  className="object-cover"
+                />
+              </ImageContainer>
+            )}
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap gap-2">
+                <Badge variant="outline" className="border-0 bg-brand/30 text-white shadow-none backdrop-blur-none">
+                  {project.category}
+                </Badge>
+                <Badge variant="outline" className="border-white/30 bg-white/10 capitalize text-white/90">
+                  {project.status.toLowerCase()}
+                </Badge>
+                {tags.map((t) => (
+                  <Badge key={t} variant="outline" className="border-white/20 bg-white/5 text-white/80">
+                    {t}
+                  </Badge>
+                ))}
+              </div>
+              <h1 className="mt-4 font-display text-3xl font-bold tracking-tight text-white md:text-4xl">
+                {project.title}
+              </h1>
+            </div>
           </div>
-          <h1 className="mt-4 font-display text-3xl font-bold tracking-tight text-white md:text-4xl">
-            {project.title}
-          </h1>
         </div>
       </div>
 
