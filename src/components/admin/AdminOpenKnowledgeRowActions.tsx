@@ -8,7 +8,17 @@ import { Button } from "@/components/ui/button";
 import { adminDeleteOpenKnowledgeResource } from "@/lib/actions/open-knowledge";
 import { useAppStore } from "@/store/appStore";
 
-export function AdminOpenKnowledgeRowActions({ id, slug, title }: { id: string; slug: string; title: string }) {
+export function AdminOpenKnowledgeRowActions({
+  id,
+  slug,
+  title,
+  viewHref,
+}: {
+  id: string;
+  slug: string;
+  title: string;
+  viewHref: string;
+}) {
   const router = useRouter();
   const showToast = useAppStore((s) => s.showToast);
   const [isPending, startTransition] = useTransition();
@@ -32,7 +42,7 @@ export function AdminOpenKnowledgeRowActions({ id, slug, title }: { id: string; 
         <Link href={`/admin/open-knowledge/${slug}/edit`}>Edit</Link>
       </Button>
       <Button asChild variant="ghost" size="sm">
-        <Link href={`/open-knowledge/${slug}`} target="_blank" rel="noopener noreferrer">
+        <Link href={viewHref} target="_blank" rel="noopener noreferrer">
           View
         </Link>
       </Button>

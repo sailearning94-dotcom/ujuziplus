@@ -20,7 +20,11 @@ export default async function EditOpenKnowledgeResourcePage({ params }: { params
           <p className="mt-1 text-sm text-gray-500">/{item.slug}</p>
         </div>
         <Button asChild variant="outline" size="sm">
-          <a href={`/open-knowledge/${item.slug}`} target="_blank" rel="noopener noreferrer">
+          <a
+            href={item.externalUrl ?? item.fileUrl ?? `/open-knowledge/${item.slug}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Preview
           </a>
         </Button>

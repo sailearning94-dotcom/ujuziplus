@@ -86,7 +86,12 @@ export default async function AdminOpenKnowledgePage() {
                   </p>
                 </div>
 
-                <AdminOpenKnowledgeRowActions id={r.id} slug={r.slug} title={r.title} />
+                <AdminOpenKnowledgeRowActions
+                  id={r.id}
+                  slug={r.slug}
+                  title={r.title}
+                  viewHref={r.externalUrl ?? r.fileUrl ?? `/open-knowledge/${r.slug}`}
+                />
               </Card>
             );
           })}

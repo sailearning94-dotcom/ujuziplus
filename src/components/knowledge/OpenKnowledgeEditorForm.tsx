@@ -250,7 +250,11 @@ export function OpenKnowledgeEditorForm({ id, initial }: Props) {
         </Button>
         {id && (
           <Button asChild variant="ghost">
-            <a href={`/open-knowledge/${slug}`} target="_blank" rel="noopener noreferrer">
+            <a
+              href={externalUrl || fileUrl || `/open-knowledge/${slug}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               Preview
             </a>
           </Button>
