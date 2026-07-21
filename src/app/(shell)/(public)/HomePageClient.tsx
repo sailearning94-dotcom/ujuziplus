@@ -262,7 +262,7 @@ export function HomePageClient({
       {courses.length > 0 && (
         <Reveal className="mt-8">
           <Box sx={contentShellSx}>
-            <div className="home-discover-panel home-discover-panel--fade">
+            <div className="home-discover-panel home-discover-panel--transparent">
               <HomeQuickCoursePeek courses={courses} />
             </div>
           </Box>
