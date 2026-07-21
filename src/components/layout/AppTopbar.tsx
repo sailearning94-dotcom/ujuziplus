@@ -72,7 +72,7 @@ export function AppTopbar({
             title="Go back"
             aria-label="Go back"
             onClick={() => router.back()}
-            className="topbar-nav-group__btn text-gray-600 outline-none transition focus:outline-none focus-visible:outline-none"
+            className="topbar-nav-group__btn text-white outline-none transition focus:outline-none focus-visible:outline-none"
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
@@ -82,7 +82,7 @@ export function AppTopbar({
             title="Go forward"
             aria-label="Go forward"
             onClick={() => router.forward()}
-            className="topbar-nav-group__btn text-gray-600 outline-none transition focus:outline-none focus-visible:outline-none"
+            className="topbar-nav-group__btn text-white outline-none transition focus:outline-none focus-visible:outline-none"
           >
             <ChevronRight className="h-5 w-5" />
           </button>
