@@ -8,15 +8,19 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { LearnerPageHero } from "@/components/shared/LearnerPageHero";
 import type { KitCatalogItem } from "@/components/kits/KitCatalogItem";
+import { ParticleNetworkBackground } from "@/components/home/ParticleNetworkBackground";
+import type { ParticleSettings } from "@/components/home/PageParticleBackground";
 
 const DIFFICULTIES = ["beginner", "intermediate", "advanced"] as const;
 
 export function KitsCatalogClient({
   kits,
   categories,
+  particleSettings,
 }: {
   kits: KitCatalogItem[];
   categories: string[];
+  particleSettings?: ParticleSettings;
 }) {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<string | null>(null);
@@ -33,6 +37,18 @@ export function KitsCatalogClient({
 
   return (
     <div className="learner-canvas mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+      {particleSettings?.enabled && (
+        <ParticleNetworkBackground
+          enabled
+          colors={particleSettings.colors}
+          rainbowMode={particleSettings.rainbowMode}
+          speed={particleSettings.speed}
+          connectDistance={particleSettings.connectDistance}
+          lineThickness={particleSettings.lineThickness}
+          interaction={particleSettings.interaction}
+          intensity={particleSettings.intensity}
+        />
+      )}
       <LearnerPageHero
         banner="kits"
         title="Learning Kits"

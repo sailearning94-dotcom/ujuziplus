@@ -1,11 +1,13 @@
 import { getAuthSession } from "@/lib/auth-server";
 import { getPublishedCourses } from "@/lib/actions/enrollments";
 import { CourseCatalog } from "@/components/courses/CourseCatalog";
+import { getPageParticleSettings } from "@/components/home/PageParticleBackground";
 
 export async function CourseCatalogSection() {
-  const [session, dbCourses] = await Promise.all([
+  const [session, dbCourses, particleSettings] = await Promise.all([
     getAuthSession(),
     getPublishedCourses(),
+    getPageParticleSettings(),
   ]);
 
   const courses = dbCourses.map((c) => ({
@@ -31,5 +33,11 @@ export async function CourseCatalogSection() {
     totalReviews: 0,
   }));
 
-  return <CourseCatalog courses={courses} userId={session?.user?.id ?? null} />;
+  return (
+    <CourseCatalog
+      courses={courses}
+      userId={session?.user?.id ?? null}
+      particleSettings={particleSettings}
+    />
+  );
 }

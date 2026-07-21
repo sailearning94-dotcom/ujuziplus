@@ -3,6 +3,7 @@ import { LearnerPageHero } from "@/components/shared/LearnerPageHero";
 import { ProgramsList } from "@/components/programs/ProgramsList";
 import { getPrograms, getUserProgramRegistrations } from "@/lib/actions/programs";
 import { getAuthSession } from "@/lib/auth-server";
+import { PageParticleBackground } from "@/components/home/PageParticleBackground";
 
 export default async function ProgramsPage() {
   const session = await getAuthSession();
@@ -15,6 +16,7 @@ export default async function ProgramsPage() {
 
   return (
     <div className="learner-canvas mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+      <PageParticleBackground />
       <LearnerPageHero
         banner="programs"
         title="Programs & Bootcamps"

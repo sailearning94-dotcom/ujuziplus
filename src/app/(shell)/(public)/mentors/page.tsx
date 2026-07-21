@@ -11,6 +11,7 @@ import { Users } from "lucide-react";
 import Link from "next/link";
 import { Reveal } from "@/components/motion/Reveal";
 import { MotionGrid, RevealItem } from "@/components/motion/RevealStagger";
+import { PageParticleBackground } from "@/components/home/PageParticleBackground";
 
 export default async function MentorsPage() {
   const [mentors, cohorts, session] = await Promise.all([
@@ -24,6 +25,7 @@ export default async function MentorsPage() {
 
   return (
     <div className="learner-canvas mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+      <PageParticleBackground />
       <LearnerPageHero
         banner="mentors"
         title="Learn from industry builders"

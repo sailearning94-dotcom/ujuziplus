@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { LearnerPageHero } from "@/components/shared/LearnerPageHero";
 import { getCompetitions, getUserCompetitionRegistrations } from "@/lib/actions/competitions";
 import { getAuthSession } from "@/lib/auth-server";
+import { PageParticleBackground } from "@/components/home/PageParticleBackground";
 
 const STATUS_VARIANT: Record<string, "success" | "warning" | "outline" | "accent"> = {
   REGISTRATION_OPEN: "success",
@@ -24,6 +25,7 @@ export default async function CompetitionsPage() {
 
   return (
     <div className="learner-canvas pb-12">
+      <PageParticleBackground />
       <LearnerPageHero
         banner="competitions"
         title="Competitions"

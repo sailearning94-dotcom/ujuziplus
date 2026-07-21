@@ -18,6 +18,8 @@ import { LAB_COURSE_FILTERS } from "@/lib/ujuzi-brand";
 import { MotionGrid } from "@/components/motion/RevealStagger";
 import { Reveal } from "@/components/motion/Reveal";
 import { usePersistedFilter } from "@/hooks/usePersistedFilter";
+import { ParticleNetworkBackground } from "@/components/home/ParticleNetworkBackground";
+import type { ParticleSettings } from "@/components/home/PageParticleBackground";
 
 type SortKey = "popular" | "title" | "price-low" | "price-high";
 type PriceFilter = "all" | "free" | "paid";
@@ -68,9 +70,11 @@ function applyFilters(
 export function CourseCatalog({
   courses,
   userId,
+  particleSettings,
 }: {
   courses: CourseStoreItem[];
   userId: string | null;
+  particleSettings?: ParticleSettings;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -137,8 +141,20 @@ export function CourseCatalog({
   }
 
   return (
-    <div className="course-store">
-      <div className="course-store-body mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div className="course-store" style={{ position: "relative" }}>
+      {particleSettings?.enabled && (
+        <ParticleNetworkBackground
+          enabled
+          colors={particleSettings.colors}
+          rainbowMode={particleSettings.rainbowMode}
+          speed={particleSettings.speed}
+          connectDistance={particleSettings.connectDistance}
+          lineThickness={particleSettings.lineThickness}
+          interaction={particleSettings.interaction}
+          intensity={particleSettings.intensity}
+        />
+      )}
+      <div className="course-store-body mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" style={{ position: "relative", zIndex: 1 }}>
         <div
           className="course-store-toolbar learner-hero learner-hero--photo"
           style={
