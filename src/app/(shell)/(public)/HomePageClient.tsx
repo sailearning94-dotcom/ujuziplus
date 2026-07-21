@@ -196,18 +196,6 @@ export function HomePageClient({
 
   return (
     <Box className="learner-canvas home-landing" sx={{ pb: { xs: 2, md: 2.5 }, position: "relative" }}>
-        {particlesEnabled && particlesScope === "full" && (
-          <ParticleNetworkBackground
-            enabled={particlesEnabled}
-            colors={particlesColors ?? "#f39223,#00004D,#1a1a6b,#e0831a"}
-            rainbowMode={!!particlesRainbowMode}
-            speed={particlesSpeed ?? 1}
-            connectDistance={particlesConnectDistance ?? 140}
-            lineThickness={particlesLineThickness ?? 1}
-            interaction={particlesInteraction ?? "repel"}
-            intensity={particlesIntensity ?? 1}
-          />
-        )}
         <Box sx={{ position: "relative", zIndex: 1, pt: { xs: 2, md: 2.5 } }}>
         <Box sx={contentShellSx}>
         <div className="home-fold" style={{ position: "relative" }}>
