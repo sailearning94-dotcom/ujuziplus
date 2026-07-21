@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { Session } from "next-auth";
-import { Bell, Search, Menu, LogOut, Shield, GraduationCap } from "lucide-react";
+import { Bell, Search, Menu, LogOut, Shield, GraduationCap, ChevronLeft, ChevronRight } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { Avatar } from "@/components/ui/avatar";
@@ -66,6 +66,26 @@ export function AppTopbar({
         >
           <Menu className="h-5 w-5" />
         </button>
+        <div className="hidden items-center gap-0.5 sm:flex">
+          <button
+            type="button"
+            title="Go back"
+            aria-label="Go back"
+            onClick={() => router.back()}
+            className="rounded-xl p-2 text-gray-600 transition hover:bg-gray-100"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          <button
+            type="button"
+            title="Go forward"
+            aria-label="Go forward"
+            onClick={() => router.forward()}
+            className="rounded-xl p-2 text-gray-600 transition hover:bg-gray-100"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
+        </div>
         <form onSubmit={handleSearch} className="relative max-w-md flex-1">
           <label htmlFor="app-topbar-search" className="sr-only">
             Search courses, kits, people
