@@ -10,7 +10,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { assertActor } from "@/lib/auth-server";
-import { sendEmail, passwordResetEmail, welcomeEmail, verificationEmail } from "@/lib/email";
+import { sendEmail, passwordResetEmail, welcomeEmail } from "@/lib/email";
 import {
   RegisterSchema,
   ForgotPasswordSchema,
@@ -87,7 +87,7 @@ export async function registerUser(formData: FormData) {
     },
   });
 
-  // Send welcome + verification emails (non-blocking — don't fail registration if email fails)
+  // Send welcome email (non-blocking — don't fail registration if email fails)
   sendEmail({
     to: normalizedEmail,
     subject: "Welcome to UjuziLab!",
@@ -95,8 +95,6 @@ export async function registerUser(formData: FormData) {
   }).then((result) => {
     if (!result.ok) console.error("Welcome email failed:", result.error);
   });
-
-  issueVerificationEmail(user.id, normalizedEmail);
 
   if (isInstructor) {
     const credentialToken = await issueSignupCredentialToken(user.id);
@@ -252,64 +250,6 @@ export async function resetPassword(formData: FormData) {
       data: { passwordHash },
     }),
     db.passwordResetToken.update({
-      where: { token },
-      data: { usedAt: new Date() },
-    }),
-  ]);
-
-  return { success: true };
-}
-
-// ─── Email verification ────────────────────────────────────────────────────────
-
-async function issueVerificationEmail(userId: string, email: string) {
-  await db.emailVerificationToken.deleteMany({ where: { userId } });
-
-  const token = randomBytes(32).toString("hex");
-  const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
-
-  await db.emailVerificationToken.create({
-    data: { userId, token, expiresAt },
-  });
-
-  const verifyUrl = `${process.env.NEXTAUTH_URL}/auth/verify-email?token=${token}`;
-
-  const result = await sendEmail({
-    to: email,
-    subject: "Verify your UjuziLab email address",
-    html: verificationEmail(verifyUrl),
-  });
-  if (!result.ok) console.error("Verification email failed:", result.error);
-
-  return result;
-}
-
-export async function sendVerificationEmail(userId: string) {
-  await assertActor(userId);
-
-  const user = await db.user.findUnique({ where: { id: userId } });
-  if (!user) return { error: "User not found." };
-  if (user.emailVerified) return { success: true, alreadyVerified: true };
-
-  await issueVerificationEmail(user.id, user.email);
-  return { success: true };
-}
-
-export async function verifyEmail(token: string) {
-  if (!token) return { error: "This verification link is invalid." };
-
-  const record = await db.emailVerificationToken.findUnique({ where: { token } });
-
-  if (!record || record.usedAt || record.expiresAt < new Date()) {
-    return { error: "This verification link is invalid or has expired." };
-  }
-
-  await db.$transaction([
-    db.user.update({
-      where: { id: record.userId },
-      data: { emailVerified: true },
-    }),
-    db.emailVerificationToken.update({
       where: { token },
       data: { usedAt: new Date() },
     }),

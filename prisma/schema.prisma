@@ -58,7 +58,6 @@ model User {
 
   // Relations
   resetTokens             PasswordResetToken[]
-  verificationTokens      EmailVerificationToken[]
   signupCredentialTokens  SignupCredentialToken[]
   instructorCredentials   InstructorCredential[]       @relation("UserInstructorCredentials")
   courses                 Course[]                     @relation("InstructorCourses")
@@ -447,20 +446,6 @@ model PasswordResetToken {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("password_reset_tokens")
-}
-
-// ─── Email verification ────────────────────────────────────────────────────────
-model EmailVerificationToken {
-  id        String    @id @default(cuid())
-  userId    String
-  token     String    @unique @db.VarChar(191)
-  expiresAt DateTime
-  usedAt    DateTime?
-  createdAt DateTime  @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@map("email_verification_tokens")
 }
 
 // ─── Signup credential upload token ────────────────────────────────────────────

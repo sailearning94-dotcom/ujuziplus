@@ -44,7 +44,6 @@ export const authOptions: AuthOptions = {
           username: user.username,
           role: user.role,
           avatarUrl: user.avatarUrl ?? undefined,
-          emailVerified: user.emailVerified,
         };
       },
     }),
@@ -62,7 +61,6 @@ export const authOptions: AuthOptions = {
         token.fullName = (user as { fullName: string }).fullName;
         token.username = (user as { username: string }).username;
         token.avatarUrl = (user as { avatarUrl?: string }).avatarUrl;
-        token.emailVerified = (user as { emailVerified?: boolean }).emailVerified ?? false;
         token.isActive = true;
         token.lastRoleCheck = now;
         token.lastProfileSync = now;
@@ -87,7 +85,6 @@ export const authOptions: AuthOptions = {
           fullName: true,
           username: true,
           avatarUrl: true,
-          emailVerified: true,
           instructorStatus: true,
         },
       });
@@ -106,7 +103,6 @@ export const authOptions: AuthOptions = {
 
       token.isActive = dbUser.isActive && !instructorRevoked;
       token.role = dbUser.role;
-      token.emailVerified = dbUser.emailVerified;
       token.lastRoleCheck = now;
 
       if (needProfileSync) {
@@ -129,7 +125,6 @@ export const authOptions: AuthOptions = {
         session.user.username = token.username as string;
         session.user.avatarUrl = token.avatarUrl as string | undefined;
         session.user.isActive = true;
-        session.user.emailVerified = token.emailVerified as boolean;
       }
       return session;
     },

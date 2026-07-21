@@ -81,23 +81,6 @@ export function passwordResetEmail(resetUrl: string) {
   `;
 }
 
-export function verificationEmail(verifyUrl: string) {
-  return `
-    <div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;">
-      <h2 style="color:#f39223">Verify your email</h2>
-      <p>Click the button below to verify your UjuziLab email address. This link expires in 24 hours.</p>
-      <a href="${verifyUrl}"
-         style="display:inline-block;background:#f39223;color:#fff;padding:12px 24px;
-                border-radius:6px;text-decoration:none;font-weight:bold;margin:16px 0;">
-        Verify email
-      </a>
-      <p style="color:#666;font-size:12px;">
-        If you didn't create this account, you can safely ignore this email.
-      </p>
-    </div>
-  `;
-}
-
 export function instructorApprovedEmail(fullName: string) {
   return `
     <div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;">
