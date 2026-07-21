@@ -32,42 +32,39 @@ export default async function ProjectDetailPage({ params }: { params: { slug: st
             className="mb-4"
             items={[{ label: "Projects", href: "/projects" }, { label: project.title }]}
           />
-          <div className="flex flex-col gap-6 sm:flex-row sm:items-start">
-            {project.thumbnailUrl && (
-              <ImageContainer className="relative aspect-video w-full shrink-0 overflow-hidden rounded-xl shadow-lg sm:w-72">
-                <OptimizedImage
-                  src={project.thumbnailUrl}
-                  alt={project.title}
-                  fill
-                  priority
-                  sizes="(max-width: 640px) 100vw, 288px"
-                  className="object-cover"
-                />
-              </ImageContainer>
-            )}
-            <div className="min-w-0 flex-1">
-              <div className="flex flex-wrap gap-2">
-                <Badge variant="outline" className="border-0 bg-brand/30 text-white shadow-none backdrop-blur-none">
-                  {project.category}
-                </Badge>
-                <Badge variant="outline" className="border-white/30 bg-white/10 capitalize text-white/90">
-                  {project.status.toLowerCase()}
-                </Badge>
-                {tags.map((t) => (
-                  <Badge key={t} variant="outline" className="border-white/20 bg-white/5 text-white/80">
-                    {t}
-                  </Badge>
-                ))}
-              </div>
-              <h1 className="mt-4 font-display text-3xl font-bold tracking-tight text-white md:text-4xl">
-                {project.title}
-              </h1>
-            </div>
+          <div className="flex flex-wrap gap-2">
+            <Badge variant="outline" className="border-0 bg-brand/30 text-white shadow-none backdrop-blur-none">
+              {project.category}
+            </Badge>
+            <Badge variant="outline" className="border-white/30 bg-white/10 capitalize text-white/90">
+              {project.status.toLowerCase()}
+            </Badge>
+            {tags.map((t) => (
+              <Badge key={t} variant="outline" className="border-white/20 bg-white/5 text-white/80">
+                {t}
+              </Badge>
+            ))}
           </div>
+          <h1 className="mt-4 font-display text-3xl font-bold tracking-tight text-white md:text-4xl">
+            {project.title}
+          </h1>
         </div>
       </div>
 
       <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
+        <div className="flex flex-col gap-8 lg:flex-row lg:items-start">
+          {project.thumbnailUrl && (
+            <ImageContainer className="relative aspect-video w-full shrink-0 overflow-hidden rounded-xl shadow-md lg:sticky lg:top-24 lg:w-64">
+              <OptimizedImage
+                src={project.thumbnailUrl}
+                alt={project.title}
+                fill
+                sizes="(max-width: 1024px) 100vw, 256px"
+                className="object-cover"
+              />
+            </ImageContainer>
+          )}
+          <div className="min-w-0 flex-1">
         <p className="whitespace-pre-wrap text-gray-600 leading-relaxed">{project.description}</p>
 
         <div className="mt-6 flex flex-wrap items-center gap-3">
@@ -231,6 +228,8 @@ export default async function ProjectDetailPage({ params }: { params: { slug: st
             </Button>
           )}
         </Card>
+          </div>
+        </div>
       </div>
     </div>
   );
