@@ -66,22 +66,23 @@ export function AppTopbar({
         >
           <Menu className="h-5 w-5" />
         </button>
-        <div className="hidden items-center gap-0.5 sm:flex">
+        <div className="topbar-nav-group hidden items-center sm:flex">
           <button
             type="button"
             title="Go back"
             aria-label="Go back"
             onClick={() => router.back()}
-            className="topbar-nav-btn rounded-xl p-2 text-gray-600 outline-none transition focus:outline-none focus-visible:outline-none"
+            className="topbar-nav-group__btn text-gray-600 outline-none transition focus:outline-none focus-visible:outline-none"
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
+          <span className="topbar-nav-group__divider" aria-hidden />
           <button
             type="button"
             title="Go forward"
             aria-label="Go forward"
             onClick={() => router.forward()}
-            className="topbar-nav-btn rounded-xl p-2 text-gray-600 outline-none transition focus:outline-none focus-visible:outline-none"
+            className="topbar-nav-group__btn text-gray-600 outline-none transition focus:outline-none focus-visible:outline-none"
           >
             <ChevronRight className="h-5 w-5" />
           </button>
