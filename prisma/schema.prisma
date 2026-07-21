@@ -59,6 +59,7 @@ model User {
   // Relations
   resetTokens             PasswordResetToken[]
   verificationTokens      EmailVerificationToken[]
+  signupCredentialTokens  SignupCredentialToken[]
   instructorCredentials   InstructorCredential[]       @relation("UserInstructorCredentials")
   courses                 Course[]                     @relation("InstructorCourses")
   enrollments             Enrollment[]
@@ -460,6 +461,22 @@ model EmailVerificationToken {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("email_verification_tokens")
+}
+
+// ─── Signup credential upload token ────────────────────────────────────────────
+// Short-lived token letting a just-registered (still-PENDING, not-yet-signed-in)
+// instructor upload certification files on the step-2 signup page.
+model SignupCredentialToken {
+  id        String    @id @default(cuid())
+  userId    String
+  token     String    @unique @db.VarChar(191)
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("signup_credential_tokens")
 }
 
 // ─── Instructor credentials ─────────────────────────────────────────────────────

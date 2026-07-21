@@ -7,10 +7,16 @@
 import { hash } from "bcryptjs";
 import { randomBytes } from "crypto";
 import { revalidatePath } from "next/cache";
+import { z } from "zod";
 import { db } from "@/lib/db";
 import { assertActor } from "@/lib/auth-server";
 import { sendEmail, passwordResetEmail, welcomeEmail, verificationEmail } from "@/lib/email";
-import { RegisterSchema, ForgotPasswordSchema, ResetPasswordSchema } from "@/lib/validations/auth";
+import {
+  RegisterSchema,
+  ForgotPasswordSchema,
+  ResetPasswordSchema,
+  InstructorCredentialInputSchema,
+} from "@/lib/validations/auth";
 
 export type UserProfileData = {
   fullName: string;
@@ -37,20 +43,11 @@ function optionalText(value: FormDataEntryValue | null): string | null {
 // ─── Register ─────────────────────────────────────────────────────────────────
 
 export async function registerUser(formData: FormData) {
-  const credentialsRaw = formData.get("credentials") as string | null;
-  let parsedCredentials: unknown;
-  try {
-    parsedCredentials = credentialsRaw ? JSON.parse(credentialsRaw) : undefined;
-  } catch {
-    return { error: "Invalid certification data." };
-  }
-
   const raw = {
     fullName: formData.get("fullName") as string,
     email: formData.get("email") as string,
     password: formData.get("password") as string,
     role: (formData.get("role") as string) || "STUDENT",
-    credentials: parsedCredentials,
   };
 
   const result = RegisterSchema.safeParse(raw);
@@ -58,7 +55,7 @@ export async function registerUser(formData: FormData) {
     return { error: result.error.issues[0].message };
   }
 
-  const { fullName, email, password, role, credentials } = result.data;
+  const { fullName, email, password, role } = result.data;
   const normalizedEmail = email.toLowerCase().trim();
 
   // Check duplicate email
@@ -90,19 +87,6 @@ export async function registerUser(formData: FormData) {
     },
   });
 
-  if (isInstructor && credentials?.length) {
-    await db.instructorCredential.createMany({
-      data: credentials.map((c, index) => ({
-        userId: user.id,
-        title: c.title,
-        issuer: c.issuer || null,
-        issueDate: c.issueDate ? new Date(c.issueDate) : null,
-        credentialUrl: c.credentialUrl || null,
-        orderIndex: index,
-      })),
-    });
-  }
-
   // Send welcome + verification emails (non-blocking — don't fail registration if email fails)
   sendEmail({
     to: normalizedEmail,
@@ -114,7 +98,82 @@ export async function registerUser(formData: FormData) {
 
   issueVerificationEmail(user.id, normalizedEmail);
 
-  return { success: true, pendingInstructorApproval: isInstructor };
+  if (isInstructor) {
+    const credentialToken = await issueSignupCredentialToken(user.id);
+    return { success: true, pendingInstructorApproval: true, credentialToken };
+  }
+
+  return { success: true, pendingInstructorApproval: false };
+}
+
+// ─── Signup certification upload (pre-approval instructor step 2) ─────────────
+
+async function issueSignupCredentialToken(userId: string) {
+  await db.signupCredentialToken.deleteMany({ where: { userId } });
+
+  const token = randomBytes(32).toString("hex");
+  const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour to complete step 2
+
+  await db.signupCredentialToken.create({
+    data: { userId, token, expiresAt },
+  });
+
+  return token;
+}
+
+async function getUserIdForSignupCredentialToken(token: string) {
+  if (!token) return null;
+  const record = await db.signupCredentialToken.findUnique({ where: { token } });
+  if (!record || record.usedAt || record.expiresAt < new Date()) return null;
+  return record.userId;
+}
+
+export async function submitSignupCredentials(
+  token: string,
+  credentials: {
+    title: string;
+    issuer?: string;
+    issueDate?: string;
+    credentialUrl?: string;
+    fileUrl?: string;
+  }[]
+) {
+  const userId = await getUserIdForSignupCredentialToken(token);
+  if (!userId) {
+    return { error: "This session has expired. Please sign up again." };
+  }
+
+  const parsed = z.array(InstructorCredentialInputSchema).safeParse(
+    credentials.filter((c) => c.title.trim().length > 0)
+  );
+  if (!parsed.success) {
+    return { error: parsed.error.issues[0].message };
+  }
+
+  const cleaned = parsed.data.map((c) => ({ ...c, title: c.title.trim() }));
+
+  if (cleaned.length === 0) {
+    return { error: "Add at least one certification so admins can review your application." };
+  }
+
+  await db.instructorCredential.createMany({
+    data: cleaned.map((c, index) => ({
+      userId,
+      title: c.title,
+      issuer: c.issuer?.trim() || null,
+      issueDate: c.issueDate ? new Date(c.issueDate) : null,
+      credentialUrl: c.credentialUrl?.trim() || null,
+      fileUrl: c.fileUrl?.trim() || null,
+      orderIndex: index,
+    })),
+  });
+
+  await db.signupCredentialToken.update({
+    where: { token },
+    data: { usedAt: new Date() },
+  });
+
+  return { success: true };
 }
 
 // ─── Forgot password ──────────────────────────────────────────────────────────

@@ -5,6 +5,7 @@ import { Plus, Trash2, Pencil, ExternalLink } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { MediaUploadField } from "@/components/ui/MediaUploadField";
 import { useAppStore } from "@/store/appStore";
 import {
   addCredential,
@@ -20,6 +21,7 @@ const emptyDraft = (): InstructorCredentialInput => ({
   issuer: "",
   issueDate: "",
   credentialUrl: "",
+  fileUrl: "",
 });
 
 function toDraft(cred: InstructorCredential): InstructorCredentialInput {
@@ -28,6 +30,7 @@ function toDraft(cred: InstructorCredential): InstructorCredentialInput {
     issuer: cred.issuer ?? "",
     issueDate: cred.issueDate ? cred.issueDate.toISOString().slice(0, 10) : "",
     credentialUrl: cred.credentialUrl ?? "",
+    fileUrl: cred.fileUrl ?? "",
   };
 }
 
@@ -111,9 +114,9 @@ export function CredentialsManager({
                     .filter(Boolean)
                     .join(" · ")}
                 </p>
-                {cred.credentialUrl && (
+                {(cred.credentialUrl || cred.fileUrl) && (
                   <a
-                    href={cred.credentialUrl}
+                    href={cred.credentialUrl || cred.fileUrl || "#"}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="mt-1 inline-flex items-center gap-1 text-sm font-medium text-brand hover:underline"
@@ -197,6 +200,14 @@ function CredentialForm({
         label="Credential URL (optional)"
         value={draft.credentialUrl}
         onChange={(e) => setDraft({ ...draft, credentialUrl: e.target.value })}
+      />
+      <MediaUploadField
+        kind="doc"
+        label="Certificate file (optional)"
+        hint="Upload a PDF from your device."
+        value={draft.fileUrl ?? ""}
+        onChange={(url) => setDraft({ ...draft, fileUrl: url })}
+        localOnly
       />
       <div className="flex gap-2 pt-1">
         <Button type="button" size="sm" disabled={isPending} onClick={onSave}>

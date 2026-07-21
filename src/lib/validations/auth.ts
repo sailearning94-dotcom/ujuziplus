@@ -9,23 +9,18 @@ export const InstructorCredentialInputSchema = z.object({
   issuer: z.string().max(191).optional(),
   issueDate: z.string().optional(),
   credentialUrl: z.string().url("Enter a valid URL").optional().or(z.literal("")),
+  fileUrl: z.string().optional(),
 });
 
-export const RegisterSchema = z
-  .object({
-    fullName: z.string().min(2, "Name must be at least 2 characters").max(100),
-    email: z.string().email("Please enter a valid email address"),
-    password: z
-      .string()
-      .min(8, "Password must be at least 8 characters")
-      .max(100),
-    role: z.enum(["STUDENT", "INSTRUCTOR"]).default("STUDENT"),
-    credentials: z.array(InstructorCredentialInputSchema).optional(),
-  })
-  .refine((d) => d.role !== "INSTRUCTOR" || (d.credentials && d.credentials.length > 0), {
-    message: "Add at least one certification so admins can review your application.",
-    path: ["credentials"],
-  });
+export const RegisterSchema = z.object({
+  fullName: z.string().min(2, "Name must be at least 2 characters").max(100),
+  email: z.string().email("Please enter a valid email address"),
+  password: z
+    .string()
+    .min(8, "Password must be at least 8 characters")
+    .max(100),
+  role: z.enum(["STUDENT", "INSTRUCTOR"]).default("STUDENT"),
+});
 
 export const LoginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),

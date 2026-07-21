@@ -149,9 +149,9 @@ export default async function PublicProfilePage({ params }: { params: { username
                         .filter(Boolean)
                         .join(" · ")}
                     </p>
-                    {cred.credentialUrl && (
+                    {(cred.credentialUrl || cred.fileUrl) && (
                       <a
-                        href={cred.credentialUrl}
+                        href={cred.credentialUrl || cred.fileUrl || "#"}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="mt-1 inline-flex items-center gap-1 text-sm font-medium text-brand hover:underline"

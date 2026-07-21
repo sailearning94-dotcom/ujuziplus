@@ -9,6 +9,7 @@ export type InstructorCredentialInput = {
   issuer?: string;
   issueDate?: string;
   credentialUrl?: string;
+  fileUrl?: string;
 };
 
 async function revalidateCredentialPaths(userId: string) {
@@ -40,6 +41,7 @@ export async function addCredential(userId: string, input: InstructorCredentialI
       issuer: input.issuer?.trim() || null,
       issueDate: input.issueDate ? new Date(input.issueDate) : null,
       credentialUrl: input.credentialUrl?.trim() || null,
+      fileUrl: input.fileUrl?.trim() || null,
       orderIndex: count,
     },
   });
@@ -68,6 +70,7 @@ export async function updateCredential(
       issuer: input.issuer?.trim() || null,
       issueDate: input.issueDate ? new Date(input.issueDate) : null,
       credentialUrl: input.credentialUrl?.trim() || null,
+      fileUrl: input.fileUrl?.trim() || null,
     },
   });
 

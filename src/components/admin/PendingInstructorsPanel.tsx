@@ -16,6 +16,7 @@ type Credential = {
   issuer: string | null;
   issueDate: Date | null;
   credentialUrl: string | null;
+  fileUrl: string | null;
 };
 
 type Applicant = {
@@ -136,7 +137,20 @@ export function PendingInstructorsPanel({
                         rel="noopener noreferrer"
                         className="text-brand hover:underline"
                       >
-                        View
+                        View link
+                      </a>
+                    </>
+                  )}
+                  {c.fileUrl && (
+                    <>
+                      {" · "}
+                      <a
+                        href={c.fileUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-brand hover:underline"
+                      >
+                        View certificate PDF
                       </a>
                     </>
                   )}

@@ -142,6 +142,7 @@ export async function getPendingInstructors() {
           issuer: true,
           issueDate: true,
           credentialUrl: true,
+          fileUrl: true,
         },
       },
     },
