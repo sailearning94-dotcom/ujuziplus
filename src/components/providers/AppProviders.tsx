@@ -5,6 +5,7 @@ import { WaziLabMuiProvider } from "@/components/providers/WaziLabMuiProvider";
 import { ModalRoot } from "@/components/simulation/ModalRoot";
 import { ToastHost } from "@/components/providers/ToastHost";
 import { ChatWidget } from "@/components/chat/ChatWidget";
+import { CookieConsent } from "@/components/providers/CookieConsent";
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
   return (
@@ -14,6 +15,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
         <ModalRoot />
         <ToastHost />
         <ChatWidget />
+        <CookieConsent />
       </WaziLabMuiProvider>
     </SessionProvider>
   );
