@@ -6,15 +6,13 @@
  *
  * POST /api/upload/signup-credential
  * Body: FormData — "file" (required, PDF only), "token" (required)
- * Returns: { url: "/uploads/doc/filename.pdf" }
+ * Returns: { url: "https://<b2-public-url>/doc/filename.pdf" }
  */
 
-import { mkdirSync, existsSync } from "fs";
-import { writeFile } from "fs/promises";
-import path from "path";
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { defaultExtension, resolveMimeType } from "@/lib/upload-mime";
+import { uploadFile } from "@/lib/storage";
 
 export const runtime = "nodejs";
 
@@ -55,20 +53,15 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const uploadBasePath = path.join(process.cwd(), "public", "uploads", "doc");
-    if (!existsSync(uploadBasePath)) {
-      mkdirSync(uploadBasePath, { recursive: true });
-    }
-
     const ext = defaultExtension("doc", resolvedMime, file.name);
     const filename = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-    const filepath = path.join(uploadBasePath, filename);
+    const key = `doc/${filename}`;
 
     const buffer = Buffer.from(await file.arrayBuffer());
-    await writeFile(filepath, buffer);
+    const url = await uploadFile(key, buffer, resolvedMime);
 
     return NextResponse.json({
-      url: `/uploads/doc/${filename}`,
+      url,
       name: file.name,
       size: file.size,
     });

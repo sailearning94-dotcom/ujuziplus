@@ -2,17 +2,14 @@
  * Universal media upload API
  * POST /api/upload
  * Body: FormData  —  field "file" (required), field "kind" (optional: "image"|"video"|"doc"|"audio")
- * Returns: { url: "/uploads/<kind>/filename.ext" }
+ * Returns: { url: "https://<b2-public-url>/<kind>/filename.ext" }
  */
 
-import { mkdirSync } from "fs";
-import { writeFile } from "fs/promises";
-import path from "path";
 import sharp from "sharp";
 import { NextRequest, NextResponse } from "next/server";
 import { getUploadUserId } from "@/lib/upload-auth";
 import { defaultExtension, resolveMimeType } from "@/lib/upload-mime";
-import { existsSync } from "fs";
+import { uploadFile } from "@/lib/storage";
 
 export const runtime = "nodejs";
 
@@ -123,41 +120,28 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Use local public/uploads path (Railway volume should be mounted at /app/public/uploads)
-    const uploadBasePath = path.join(process.cwd(), "public", "uploads", kind);
-    
-    if (!existsSync(uploadBasePath)) {
-      mkdirSync(uploadBasePath, { recursive: true });
-    }
-
     const originalExt = defaultExtension(kind, resolvedMime, file.name);
     const filename = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${originalExt}`;
-    const filepath = path.join(uploadBasePath, filename);
+    const key = `${kind}/${filename}`;
 
     const buffer = Buffer.from(await file.arrayBuffer());
 
+    let url: string;
     if (kind === "image" && resolvedMime !== "image/svg+xml") {
-      const outputBuffer = await sharp(buffer)
-        .rotate()
-        .jpeg({ quality: 85, mozjpeg: true })
-        .toBuffer();
-      await writeFile(filepath, outputBuffer);
+      const outputBuffer = await sharp(buffer).rotate().jpeg({ quality: 85, mozjpeg: true }).toBuffer();
+      url = await uploadFile(key, outputBuffer, "image/jpeg");
     } else {
-      await writeFile(filepath, buffer);
+      url = await uploadFile(key, buffer, resolvedMime);
     }
 
     return NextResponse.json({
-      url: `/uploads/${kind}/${filename}`,
+      url,
       kind,
       name: file.name,
       size: file.size,
     });
   } catch (err) {
     console.error("Upload error:", err);
-    const message =
-      err instanceof Error && err.message.includes("ENOENT")
-        ? "Could not save file. Check server write permissions for public/uploads."
-        : "Upload failed. Please try again.";
-    return NextResponse.json({ error: message }, { status: 500 });
+    return NextResponse.json({ error: "Upload failed. Please try again." }, { status: 500 });
   }
 }
